@@ -13,3 +13,56 @@ Real-time inflation nowcasting system built on a full MLOps stack. Serves as bot
 8.  [Use Cases & Applications](#applications)
 9.  [Future Work](#future-work)
 10. [Acknowledgements](#acknowledgements)
+
+## Repository Structure
+```
+├── airflow
+│   ├── dags
+│   ├── logs
+│   └── plugins
+├── api
+│   ├── deployment
+│   └── openapi.yaml
+├── data
+│   ├── external
+│   ├── interim
+│   ├── processed
+│   └── raw
+├── deploy
+│   ├── aws
+│   └── k8s
+├── docker-compose.yml
+├── docs
+│   ├── architecture.md
+│   └── data-dictionary.md
+├── feature-store
+│   ├── entities
+│   └── registry
+├── infra
+│   ├── github-actions
+│   └── terraform
+├── LICENSE
+├── Makefile
+├── mlflow
+│   ├── artifacts
+│   └── tracking
+├── monitoring
+│   ├── grafana
+│   └── prometheus
+├── notebooks
+├── README.md
+├── requirements.txt
+├── scripts
+├── src
+│   ├── config
+│   ├── evaluation
+│   ├── features
+│   ├── ingestion
+│   ├── models
+│   ├── serving
+│   └── validation
+└── tests
+    ├── api
+    ├── data
+    └── pipeline
+```
