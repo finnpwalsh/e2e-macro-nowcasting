@@ -1,3 +1,10 @@
+# ----------------- Project-specific ------------------
+.env
+data/
+mlruns/
+airflow/logs/
+
+# ------------------ GitHub template ------------------
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

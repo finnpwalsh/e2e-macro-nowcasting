@@ -35,9 +35,6 @@ Real-time inflation nowcasting system built on a full MLOps stack. Serves as bot
 ├── docs
 │   ├── architecture.md
 │   └── data-dictionary.md
-├── feature-store
-│   ├── entities
-│   └── registry
 ├── infra
 │   ├── github-actions
 │   └── terraform
@@ -56,9 +53,13 @@ Real-time inflation nowcasting system built on a full MLOps stack. Serves as bot
 ├── src
 │   ├── config
 │   ├── evaluation
+│   ├── feature_store
+│   │   ├── entities
+│   │   └── registry
 │   ├── features
 │   ├── ingestion
 │   ├── models
+│   ├── pipelines
 │   ├── serving
 │   └── validation
 └── tests
