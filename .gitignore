@@ -1,8 +1,21 @@
 # ----------------- Project-specific ------------------
 .env
-data/
-mlruns/
-airflow/logs/
+.envrc
+
+# Data & Artifacts
+data/**
+!data/**/.gitkeep
+
+mlruns/**
+mlflow/artifacts/**
+mlflow/tracking/**
+
+# Airflow generated files
+airflow/logs/**
+airflow/*.db
+airflow/*.pid
+airflow/airflow.cfg
+airflow/webserver_config.py
 
 # ------------------ GitHub template ------------------
 # Byte-compiled / optimized / DLL files
