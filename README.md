@@ -4,17 +4,12 @@ Real-time inflation nowcasting system built on a full MLOps stack. Serves as bot
 
 ### Contents
 1.  [Overview](#overview)
-2.  [Motivation](#motivation)
-3.  [Architecture & System Design](#architecture--system-design)
-4.  [Tech Stack & Dependencies](#tech-stack--dependencies)
-5.  [Running the Project](#running-the-project)
-6.  [Repository Structure](#repository-structure)
-7.  [Performance Evaluation](#performance-evaluation)
-8.  [Use Cases & Applications](#applications)
-9.  [Future Work](#future-work)
-10. [Acknowledgements](#acknowledgements)
+2.  [Status](#status)
+3.  [Quickstart](#quickstart)
+4.  [Repo Structure](#repo-structure)
+5.  [Roadmap (V1 -> V2)]
 
-## Repository Structure
+## Repo Structure
 ```
 ├── airflow
 │   ├── dags
@@ -33,8 +28,14 @@ Real-time inflation nowcasting system built on a full MLOps stack. Serves as bot
 │   └── k8s
 ├── docker-compose.yml
 ├── docs
-│   ├── architecture.md
-│   └── data-dictionary.md
+│   ├── 00_overview.md
+│   ├── 01_data_plan.md
+│   ├── 02_architecture.md
+│   ├── 03_model_plan.md
+│   ├── 04_retraining_and_drift.md
+│   ├── 05_api_dashboard.md
+│   ├── 06_repo_structure.md
+│   └── architecture_v1.png
 ├── infra
 │   ├── github-actions
 │   └── terraform
