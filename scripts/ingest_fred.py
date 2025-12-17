@@ -1,3 +1,13 @@
+'''
+Run ingest/fred.py and write output to data/raw/fred_{FRED_SERIES}.parquet
+
+RESPONSIBILITIES:
+- load FRED api
+- call ingest_fred_api
+- write raw data to data/raw
+- confirm task ran successfully
+'''
+
 from __future__ import annotations
 
 import os

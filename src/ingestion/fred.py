@@ -5,12 +5,25 @@ from fredapi import Fred
 
 REQUIRED_COLS = ["date", "value", "series_id"]
 
+"""
+FRED raw data ingestion and validation.
+
+Responsibilities:
+- Fetch series from FRED
+- Enforce raw data schema
+- Write validated data to raw parquet
+"""
+
 def validate_fred(df: pd.DataFrame) -> pd.DataFrame:
     '''
-    Schema:
-        date        datetime64[ns]
-        value       float64
-        series_id   string
+    Make sure...
+    - Required columns exist
+        + date, value, series_id
+    - no null values
+    - variables coerced to schema:
+        + date        datetime64[ns]
+        + value       float64
+        + series_id   string
     '''
     
     # check required cols exist
@@ -31,12 +44,24 @@ def validate_fred(df: pd.DataFrame) -> pd.DataFrame:
     # else, valid data frame
     return df
 
+
 def ingest_fred_series(
     fred: Fred, 
     series_id: str,
     start: str = "2010-01-01",
 ) -> pd.DataFrame:
+    '''
+    Ingest FRED api and return coerced + validated raw data.
     
+    :param fred: FRED api
+        :type fred: Fred
+    :param series_id: FRED series id
+        :type series_id: str
+    :param start: start date
+        :type start: str
+    :return: validated raw FRED data
+        :rtype: DataFrame
+    '''
     # ingest
     s = fred.get_series(series_id, observation_start = start)
 
