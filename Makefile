@@ -13,7 +13,10 @@ setup:
 	$(PIP) install -r requirements.txt
 
 #------------------ Run ingestion ------------------
-ingest: 
+ingest-all:
+	ingest-fred
+
+ingest-fred: 
 	PYTHONPATH=$(PYTHONPATH) $(PY) scripts/ingest_fred.py
 
 # --------------------- Tests ----------------------
