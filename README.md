@@ -7,7 +7,11 @@ Real-time inflation nowcasting system built on a full MLOps stack. Serves as bot
 2.  [Status](#status)
 3.  [Quickstart](#quickstart)
 4.  [Repo Structure](#repo-structure)
-5.  [Roadmap (V1 -> V2)]
+5.  [Roadmap](#roadmap)
+
+## Status
+**Dec 16, 2026**: Under active construction. V1 focus is reliable data ingestion &rarr validation &rarr storage with orchestration (Airflow) and containerization (Docker) coming next. 
+**Goal**: An end-to-end inflation nowcasting pipeline that is reproducible and production-minded.
 
 ## Repo Structure
 ```
