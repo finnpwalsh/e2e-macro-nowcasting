@@ -8,7 +8,7 @@ python-dotenv
 fredapi
 
 # parquet
-# pyarrow
+pyarrow
 
 # test
 pytest

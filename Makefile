@@ -1,24 +1,29 @@
-# --------------------- Config ---------------------
-PYTHONPATH := .
-VENV := .venv
-PY := $(VENV)/bin/python
-PIP:= $(PY) -m pip
+# config
+APP_NAME	:= e2e-macro-nowcasting
+IMAGE		:= $(APP_NAME):dev
+ENV_FILE	:= .env
+WORKDIR		:= /app
 
-.PHONY: setup ingest test
 
-# --------------------- Setup ----------------------
-setup:
-	python3 -m venv $(VENV)
-	$(PIP) install --upgrade pip
-	$(PIP) install -r requirements.txt
+# common docker run flags
+DOCKER_RUN  := docker run --rm -it \
+	--env-file $(ENV_FILE) \
+	-v $(PWD):$(WORKDIR) \ 
+	-w $(WORKDIR) \ 
+	$(IMAGE)
 
-#------------------ Run ingestion ------------------
-ingest-all:
-	ingest-fred
 
-ingest-fred: 
-	PYTHONPATH=$(PYTHONPATH) $(PY) scripts/ingest_fred.py
+# do
+.PHONY: build run shell test
 
-# --------------------- Tests ----------------------
+build:
+	docker build -t $(IMAGE) .
+
+run:
+	$(DOCKER_RUN) python scripts/ingest_fred.py
+
 test:
-	PYTHONPATH=$(PYTHONPATH) $(PY) -m pytest -q
+	$(DOCKER_RUN) pytest -q
+
+shell:
+	$(DOCKER_RUN) bash
