@@ -1,7 +1,7 @@
 DONE:
 - finalize Dockerfile + Makefile
-- moved all workflow to Docker
-- added smoke test to ensure pytest is functional
+- move all workflow to Docker
+- add smoke test to ensure pytest is functional
 - ingestion writes parquet
 
 NEXT:
