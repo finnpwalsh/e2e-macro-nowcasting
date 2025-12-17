@@ -31,9 +31,9 @@ def main():
     outdir = Path("data/raw")
     outdir.mkdir(parents=True, exist_ok=True)
     
-    # make out path, save data as csv
-    out_path = outdir / f"fred_{series_id}.csv"
-    df.to_csv(out_path, index=False)
+    # make out path, save data as parquet
+    out_path = outdir / f"fred_{series_id}.parquet"
+    df.to_parquet(out_path, index=False)
 
     # confirm the task ran successfully
     print(f"[OK] wrote {len(df):,} rows -> {out_path}")
