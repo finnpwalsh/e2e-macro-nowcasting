@@ -8,8 +8,8 @@ WORKDIR		:= /app
 # common docker run flags
 DOCKER_RUN  := docker run --rm -it \
 	--env-file $(ENV_FILE) \
-	-v $(PWD):$(WORKDIR) \ 
-	-w $(WORKDIR) \ 
+	-v $(PWD):$(WORKDIR) \
+	-w $(WORKDIR) \
 	$(IMAGE)
 
 
