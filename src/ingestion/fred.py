@@ -36,11 +36,14 @@ def validate_fred(df: pd.DataFrame) -> pd.DataFrame:
     df["value"] = pd.to_numeric(df["value"], errors = "coerce")
     df["series_id"] = df["series_id"].astype("string")
 
-    # if ANY NaN values exist, raise error w/ count
-    bad = df.isna().sum()
-    if bad.any():
-        raise ValueError(f"Invalid FRED data after type coersion. NaN counts: {bad.to_dict()}")
-
+    # date and series_id must be valid, must have at least 1 valid value
+    if df["date"].isna().any():
+        raise ValueError(f"Missing {df['date'].isna().sum} dates.")
+    if df["series_id"].isna().any():
+        raise ValueError(f"Missing {df['series_id'].isna().sum} series IDs.")
+    if df["value"].isna().sum() == len(df):
+        raise ValueError(f"All values are NaN")
+    
     # else, valid data frame
     return df
 

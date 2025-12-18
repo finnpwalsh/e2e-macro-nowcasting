@@ -11,12 +11,24 @@ RESPONSIBILITIES:
 from __future__ import annotations
 
 import os
+import pandas as pd
 from pathlib import Path
 
 from dotenv import load_dotenv
 from fredapi import Fred
 
 from src.ingestion.fred import ingest_fred_series
+
+START_DATE = "2010-01-01"
+OUTDIR = Path("data/raw")
+
+FRED_SERIES = [
+    "CPIAUCSL", # target: headline CPI level
+    "CPIHOSSL", # anchor: shelter
+    "CPIENGSL", # anchor: energy
+    "UNRATE",   # anchor: demand
+    "FEDFUNDS", # anchor: policy
+]
 
 def main():
     # load secrets
@@ -27,26 +39,37 @@ def main():
     if not api_key:
         raise RuntimeError("Missing FRED_API_KEY. Add it to .env")
     
-    # check for .env variables FRED_SERIES, FRED START. If they
-    # do not exist, use "CPIAUCSL and 2010-01-01, respectively"
-    series_id = os.getenv("FRED_SERIES", "CPIAUCSL")
-    start     = os.getenv("FRED_START", "2010-01-01")
-
-    # create Fred variable, ingest the series into a df
-    fred = Fred(api_key = api_key)
-    df   = ingest_fred_series(fred, series_id, start=start)
-
     # make out directory (and all parent directories) if
     # doesn't exist. Do not throw error if it does exist
-    outdir = Path("data/raw")
-    outdir.mkdir(parents=True, exist_ok=True)
+    OUTDIR.mkdir(parents=True, exist_ok=True)
+
+    # create Fred variable
+    fred = Fred(api_key = api_key)
+
+    # initialize merged dataframe
+    dfs = []
+
+    for series_id in FRED_SERIES:
+        # ingest series
+        df   = ingest_fred_series(fred, series_id, start=START_DATE)
+
+        # make out path, save data as parquet
+        out_path = OUTDIR / f"fred_{series_id}.parquet"
+        df.to_parquet(out_path, index=False)
+
+        # append to dfs
+        dfs.append(df)
+
+        # confirm the task ran successfully
+        print(f"[OK] wrote {len(df):,} rows -> {out_path}")
     
-    # make out path, save data as parquet
-    out_path = outdir / f"fred_{series_id}.parquet"
-    df.to_parquet(out_path, index=False)
+    # write combined
+    out_path = OUTDIR / "fred_all.parquet"
+    combined = pd.concat(dfs, ignore_index=True)
+    combined.to_parquet(out_path, index=False)
 
     # confirm the task ran successfully
-    print(f"[OK] wrote {len(df):,} rows -> {out_path}")
+    print(f"[OK] wrote {len(combined):,} rows -> {out_path}")
 
 # run
 if __name__ == "__main__":
