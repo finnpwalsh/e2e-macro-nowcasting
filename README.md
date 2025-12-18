@@ -10,18 +10,39 @@ Real-time inflation nowcasting system built on a full MLOps stack. Serves as bot
 5.  [Roadmap](#roadmap)
 
 ## Status
-**Dec 16, 2026**: Under active construction. V1 focus is reliable data ingestion &rarr validation &rarr storage with orchestration (Airflow) and containerization (Docker) coming next. 
+**Dec 18, 2026**: Under active construction. V1 focus is reliable data ingestion &rarr validation &rarr storage with orchestration (Airflow) and containerization (Docker) coming next. 
 **Goal**: An end-to-end inflation nowcasting pipeline that is reproducible and production-minded.
 
 ## Repo Structure
+### V1
+```
+├── airflow/
+│   └── dags/
+├── data/
+│   ├── raw/
+│   ├── interim/
+│   └── processed/
+├── scripts/
+├── src/
+│   ├── config/
+│   ├── features/
+│   ├── ingestion/
+│   ├── models/
+│   ├── pipelines/
+│   ├── serving/
+│   └── validation/
+└── tests
+    └── data
+```
+
+### V3 or V4 (Planned)
 ```
 ├── airflow
-│   ├── dags
+│   └── dags
 │   ├── logs
 │   └── plugins
 ├── api
-│   ├── deployment
-│   └── openapi.yaml
+│   └── deployment
 ├── data
 │   ├── external
 │   ├── interim
@@ -30,21 +51,10 @@ Real-time inflation nowcasting system built on a full MLOps stack. Serves as bot
 ├── deploy
 │   ├── aws
 │   └── k8s
-├── docker-compose.yml
 ├── docs
-│   ├── 00_overview.md
-│   ├── 01_data_plan.md
-│   ├── 02_architecture.md
-│   ├── 03_model_plan.md
-│   ├── 04_retraining_and_drift.md
-│   ├── 05_api_dashboard.md
-│   ├── 06_repo_structure.md
-│   └── architecture_v1.png
 ├── infra
 │   ├── github-actions
 │   └── terraform
-├── LICENSE
-├── Makefile
 ├── mlflow
 │   ├── artifacts
 │   └── tracking
@@ -52,8 +62,6 @@ Real-time inflation nowcasting system built on a full MLOps stack. Serves as bot
 │   ├── grafana
 │   └── prometheus
 ├── notebooks
-├── README.md
-├── requirements.txt
 ├── scripts
 ├── src
 │   ├── config
@@ -67,8 +75,8 @@ Real-time inflation nowcasting system built on a full MLOps stack. Serves as bot
 │   ├── pipelines
 │   ├── serving
 │   └── validation
-└── tests
-    ├── api
-    ├── data
-    └── pipeline
+├── tests
+│   ├── api
+│   ├── data
+│   └── pipeline
 ```
