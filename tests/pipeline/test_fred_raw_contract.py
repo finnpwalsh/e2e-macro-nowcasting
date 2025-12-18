@@ -39,4 +39,7 @@ def test_fred_raw_contract():
         assert pd.api.types.is_float_dtype(df["value"]), f"Expected float type, got {df['value'].dtype}"
         assert pd.api.types.is_datetime64_any_dtype(df["date"]), f"Expected datetime type, got {df['date'].dtype}"
         assert pd.api.types.is_string_dtype(df["series_id"]), f"Expected string type, got {df['series_id'].dtype}"
+
+    combined = pd.read_parquet(Path("raw/data" / "fred_all.parquet"))
     
+

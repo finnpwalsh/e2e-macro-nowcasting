@@ -1,0 +1,8 @@
+# target
+CPIAUCSL
+
+# anchors
+CPIHOSSL
+CPIENGSL
+UNRATE
+FEDFUNDS
