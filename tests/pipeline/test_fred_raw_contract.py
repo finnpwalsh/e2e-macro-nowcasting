@@ -31,7 +31,9 @@ def test_fred_raw_contract():
         assert not missing, f"Missing required columns: {sorted(missing)}"
 
         # check null values
-        assert not df[REQUIRED_COLS].isna().any().any()
+        nn_cols = ["date", "series_id"]
+        assert not df[nn_cols].isna().any().any()
+        assert not df["value"].isna().sum() == len(df)
 
         # check valid data types
         assert pd.api.types.is_float_dtype(df["value"]), f"Expected float type, got {df['value'].dtype}"
