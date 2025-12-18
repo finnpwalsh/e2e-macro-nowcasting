@@ -18,9 +18,10 @@ def test_fred_raw_contract():
         + iterate through list
     """
 
-    # check in-file paths
+    # check in-file paths, excluding combined file
     files = sorted(Path("data/raw").glob("fred_*.parquet"))
-    assert files, f"No FRED raw parquet files found in data/raw"
+    files = [p for p in files if p.name != "fred_all.parquet"]
+    assert files, f"No individual FRED raw parquet files found in data/raw"
     
     for infile in files:
         # read parquet
@@ -32,14 +33,31 @@ def test_fred_raw_contract():
 
         # check null values
         nn_cols = ["date", "series_id"]
-        assert not df[nn_cols].isna().any().any()
-        assert not df["value"].isna().sum() == len(df)
+        assert not df[nn_cols].isna().any().any(), f"Nulls found in {infile.name} for {nn_cols}."
+        assert not df["value"].isna().sum() == len(df), f"All values in {infile.name} are null."
 
         # check valid data types
         assert pd.api.types.is_float_dtype(df["value"]), f"Expected float type, got {df['value'].dtype}"
         assert pd.api.types.is_datetime64_any_dtype(df["date"]), f"Expected datetime type, got {df['date'].dtype}"
         assert pd.api.types.is_string_dtype(df["series_id"]), f"Expected string type, got {df['series_id'].dtype}"
 
-    combined = pd.read_parquet(Path("raw/data" / "fred_all.parquet"))
-    
+    # read combined series
+    combined = pd.read_parquet(Path("data/raw") / "fred_all.parquet")
 
+    # read FRED series list
+    config_path = Path("src/config/fred.txt")
+    with open(config_path) as f:
+        fred_series = [
+            line.strip() for line in f
+            if line.strip() and not line.startswith("#")
+        ]
+    
+    # check missing  or extra series in combined
+    expected = set(fred_series)
+    actual = set(combined["series_id"].unique())
+
+    missing = expected - actual
+    extra = actual - expected
+    
+    assert not missing, f"Combined FRED file missing series: {sorted(missing)}."
+    assert not extra, f"Combined FRED file has unexpected series: {sorted(extra)}."
