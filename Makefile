@@ -14,13 +14,16 @@ DOCKER_RUN  := docker run --rm -it \
 
 
 # do
-.PHONY: build run shell test
+.PHONY: build ingest run shell test
 
 build:
 	docker build -t $(IMAGE) .
 
-run:
+ingest:
 	$(DOCKER_RUN) python scripts/ingest_fred.py
+
+run: ingest
+	@echo "Run complete."
 
 test:
 	$(DOCKER_RUN) pytest -q

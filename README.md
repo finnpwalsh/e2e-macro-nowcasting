@@ -2,39 +2,58 @@
 ## Overview
 Real-time inflation nowcasting system built on a full MLOps stack. Serves as both an applied exploration of end-to-end pipeline development and a practical introduction to modern deployment and monitoring best practices.
 
-### Contents
-1.  [Overview](#overview)
-2.  [Status](#status)
-3.  [Quickstart](#quickstart)
-4.  [Repo Structure](#repo-structure)
-5.  [Roadmap](#roadmap)
-
 ## Status
-**Dec 18, 2026**: Under active construction. V1 focus is reliable data ingestion &rarr validation &rarr storage with orchestration (Airflow) and containerization (Docker) coming next. 
-**Goal**: An end-to-end inflation nowcasting pipeline that is reproducible and production-minded.
+**Dec 18, 2026**: Under active construction. 
+### V1 Focus
+**Goal:** An end-to-end inflation nowcasting pipeline that is reproducible and production-flavored.
+
+**Specs**
+- Reliable macro ingestion
+- Data validation and contracts 
+- Storage: raw → interim → processed
+- Orchestration with apache Airflow
+- Containerization with Docker
+
+### Non-goals (V1)
+Planned for later versions:
+- Model optimization tuning
+- Real-time serving or latency guarantees
+- Cloud deployment
+- Monitoring, drift detection, CI/CD
+
+## Quickstart
+1. Install Docker Desktop.
+2. `make build` to create Docker image.
+3. `make ingest` to ingest raw macro data.
+4. `make test` to validate data contracts.
+5. `make run` to run end-to-end pipeline.
 
 ## Repo Structure
-### V1
+### V1 (Current)
 ```
 ├── airflow/
 │   └── dags/
+├── artifacts/
+│   └── models/         # saved models
 ├── data/
 │   ├── raw/
 │   ├── interim/
 │   └── processed/
-├── scripts/
+├── notebooks/          # exploratory analysis ONLY
+├── scripts/            # program drivers
 ├── src/
-│   ├── config/
-│   ├── features/
-│   ├── ingestion/
-│   ├── models/
-│   ├── pipelines/
-│   ├── serving/
-│   └── validation/
-└── tests
-    └── data
+│   ├── config/         # series lists and constants
+│   ├── features/       
+│   ├── ingestion/      
+│   ├── models/         
+│   ├── pipelines/      # end-to-end logic
+│   ├── serving/        # API
+│   └── validation/     # data checks
+└── tests/
+    └── data/
 ```
 
+## Roadmap
 ### V3 or V4 (Planned)
 ```
 ├── airflow
