@@ -12,10 +12,21 @@
 - 
 
 ## V1
+### December 18, 2025
+**NEXT**
+- raw → clean stage for FRED series
+
+**DONE**
+- ingest multiple FRED series
+- store FRED series list in config
+- incl. test for all global FRED series
+- move raw FRED test to tests/data
+- remove non-V1 directories + files
+
 ### December 17, 2025
 **NEXT**
 - ingest multiple FRED series
-- raw -> clean stage for FRED series
+- raw → clean stage for FRED series
 
 **DONE**
 - enforce FRED schema

@@ -54,6 +54,10 @@ Planned for later versions:
 ```
 
 ## Roadmap
+### V2
+- S3 Storage (AWS)
+- Model tracking with MLFlow
+
 ### V3 or V4 (Planned)
 ```
 ├── airflow
