@@ -21,7 +21,7 @@ def clean_fred_long(df: pd.DataFrame) -> pd.DataFrame:
 
     # handle NaNs (DROP in v1)
     df = df.dropna(subset=["date", "value", "series_id"])
-
+    
     # dedupe, sort
     df = df.sort_values(["series_id", "date"])
     df = df.drop_duplicates(subset=["series_id", "date"], keep="last")
