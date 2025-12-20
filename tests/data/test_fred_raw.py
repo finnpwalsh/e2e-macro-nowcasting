@@ -3,7 +3,7 @@ from pathlib import Path
 
 REQUIRED_COLS = ["value", "date", "series_id"]
 
-def test_fred_raw_contract():
+def test_fred_raw():
     """
     Finds all raw FRED files and ensures they follow schema.
 
