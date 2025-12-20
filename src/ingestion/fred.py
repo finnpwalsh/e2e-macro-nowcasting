@@ -27,11 +27,11 @@ def validate_fred(df: pd.DataFrame) -> pd.DataFrame:
     '''
     
     # check required cols exist
-    missing = set(REQUIRED_COLS) - set(df.columns)
+    missing = [c for c in REQUIRED_COLS if c not in df.columns]
     if missing:
         raise ValueError(f"Missing required columns: {sorted(missing)}")
 
-    # coerce
+    # coerce types
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
     df["value"] = pd.to_numeric(df["value"], errors = "coerce")
     df["series_id"] = df["series_id"].astype("string")

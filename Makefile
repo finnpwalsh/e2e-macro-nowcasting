@@ -22,7 +22,10 @@ build:
 ingest:
 	$(DOCKER_RUN) python scripts/ingest_fred.py
 
-run: ingest
+clean:
+	$(DOCKER_RUN) python scripts/clean_fred.py
+
+run: ingest clean
 	@echo "Run complete."
 
 test:

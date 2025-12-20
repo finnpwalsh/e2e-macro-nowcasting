@@ -57,7 +57,7 @@ def main():
     # write each FRED series into data/raw
     for series_id in fred_series:
         # ingest series
-        df   = ingest_fred_series(fred, series_id, start=START_DATE)
+        df = ingest_fred_series(fred, series_id, start=START_DATE)
 
         # make out-path, save data as parquet
         out_path = OUTDIR / f"fred_{series_id}.parquet"
