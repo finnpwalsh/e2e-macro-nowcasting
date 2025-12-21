@@ -1,13 +1,11 @@
 from __future__ import annotations
-
 import pandas as pd
-from pathlib import Path
 
 REQUIRED_COLS = ["date", "value", "series_id"]
 
 def clean_fred_long(df: pd.DataFrame) -> pd.DataFrame:
     if df.empty:
-        raise ValueError(f"FRED long file is empty.")
+        raise ValueError(f"FRED long dataframe (raw) is empty.")
     
     # check required cols exist
     missing = [c for c in REQUIRED_COLS if c not in df.columns]
