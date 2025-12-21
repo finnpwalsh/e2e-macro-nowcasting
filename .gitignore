@@ -4,6 +4,8 @@
 
 # Data
 data/**
+!data/**/
+data/**/*
 !data/**/.gitkeep
 
 # Artifacts
