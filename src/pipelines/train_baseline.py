@@ -31,10 +31,7 @@ def train_ridge(
     valid = df["date"] >= split_date
 
     # make + fit model
-    model = make_ridge_pipeline(
-        feature_cols = X.columns.to_list(),
-        alpha=alpha,
-    )
+    model = make_ridge_pipeline(alpha=alpha)
     model.fit(X[train], y[train])
 
     # predict + eval
