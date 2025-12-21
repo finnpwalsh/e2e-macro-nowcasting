@@ -20,6 +20,9 @@ airflow/*.pid
 airflow/airflow.cfg
 airflow/webserver_config.py
 
+# macOS
+.DS_Store
+
 # ------------------ GitHub template ------------------
 # Byte-compiled / optimized / DLL files
 __pycache__/
