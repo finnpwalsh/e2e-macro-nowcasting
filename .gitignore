@@ -2,10 +2,11 @@
 .env
 .envrc
 
-# Data & Artifacts
+# Data
 data/**
 !data/**/.gitkeep
 
+# Artifacts
 mlruns/**
 mlflow/artifacts/**
 mlflow/tracking/**
