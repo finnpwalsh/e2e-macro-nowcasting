@@ -12,3 +12,9 @@ pyarrow
 
 # test
 pytest
+
+# models
+scikit-learn
+
+# model artifacts
+joblib
