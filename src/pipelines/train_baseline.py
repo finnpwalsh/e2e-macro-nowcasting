@@ -36,7 +36,11 @@ def train_ridge(
 
     # predict + eval
     y_hat = model.predict(X[valid])
-    rmse = float(np.sqrt(mean_squared_error(y[valid], y_hat))) # numpy to float
+    
+    y_valid = y[valid]
+    notna = y_valid.notna() # control for NaNs
+
+    rmse = float(np.sqrt(mean_squared_error(y_valid[notna], y_hat[notna]))) # numpy to float
 
     metrics = {
         "rmse": rmse,
@@ -51,9 +55,9 @@ def train_ridge(
     # for plotting / EDA
     preds = pd.DataFrame(
         {
-            "date": df.loc[valid, "date"],
-            "y": y[valid],
-            "y_hat": y_hat,
+            "date": df.loc[valid, "date"][notna],
+            "y": y_valid[notna],
+            "y_hat": y_hat[notna],
         }
     )
 
