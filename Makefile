@@ -14,7 +14,7 @@ DOCKER_RUN  := docker run --rm -it \
 
 
 # do
-.PHONY: build ingest run shell test
+.PHONY: build ingest clean train run test shell
 
 build:
 	docker build -t $(IMAGE) .
@@ -25,7 +25,10 @@ ingest:
 clean:
 	$(DOCKER_RUN) python scripts/clean_fred.py
 
-run: ingest clean
+train:
+	$(DOCKER_RUN) python scripts/train_baseline.py
+
+run: ingest clean train
 	@echo "Run complete."
 
 test:

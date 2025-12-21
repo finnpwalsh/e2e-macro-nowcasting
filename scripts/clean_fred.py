@@ -9,7 +9,7 @@ INPATH = Path("data/raw/fred_all.parquet")
 OUTPATH_LONG = Path("data/processed/fred_long.parquet")
 OUTPATH_WIDE = Path("data/processed/fred_wide.parquet")
 
-def main():
+def main() -> None:
     # ingest raw
     if not INPATH.exists():
         raise FileNotFoundError(f"Missing raw FRED file: {INPATH}")

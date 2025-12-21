@@ -22,7 +22,7 @@ from src.ingestion.fred import ingest_fred_series
 START_DATE = "2010-01-01"
 OUTDIR = Path("data/raw")
 
-def main():
+def main() -> None:
     # load secrets
     load_dotenv()
     api_key = os.getenv("FRED_API_KEY")
