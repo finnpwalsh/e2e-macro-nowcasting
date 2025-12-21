@@ -1,25 +1,41 @@
 # End-to-End Macro Nowcasting
 ## Overview
-Real-time inflation nowcasting system built on a full MLOps stack. Serves as both an applied exploration of end-to-end pipeline development and a practical introduction to modern deployment and monitoring best practices.
+End-to-end inflation nowcasting system built with production-flavored MLOps pipeline.
 
 ## Status
-**Dec 18, 2026**: Under active construction. 
-### V1 Focus
-**Goal:** An end-to-end inflation nowcasting pipeline that is reproducible and production-flavored.
+**Dec 21, 2025**: Under active development. FRED ingestion → cleaning → model-ready wide dataset completed (5 indicators). Pipeline is fully containerized and reproducible with Docker.
 
-**Specs**
+### V1
+**Goal:** A reproducible, production-style inflation nowcasting pipeline.
+
+#### Specs
 - Reliable macro ingestion
 - Data validation and contracts 
-- Storage: raw → interim → processed
-- Orchestration with apache Airflow
+- Storage: raw → processed
+- Orchestration with Apache Airflow
 - Containerization with Docker
 
-### Non-goals (V1)
+#### Data (FRED)
+**Target**
+- CPI (CPIAUCSL): headline CPI price level
+
+**Anchor Indicators**
+- Energy Prices (CPIENGSL)
+- Housing Prices (CPIHOSSL)
+- Federal Funds Rate (FEDFUNDS)
+- Unemployment Rate (UNRATE)
+
+#### Non-goals
 Planned for later versions:
 - Model optimization tuning
 - Real-time serving or latency guarantees
 - Cloud deployment
 - Monitoring, drift detection, CI/CD
+
+#### Version History
+- **v0.3.0**: model-ready FRED wide dataset
+- **v0.2.0**: multi-series FRED ingestion
+- **v0.1.0**: single-series FRED ingestion
 
 ## Quickstart
 1. Install Docker Desktop.
@@ -37,7 +53,6 @@ Planned for later versions:
 │   └── models/         # saved models
 ├── data/
 │   ├── raw/
-│   ├── interim/
 │   └── processed/
 ├── notebooks/          # exploratory analysis ONLY
 ├── scripts/            # program drivers
