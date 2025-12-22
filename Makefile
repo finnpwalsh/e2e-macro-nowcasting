@@ -14,7 +14,7 @@ DOCKER_RUN  := docker run --rm -it \
 
 
 # do
-.PHONY: build ingest clean train run test shell
+.PHONY: build ingest clean train run test up down
 
 build:
 	docker build -t $(IMAGE) .
@@ -34,5 +34,8 @@ run: ingest clean train
 test:
 	$(DOCKER_RUN) pytest -q
 
-shell:
-	$(DOCKER_RUN) bash
+up:
+	docker compose up -d
+
+down:
+	docker compose down
