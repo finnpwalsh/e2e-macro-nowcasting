@@ -18,3 +18,7 @@ scikit-learn
 
 # model artifacts
 joblib
+
+# airflow
+apache-airflow==2.9.3
+psycopg2-binary

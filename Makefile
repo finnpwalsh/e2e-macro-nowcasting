@@ -12,13 +12,12 @@ DOCKER_RUN  := docker run --rm -it \
 	-w $(WORKDIR) \
 	$(IMAGE)
 
-
-# do
 .PHONY: build ingest clean train run test up down
 
 build:
 	docker build -t $(IMAGE) .
 
+# pipeline steps
 ingest:
 	$(DOCKER_RUN) python scripts/ingest_fred.py
 
@@ -34,6 +33,7 @@ run: ingest clean train
 test:
 	$(DOCKER_RUN) pytest -q
 
+# infra (airflow + postgres via compose)
 up:
 	docker compose up -d
 

@@ -7,24 +7,29 @@ services:
       POSTGRES_DB: airflow
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow -d airflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
 
-  airflow-webserver:
-    image: apache/airflow:2.9.3
+  airflow-init:
+    image: e2e-macro-nowcasting:dev
     depends_on:
-      - postgres
-    environment:
+      postgres:
+        condition: service_healthy
+    environment: &airflow_env
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
-      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       PYTHONPATH: /opt/project
       FRED_API_KEY: ${FRED_API_KEY}
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./:/opt/project
-    ports:
-      - "8080:8080"
     command: >
       bash -lc "
       airflow db migrate &&
@@ -34,25 +39,39 @@ services:
         --firstname Admin
         --lastname User
         --role Admin
-        --email admin@example.com || true &&
-      airflow webserver
+        --email admin@example.com || true
       "
+    restart: "no"
 
-  airflow-scheduler:
-    image: apache/airflow:2.9.3
+  airflow-webserver:
+    image: e2e-macro-nowcasting:dev
     depends_on:
-      - postgres
-    environment:
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
-      PYTHONPATH: /opt/project
-      FRED_API_KEY: ${FRED_API_KEY}
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    environment: *airflow_env
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./:/opt/project
-    command: >
-      bash -lc "airflow scheduler"
+    ports:
+      - "8080:8080"
+    command: bash -lc "airflow webserver"
+    restart: unless-stopped
+
+  airflow-scheduler:
+    image: e2e-macro-nowcasting:dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    environment: *airflow_env
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./:/opt/project
+    command: bash -lc "airflow scheduler"
+    restart: unless-stopped
 
 volumes:
   postgres-db-volume:
