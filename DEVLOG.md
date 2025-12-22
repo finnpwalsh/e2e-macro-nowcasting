@@ -12,14 +12,27 @@
 - 
 
 ## V1
-# Month XX, 202X
+## Month XX, 202X
 **NEXT**
-- add baseline model on FRED
+- 
+- 
+- 
+
+**DONE**
+- 
+- 
+- 
+
+# December 21, 2025
+**NEXT**
+- add tests on baseline model
+- v0.4.0 tag/release
 
 **DONE**
 - wide-form, model-ready FRED dataset
 - v0.3.0 tag/release
-- make README public
+- make repo public
+- add baseline model on FRED
 
 ## December 20, 2025
 **NEXT**
@@ -40,7 +53,7 @@
 - incl. test for all global FRED series
 - move raw FRED test to tests/data
 - remove non-V1 directories + files
-- v0.2.0 tag/release
+- v0.2.0 tag
 
 ### December 17, 2025
 **NEXT**
@@ -52,7 +65,7 @@
 - raw FRED data contract test (passed)
     - Takes multiple series
 - added docstrings to ingest_fred, fred, raw FRED data test for clarity
-- v0.1.0 tag/release
+- v0.1.0 tag
 
 ### December 16, 2025
 **NEXT**
