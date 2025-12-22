@@ -56,7 +56,7 @@ def train_ridge(
         {
             "date": df.loc[valid, "date"],
             "y": y[valid],
-            "y_hat": y_hat[valid],
+            "y_hat": y_hat,
         }
     )
 
