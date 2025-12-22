@@ -32,17 +32,18 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./:/opt/project
-    command: >
-      bash -lc "
-      airflow db migrate &&
-      airflow users create
-        --username admin
-        --password admin
-        --firstname Admin
-        --lastname User
-        --role Admin
-        --email admin@example.com || true
-      "
+    command:
+      - bash
+      - -lc
+      - |
+        airflow db migrate && \
+        airflow users create \
+          --username admin \
+          --password admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com || true
     restart: "no"
 
   airflow-webserver:

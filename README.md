@@ -3,7 +3,7 @@
 End-to-end inflation nowcasting system built with production-flavored MLOps pipeline.
 
 ## Status
-**Dec 21, 2025**: Under active development. FRED ingestion → cleaning → model-ready wide dataset completed (5 indicators). Pipeline is fully containerized and reproducible with Docker.
+**Dec 22, 2025**: Under active development. v1.0.0 is released.
 
 ### V1
 **Goal:** A reproducible, production-style inflation nowcasting pipeline.
@@ -33,22 +33,74 @@ Planned for later versions:
 - Monitoring, drift detection, CI/CD
 
 #### Version History
+- **v1.0.0** (current): reproducible macro data pipeline (Airflow + Docker)
+- **v0.4.0**: baseline ridge pipeline implemented
 - **v0.3.0**: model-ready FRED wide dataset
 - **v0.2.0**: multi-series FRED ingestion
 - **v0.1.0**: single-series FRED ingestion
 
 ## Quickstart
-1. Install Docker Desktop.
-2. `make build` to create Docker image.
-3. `make ingest` to ingest raw macro data.
-4. `make test` to validate data contracts.
-5. `make run` to run end-to-end pipeline.
+### Setup + Run
+#### Prerequisites
+- Docker + Docker Compose
+- Make
+- A FRED API key ([get one here](https://fred.stlouisfed.org/docs/api/api_key.html))
+
+#### 1. Clone the repo
+```
+git clone https://github.com/<your-username>/e2e-macro-nowcasting.git
+cd e2e-macro-nowcasting
+
+```
+
+#### 2. Set environment variables
+Create a `.env` file in project root:
+```
+# FRED API
+FRED_API_KEY=your_api_key_here
+
+# Airflow Secret Key
+AIRFLOW__WEBSERVER__SECRET_KEY=dev_secret_key
+```
+
+#### 3. Build Docker image
+```
+make build
+```
+
+#### 4. Start Airflow
+``` 
+make up
+```
+This will:
+- start Postgres
+- initialize Airflow metadata database
+- create an admin user
+- launch the Airflow webserver and scheduler
+Access the Airflow UI at http://localhost:8080
+**Login**: Username: admin | Password: admin
+
+#### 5. Run pipeline
+Trigger DAG `fred_pipeline` via:
+```
+make run
+```
+
+#### 6. Shut down
+```
+make down
+```
+
+#### Note: Local Dev
+Use `make ingest`, `make clean`, and `make train` for local dev use + `make test` for data contract testing via pytest.
+
 
 ## Repo Structure
 ### V1 (Current)
 ```
 ├── airflow/
-│   └── dags/
+│   ├── dags/
+│   └── logs/
 ├── artifacts/
 │   └── models/         # saved models
 ├── data/
@@ -70,51 +122,53 @@ Planned for later versions:
 
 ## Roadmap
 ### V2
-- S3 Storage (AWS)
-- Model tracking with MLFlow
+- Intraday market shock sensors via yfinance
+- Stronger baseline models(regularized regression, rolling backtests)
+- Experiment tracking and model registry via MLflow
+- FastAPI serving (minimal)
 
-### V3 or V4 (Planned)
+### V3+ (Planned Architecture)
 ```
-├── airflow
-│   └── dags
-│   ├── logs
-│   └── plugins
-├── api
-│   └── deployment
-├── data
-│   ├── external
-│   ├── interim
-│   ├── processed
-│   └── raw
-├── deploy
-│   ├── aws
-│   └── k8s
-├── docs
-├── infra
-│   ├── github-actions
-│   └── terraform
-├── mlflow
-│   ├── artifacts
-│   └── tracking
-├── monitoring
-│   ├── grafana
-│   └── prometheus
-├── notebooks
-├── scripts
-├── src
-│   ├── config
-│   ├── evaluation
-│   ├── feature_store
-│   │   ├── entities
-│   │   └── registry
-│   ├── features
-│   ├── ingestion
-│   ├── models
-│   ├── pipelines
-│   ├── serving
-│   └── validation
+├── airflow/
+│   └── dags/
+│   ├── logs/
+│   └── plugins/
+├── api/
+│   └── deployment/
+├── data/
+│   ├── external/
+│   ├── interim/
+│   ├── processed/
+│   └── raw/
+├── deploy/
+│   ├── aws/
+│   └── k8s/
+├── docs/
+├── infra/
+│   ├── github-actions/
+│   └── terraform/
+├── mlflow/
+│   ├── artifacts/
+│   └── tracking/
+├── monitoring/
+│   ├── grafana/
+│   └── prometheus/
+├── notebooks/
+├── scripts/
+├── src/
+│   ├── config/
+│   ├── evaluation/
+│   ├── feature_store/
+│   │   ├── entities/
+│   │   └── registry/
+│   ├── features/
+│   ├── ingestion/
+│   ├── models/
+│   ├── pipelines/
+│   ├── serving/
+│   └── validation/
 ├── tests
-│   ├── api
-│   ├── data
-│   └── pipeline
+│   ├── api/
+│   ├── data/
+│   └── pipeline/
 ```

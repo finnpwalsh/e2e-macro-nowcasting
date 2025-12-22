@@ -12,16 +12,17 @@
 - 
 
 ## V1
-## Month XX, 202X
+## December 22, 2025
 **NEXT**
-- 
-- 
-- 
+- begin v1 -> v2
+- ingest yfinance
 
 **DONE**
-- 
-- 
-- 
+- add tests on baseline model
+- v0.4.0 release
+- add docker-compose for Airflow + PostgreSQL
+- fred_pipeline_v1 DAG live + successful
+- v1.0.0 release
 
 # December 21, 2025
 **NEXT**

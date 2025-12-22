@@ -1,41 +1,54 @@
 # config
-APP_NAME	:= e2e-macro-nowcasting
-IMAGE		:= $(APP_NAME):dev
-ENV_FILE	:= .env
-WORKDIR		:= /app
+APP_NAME := e2e-macro-nowcasting
+IMAGE    := $(APP_NAME):dev
 
+# Airflow service to run CLI commands
+AIRFLOW_SERVICE := airflow-scheduler
+DAG_ID := fred_pipeline
 
-# common docker run flags
-DOCKER_RUN  := docker run --rm -it \
-	--env-file $(ENV_FILE) \
-	-v $(PWD):$(WORKDIR) \
-	-w $(WORKDIR) \
-	$(IMAGE)
+.PHONY: build up init down logs ps shell \
+		ingest clean train test \
+		trigger run
 
-.PHONY: build ingest clean train run test up down
-
+# build
 build:
 	docker build -t $(IMAGE) .
 
-# pipeline steps
-ingest:
-	$(DOCKER_RUN) python scripts/ingest_fred.py
-
-clean:
-	$(DOCKER_RUN) python scripts/clean_fred.py
-
-train:
-	$(DOCKER_RUN) python scripts/train_baseline.py
-
-run: ingest clean train
-	@echo "Run complete."
-
-test:
-	$(DOCKER_RUN) pytest -q
-
-# infra (airflow + postgres via compose)
+# infra
 up:
 	docker compose up -d
 
+init:
+	docker compose run --rm airflow-init
+
 down:
 	docker compose down
+
+logs:
+	docker compose logs -f
+
+ps:
+	docker compose ps
+
+shell:
+	docker compose exec $(AIRFLOW_SERVICE) bash
+
+# dev utilities (manual)
+ingest:
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/ingest_fred.py"
+
+clean:
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/clean_fred.py"
+
+train:
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/train_baseline.py"
+
+test:
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "pytest -q"
+
+# orchestrated run 
+trigger:
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "airflow dags trigger $(DAG_ID)"
+
+run: trigger
+	@echo "Triggered DAG: $(DAG_ID)"

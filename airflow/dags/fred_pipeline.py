@@ -7,7 +7,7 @@ from scripts.clean_fred import main as clean_fred
 from scripts.train_baseline import main as train_baseline
 
 with DAG(
-    dag_id="fred_pipeline_v1",
+    dag_id="fred_pipeline",
     start_date=datetime(2025,12,1),
     schedule=None, # manual trigger for v1
     catchup=False,
