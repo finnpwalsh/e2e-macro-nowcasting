@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 from fredapi import Fred
 
 from src.ingestion.fred import ingest_fred_series
+from src.config.fred import FRED_SERIES
 
 START_DATE = "2010-01-01"
 OUTDIR = Path("data/raw")
@@ -40,22 +41,9 @@ def main() -> None:
 
     # initialize dataframe for concatinated series
     dfs = []
-
-    # read all fred series from src/config
-    config_path = Path("src/config/fred.txt")
-    with open(config_path) as f:
-        # control for blank lines and comments
-        fred_series = [
-            line.strip() for line in f
-            if line.strip() and not line.startswith("#")
-        ]
-    
-    # control for null input
-    if not fred_series:
-        raise RuntimeError("No FRED series found in src/config/fred.txt.")
     
     # write each FRED series into data/raw
-    for series_id in fred_series:
+    for series_id in FRED_SERIES:
         # ingest series
         df = ingest_fred_series(fred, series_id, start=START_DATE)
 

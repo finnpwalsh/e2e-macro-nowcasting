@@ -1,0 +1,7 @@
+FRED_SERIES = [
+    "CPIAUCSL",
+    "CPIENGSL",
+    "CPIHOSSL",
+    "FEDFUNDS",
+    "UNRATE",
+]

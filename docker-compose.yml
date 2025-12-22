@@ -25,6 +25,8 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
+      AIRFLOW__LOGGING__BASE_LOG_FOLDER: /opt/airflow/logs
       PYTHONPATH: /opt/project
       FRED_API_KEY: ${FRED_API_KEY}
     volumes:
@@ -53,6 +55,7 @@ services:
     environment: *airflow_env
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
       - ./:/opt/project
     ports:
       - "8080:8080"
@@ -69,6 +72,7 @@ services:
     environment: *airflow_env
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
       - ./:/opt/project
     command: bash -lc "airflow scheduler"
     restart: unless-stopped
