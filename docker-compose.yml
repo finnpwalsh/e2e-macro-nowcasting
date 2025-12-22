@@ -1,0 +1,47 @@
+# Local Airflow dev stack (V1): webserver + scheduler, LocalExecutor, SQLite
+services:
+  airflow-webserver:
+    image: apache/airflow:2.9.3
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+      # make your project importable
+      PYTHONPATH: /opt/project
+      # pass your FRED key through from your shell/.env
+      FRED_API_KEY: ${FRED_API_KEY}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./:/opt/project
+    ports:
+      - "8080:8080"
+    command: >
+      bash -lc "
+      airflow db migrate &&
+      airflow users create
+        --username admin
+        --password admin
+        --firstname Admin
+        --lastname User
+        --role Admin
+        --email admin@example.com || true &&
+      airflow webserver
+      "
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.3
+    depends_on:
+      - airflow-webserver
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      PYTHONPATH: /opt/project
+      FRED_API_KEY: ${FRED_API_KEY}
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./:/opt/project
+    command: >
+      bash -lc "airflow scheduler"
