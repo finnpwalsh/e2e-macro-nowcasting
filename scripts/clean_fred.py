@@ -26,10 +26,9 @@ def main() -> None:
 
 
     # confirm
-    print(f"[OK] wrote df_long shape={df_long.shape} -> {OUTDIR / "fred_long.parquet"}")
-    print(f"[OK] wrote df_wide shape={df_wide.shape} -> {OUTDIR / "fred_wide.parquet"}")
+    print(f"[OK] wrote df_long shape={df_long.shape} -> {OUTDIR / 'fred_long.parquet'}")
+    print(f"[OK] wrote df_wide shape={df_wide.shape} -> {OUTDIR / 'fred_wide.parquet'}")
 
-    
 
 if __name__ == "__main__":
     main()

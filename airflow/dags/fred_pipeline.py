@@ -4,7 +4,7 @@ from airflow.operators.python import PythonOperator
 
 from scripts.ingest_fred import main as ingest_fred
 from scripts.clean_fred import main as clean_fred
-from scripts.train_baseline import main as train_baseline
+from scripts.train_ridge import main as train_baseline
 
 with DAG(
     dag_id="fred_pipeline",
