@@ -35,10 +35,10 @@ shell:
 
 # dev utilities (manual)
 ingest:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/ingest_fred.py"
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/fred_ingest.py"
 
 clean:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/clean_fred.py"
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/fred_clean.py"
 
 train:
 	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/train_baseline.py"
