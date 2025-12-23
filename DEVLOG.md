@@ -1,6 +1,6 @@
 # Activity Log
 ## Template
-## Month XX, 202X
+## December 2X, 2025
 **NEXT**
 - 
 - 
@@ -12,7 +12,17 @@
 - 
 
 ## V1
-## December 22, 2025
+### December 23, 2025
+**NEXT**
+- docstrings for all necessary modules and functions
+
+**DONE**
+- split src/fred_clean functions to respective directories in features, validation, and pipelines
+- add metrics-computing file to src/evaluation for scalability
+- add docstrings to fred_clean functions
+
+## V0
+### December 22, 2025
 **NEXT**
 - begin v1 -> v2
 - ingest yfinance
@@ -24,7 +34,7 @@
 - fred_pipeline_v1 DAG live + successful
 - v1.0.0 release
 
-# December 21, 2025
+### December 21, 2025
 **NEXT**
 - add tests on baseline model
 - v0.4.0 tag/release
@@ -35,7 +45,7 @@
 - make repo public
 - add baseline model on FRED
 
-## December 20, 2025
+### December 20, 2025
 **NEXT**
 - wide-form, model-ready FRED dataset
 
