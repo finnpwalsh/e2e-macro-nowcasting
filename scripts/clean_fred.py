@@ -6,8 +6,7 @@ from pathlib import Path
 from src.pipelines.fred import prep_fred
 
 INPATH = Path("data/raw/fred_all.parquet")
-OUTPATH_LONG = Path("data/processed/fred_long.parquet")
-OUTPATH_WIDE = Path("data/processed/fred_wide.parquet")
+OUTDIR = Path("data/processed")
 
 def main() -> None:
     # ingest raw
@@ -16,25 +15,21 @@ def main() -> None:
     
     # read infile
     df_raw = pd.read_parquet(INPATH)
-    if df_raw.empty:
-        raise ValueError(f"FRED input file is empty: {INPATH}")
     
     # clean
     df_long, df_wide = prep_fred(df_raw)
 
-    # write long to data/processed
-    OUTPATH_LONG.parent.mkdir(parents = True, exist_ok=True)
-    df_long.to_parquet(OUTPATH_LONG, index=False)
+    # write to data/processed
+    OUTDIR.mkdir(parents = True, exist_ok=True)
+    df_long.to_parquet(OUTDIR / "fred_long.parquet", index=False)
+    df_wide.to_parquet(OUTDIR / "fred_wide.parquet", index=False)
+
 
     # confirm
-    print(f"[OK] wrote {len(df_long):,} rows -> {OUTPATH_LONG}")
+    print(f"[OK] wrote df_long shape={df_long.shape} -> {OUTDIR / "fred_long.parquet"}")
+    print(f"[OK] wrote df_wide shape={df_wide.shape} -> {OUTDIR / "fred_wide.parquet"}")
 
-    # write wide to data/processed
-    OUTPATH_WIDE.parent.mkdir(parents = True, exist_ok=True)
-    df_wide.to_parquet(OUTPATH_WIDE, index=False)
-
-    # confirm
-    print(f"[OK] wrote {len(df_wide):,} rows -> {OUTPATH_WIDE}")
+    
 
 if __name__ == "__main__":
     main()
