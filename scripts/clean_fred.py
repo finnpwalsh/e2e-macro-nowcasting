@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 from pathlib import Path
 
-from src.pipelines.fred_clean import prep_fred
+from src.pipelines.fred import prep_fred
 
 INPATH = Path("data/raw/fred_all.parquet")
 OUTPATH_LONG = Path("data/processed/fred_long.parquet")
