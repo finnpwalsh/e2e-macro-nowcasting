@@ -5,7 +5,7 @@ from pathlib import Path
 
 import joblib
 
-from src.pipelines.train_baseline import train_ridge
+from src.pipelines.baseline import train_ridge
 
 OUTDIR = Path("artifacts")
 
