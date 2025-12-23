@@ -5,9 +5,8 @@ import numpy as np
 
 from pathlib import Path
 
-from sklearn.metrics import mean_squared_error
-
 from src.models.baseline import make_ridge_pipeline
+from src.evaluation.metrics import regression_metrics
 
 def train_ridge(
        infile: Path = Path("data/processed/fred_wide.parquet"),
@@ -39,18 +38,19 @@ def train_ridge(
 
     # predict + eval
     y_hat = model.predict(X[valid])
-    rmse = float(np.sqrt(mean_squared_error(y[valid], y_hat))) # numpy to float
+    metrics = regression_metrics(y[valid], y_hat)
 
-    metrics = {
-        "rmse": rmse,
+    # add context to metrics
+    metrics.update(
+        {
         "split_date": split_date,
         "alpha": float(alpha),
         "n_train": int(train.sum()),
         "n_valid": int(valid.sum()),
         "n_feats": len(X.columns),
         "target": target,
-    }
-
+        }
+    )
     # for plotting / EDA
     preds = pd.DataFrame(
         {
