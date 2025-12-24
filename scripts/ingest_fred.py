@@ -23,7 +23,6 @@ from fredapi import Fred
 from src.ingestion.fred import ingest_fred_series
 from src.config.fred import FRED_SERIES
 
-START_DATE = "2010-01-01"
 OUTDIR = Path("data/raw")
 
 def main() -> None:
@@ -48,7 +47,7 @@ def main() -> None:
     # write each FRED series into data/raw
     for series_id in FRED_SERIES:
         # ingest series
-        df = ingest_fred_series(fred, series_id, start=START_DATE)
+        df = ingest_fred_series(fred, series_id)
 
         # make out-path, save data as parquet
         out_path = OUTDIR / f"fred_{series_id}.parquet"

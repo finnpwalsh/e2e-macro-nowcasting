@@ -1,9 +1,0 @@
-{
-  "rmse": 17.63865238156522,
-  "split_date": "2020-01-01",
-  "alpha": 1.0,
-  "n_train": 120,
-  "n_valid": 70,
-  "n_feats": 4,
-  "target": "CPIAUCSL"
-}
