@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import pandas as pd
 import numpy as np
-
 from pathlib import Path
 
-from src.pipelines.train_baseline import train_ridge
+from src.pipelines.baseline import train_ridge
 
 REQUIRED_METRICS = ["rmse", "split_date", "n_train", "n_valid", "n_feats"]
 REQUIRED_COLS = ["date", "y", "y_hat"]

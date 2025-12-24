@@ -5,17 +5,12 @@ REQUIRED_COLS = ["value", "date", "series_id"]
 
 def test_fred_raw():
     """
-    Finds all raw FRED files and ensures they follow schema.
+    Validate schema and data integrity for all raw FRED parquet files.
 
     Guarantees:
     - columns: date, value, series_id
     - no nulls
     - types (respectively): datetime, float, string
-
-    Future changes:
-    - define an explicit fred series list and enforce
-        + keep a list in .env or config file and have test
-        + iterate through list
     """
 
     # check in-file paths, excluding combined file

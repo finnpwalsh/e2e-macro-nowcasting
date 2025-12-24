@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import pandas as pd
 
-from src.pipelines.fred_clean import clean_fred_long
+from src.pipelines.fred import clean_fred_long
 
 REQUIRED_COLS = ["date", "value", "series_id"]
 
 def test_fred_clean():
-
     # bad df for testing
     df_in = pd.DataFrame(
         {
