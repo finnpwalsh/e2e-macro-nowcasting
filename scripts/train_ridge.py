@@ -3,8 +3,8 @@ Train baseline ridge model, generate run_id, and write model,
 metrics, and predictions to artifacts/{run_id}.
 
 RESPONSIBILITIES:
-- call train_ridge
 - generate run id
+- call train_ridge
 - save artifacts/{run_id}:
     - model to models/
     - metrics to metrics/
@@ -22,15 +22,19 @@ from __future__ import annotations
 import json
 import joblib
 
+from src.config.run import generate_run_id
 from src.pipelines.baseline import train_ridge
 from src.pipelines.paths import model_path, metrics_path, preds_path
-from src.config.run import generate_run_id
 
 def main() -> None:
-    model, metrics, preds = train_ridge()
-
     # generate run id
     run_id = generate_run_id()
+
+    # train
+    model, metrics, preds = train_ridge()
+
+    # add run_id to metrics
+    metrics["run_id"] = run_id
 
     # get directories
     model_dir = model_path(run_id)
@@ -55,6 +59,7 @@ def main() -> None:
     preds.to_parquet(preds_dir / "baseline_ridge.parquet", index=False)
 
     # output
+    print(f"Run: {run_id}")
     print(f"Baseline ridge RMSE: {metrics['rmse']:.4f}")
     print("Saved:", model_dir / "baseline_ridge.joblib")
     print("Saved:", metrics_dir / "baseline_ridge.json")
