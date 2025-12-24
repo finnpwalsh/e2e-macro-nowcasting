@@ -36,20 +36,20 @@ shell:
 
 # dev utilities (manual)
 ingest:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/ingest_fred.py"
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/ingest_fred.py"
 
 clean:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/clean_fred.py"
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/clean_fred.py"
 
 train:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/train_ridge.py"
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/train_ridge.py"
 
 test:
 	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && pytest -q"
 
 # orchestrated run 
 trigger:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "airflow dags trigger $(DAG_ID)"
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && airflow dags trigger $(DAG_ID)"
 
 run: trigger
 	@echo "Triggered DAG: $(DAG_ID)"
