@@ -5,9 +5,8 @@ import numpy as np
 from pathlib import Path
 
 from src.pipelines.baseline import train_ridge
-from src.config.fred import FRED_REQUIRED_COLS as REQUIRED_COLS
-
-REQUIRED_METRICS = ["rmse", "split_date", "n_train", "n_valid", "n_feats"]
+from src.config.metrics import TRAIN_RIDGE_REQUIRED_KEYS as REQUIRED_METRICS
+from src.config.baseline import TRAIN_PRED_COLS as REQUIRED_COLS
 
 def test_train_ridge(tmp_path: Path):
     # create df with NaN target val for testing
