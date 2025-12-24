@@ -18,3 +18,7 @@ def metrics_path(run_id: str) -> Path:
 
 def preds_path(run_id: str) -> Path:
     return run_dir(run_id) / "predictions"
+
+def latest_run_id() -> str | None:
+    runs = [p.name for p in ARTIFACTS_ROOT.iterdir() if p.is_dir()]
+    return max(runs) if runs else None
