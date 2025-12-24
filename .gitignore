@@ -2,16 +2,9 @@
 .env
 .envrc
 
-# Data
-data/**
-!data/**/
-data/**/*
-!data/**/.gitkeep
-
-# Artifacts
-mlruns/**
-mlflow/artifacts/**
-mlflow/tracking/**
+# Pipeline outputs
+data/
+artifacts/
 
 # Airflow generated files
 airflow/logs/**
