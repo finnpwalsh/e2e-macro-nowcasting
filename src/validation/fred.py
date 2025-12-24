@@ -5,14 +5,22 @@ REQUIRED_COLS = ["date", "value", "series_id"]
 
 def clean_fred_long(df_raw: pd.DataFrame) -> pd.DataFrame:
     """
-    Dedupes, drops NaNs, coerces dtypes, and sorts for raw long-form
-    FRED dataset.
+    Clean raw long-form FRED data.
+
+    Performs schema validation, coerce dtypes, drops invalid rows,
+    dedupes observations, and sorts the data.
 
     Args:
-        df_raw (pd.DataFrame): raw long-form FRED dataset
+        df_raw (pd.DataFrame): raw long-form FRED dataset with cols:
+            [date, value, series_id]
     
     Returns:
-        pd.DataFrame: long-form clean FRED dataset
+        pd.DataFrame: cleaned long-form FRED dataset which
+            - contains no missing values in date, value, or series_id
+            - is deduped on (series_id, date)
+                -> keeps last
+            - is sorted by series_id, then date
+            - has enforced dtypes (datetime, numeric, string)
     
     Raises:
         ValueError: if the input DataFrame is empty or missing required 

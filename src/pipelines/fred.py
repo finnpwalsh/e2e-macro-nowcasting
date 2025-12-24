@@ -11,8 +11,8 @@ Input schema (long-form):
     - series_id (str)
 
 Output:
-    - df_long: clean long-form FRED data
-    - df_wide: pivoted wide-form data
+    - df_long (pd.DataFrame): clean long-form FRED data
+    - df_wide (pd.DataFrame): pivoted wide-form data
 
 Called by scripts/clean_fred.py.
 """

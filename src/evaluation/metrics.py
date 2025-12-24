@@ -17,7 +17,7 @@ def regression_metrics(
         y_pred (np.ndarray): predicted values
     
     Returns:
-        dict[str, float]: evaluation metrics
+        dict[str, float]: regression metrics (currently incl. RMSE)
     """
     rmse = float(np.sqrt(mean_squared_error(y, y_pred)))
 
