@@ -1,3 +1,10 @@
+"""
+End-to-end FRED data pipeline (V1).
+
+Manually triggered pipeline that ingests raw FRED time-series
+data, cleans and prepares modeling datasets, and trains a 
+baseline Ridge regression model for evaluation.
+"""
 from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -8,8 +15,11 @@ from scripts.train_ridge import main as train_baseline
 
 with DAG(
     dag_id="fred_pipeline",
+    description=
+        ("Manual V1 pipeline: ingest, clean, and train "
+         "baseline Ridge model on FRED data"),
     start_date=datetime(2025,12,1),
-    schedule=None, # manual trigger for v1
+    schedule_interval=None, # manual trigger for v1
     catchup=False,
     tags=["v1", "fred"]
 ) as dag:
