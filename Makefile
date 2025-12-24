@@ -1,6 +1,7 @@
 # config
-APP_NAME := e2e-macro-nowcasting
-IMAGE    := $(APP_NAME):dev
+APP_NAME    := e2e-macro-nowcasting
+IMAGE       := $(APP_NAME):dev
+PROJECT_DIR := /opt/project
 
 # Airflow service to run CLI commands
 AIRFLOW_SERVICE := airflow-scheduler
@@ -44,7 +45,7 @@ train:
 	docker compose exec $(AIRFLOW_SERVICE) bash -lc "python /opt/project/scripts/train_ridge.py"
 
 test:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "pytest -q"
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && pytest -q"
 
 # orchestrated run 
 trigger:

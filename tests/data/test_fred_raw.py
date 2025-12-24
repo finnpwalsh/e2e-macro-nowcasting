@@ -1,6 +1,7 @@
 import pandas as pd
 from pathlib import Path
 
+from src.config.fred import FRED_SERIES
 from src.config.fred import FRED_REQUIRED_COLS as REQUIRED_COLS
 
 def test_fred_raw():
@@ -38,17 +39,9 @@ def test_fred_raw():
 
     # read combined series
     combined = pd.read_parquet(Path("data/raw") / "fred_all.parquet")
-
-    # read FRED series list
-    config_path = Path("src/config/fred.txt")
-    with open(config_path) as f:
-        fred_series = [
-            line.strip() for line in f
-            if line.strip() and not line.startswith("#")
-        ]
     
     # check missing  or extra series in combined
-    expected = set(fred_series)
+    expected = set(FRED_SERIES)
     actual = set(combined["series_id"].unique())
 
     missing = expected - actual
