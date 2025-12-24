@@ -5,3 +5,9 @@ FRED_SERIES = [
     "FEDFUNDS",
     "UNRATE",
 ]
+
+FRED_REQUIRED_COLS = [
+    "date",
+    "value",
+    "series_id"
+]

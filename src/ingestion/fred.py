@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 from fredapi import Fred
 
-REQUIRED_COLS = ["date", "value", "series_id"]
+from src.config.fred import FRED_REQUIRED_COLS as REQUIRED_COLS
 
 """
 FRED raw data ingestion and validation.

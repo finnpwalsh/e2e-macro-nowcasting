@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
 
-REQUIRED_COLS = ["value", "date", "series_id"]
+from src.config.fred import FRED_REQUIRED_COLS as REQUIRED_COLS
 
 def test_fred_raw():
     """

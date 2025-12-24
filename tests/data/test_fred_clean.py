@@ -3,8 +3,7 @@ from __future__ import annotations
 import pandas as pd
 
 from src.pipelines.fred import clean_fred_long
-
-REQUIRED_COLS = ["date", "value", "series_id"]
+from src.config.fred import FRED_REQUIRED_COLS as REQUIRED_COLS
 
 def test_fred_clean():
     # bad df for testing

@@ -1,7 +1,7 @@
 from __future__ import annotations
 import pandas as pd
 
-REQUIRED_COLS = ["date", "value", "series_id"]
+from src.config.fred import FRED_REQUIRED_COLS as REQUIRED_COLS
 
 def clean_fred_long(df_raw: pd.DataFrame) -> pd.DataFrame:
     """
