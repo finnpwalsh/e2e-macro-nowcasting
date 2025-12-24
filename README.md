@@ -3,7 +3,16 @@
 End-to-end inflation nowcasting system built with production-flavored MLOps pipeline.
 
 ## Status
-**Dec 22, 2025**: Under active development. v1.0.0 is released.
+**Dec 22, 2025**: Under active development.
+**v1.0.0** released — documentation + config robustness improvements.
+
+### Version History
+- **v1.0.1** (current): documentation + full docstrings, robust config refactor
+- **v1.0.0**: reproducible macro data pipeline (Airflow + Docker)
+- **v0.4.0**: baseline ridge pipeline implemented
+- **v0.3.0**: model-ready FRED wide dataset
+- **v0.2.0**: multi-series FRED ingestion
+- **v0.1.0**: single-series FRED ingestion
 
 ### V1
 **Goal:** A reproducible, production-style inflation nowcasting pipeline.
@@ -32,13 +41,6 @@ Planned for later versions:
 - Cloud deployment
 - Monitoring, drift detection, CI/CD
 
-#### Version History
-- **v1.0.0** (current): reproducible macro data pipeline (Airflow + Docker)
-- **v0.4.0**: baseline ridge pipeline implemented
-- **v0.3.0**: model-ready FRED wide dataset
-- **v0.2.0**: multi-series FRED ingestion
-- **v0.1.0**: single-series FRED ingestion
-
 ## Quickstart
 ### Setup + Run
 #### Prerequisites
@@ -48,9 +50,8 @@ Planned for later versions:
 
 #### 1. Clone the repo
 ```
-git clone https://github.com/<your-username>/e2e-macro-nowcasting.git
+git clone https://github.com/finnpwalsh/e2e-macro-nowcasting.git
 cd e2e-macro-nowcasting
-
 ```
 
 #### 2. Set environment variables
