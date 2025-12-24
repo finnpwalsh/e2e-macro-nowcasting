@@ -1,3 +1,21 @@
+"""
+Train baseline ridge model and write model,
+metrics, and predictions to artifacts/.
+
+RESPONSIBILITIES:
+- call train_ridge
+- save artifacts/:
+    - model to models/
+    - metrics to metrics/
+    - preds to predicions/
+- confirm run successful
+
+OUTPUTS:
+- artifacts/models/baseline_ridge.joblib
+- artifacts/metrics/baseline_ridge.json
+- artifacts/predictions/baseline_ridge.parquet
+"""
+
 from __future__ import annotations
 
 import json
@@ -20,7 +38,6 @@ def main() -> None:
     OUT_MOD.mkdir(parents=True, exist_ok=True)
     OUT_MET.mkdir(parents=True, exist_ok=True)
     OUT_PRED.mkdir(parents=True, exist_ok=True)
-
 
     # save model
     joblib.dump(model, OUT_MOD / "baseline_ridge.joblib")

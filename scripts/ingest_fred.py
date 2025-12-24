@@ -1,13 +1,16 @@
-'''
-Run ingest/fred.py and write output to data/raw/fred_{FRED_SERIES}.parquet
+"""
+Ingest FRED time series and write data to parquet files under data/raw/.
 
 RESPONSIBILITIES:
 - load FRED api
-- call ingest_fred_api
-- write raw data to data/raw
+- call ingest_fred_series
+- write raw data to data/raw/
 - confirm task ran successfully
-'''
 
+OUTPUTS:
+- data/raw/fred_{SERIES_ID}.parquet
+- data/raw/fred_all.parquet
+"""
 from __future__ import annotations
 
 import os

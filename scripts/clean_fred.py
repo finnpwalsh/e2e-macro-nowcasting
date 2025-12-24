@@ -1,3 +1,18 @@
+"""
+Clean raw FRED combined time series and write long- and 
+wide-form data to parquet under data/processed/. Wide-form
+is ready for modeling.
+
+RESPONSIBILITIES:
+- ingest raw FRED series
+- call prep_fred
+- write long- and wide-form data to data/processed/
+- confirm task ran successfully
+
+OUTPUTS:
+- data/processed/fred_long.parquet
+- data/processed/fred_wide.parquet
+"""
 from __future__ import annotations
 
 import pandas as pd
