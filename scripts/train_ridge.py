@@ -1,60 +1,64 @@
 """
-Train baseline ridge model and write model,
-metrics, and predictions to artifacts/.
+Train baseline ridge model, generate run_id, and write model,
+metrics, and predictions to artifacts/{run_id}.
 
 RESPONSIBILITIES:
 - call train_ridge
-- save artifacts/:
+- generate run id
+- save artifacts/{run_id}:
     - model to models/
     - metrics to metrics/
     - preds to predicions/
 - confirm run successful
 
 OUTPUTS:
-- artifacts/models/baseline_ridge.joblib
-- artifacts/metrics/baseline_ridge.json
-- artifacts/predictions/baseline_ridge.parquet
+- artifacts/{run_id}/models/baseline_ridge.joblib
+- artifacts/{run_id}/metrics/baseline_ridge.json
+- artifacts/{run_id}/predictions/baseline_ridge.parquet
 """
 
 from __future__ import annotations
 
 import json
-from pathlib import Path
-
 import joblib
 
 from src.pipelines.baseline import train_ridge
-
-OUTDIR = Path("artifacts")
-
-OUT_MOD = OUTDIR / "models"
-OUT_MET = OUTDIR / "metrics"
-OUT_PRED = OUTDIR / "predictions"
+from src.pipelines.paths import model_path, metrics_path, preds_path
+from src.config.run import generate_run_id
 
 def main() -> None:
     model, metrics, preds = train_ridge()
+
+    # generate run id
+    run_id = generate_run_id()
+
+    # get directories
+    model_dir = model_path(run_id)
+    metrics_dir = metrics_path(run_id)
+    preds_dir = preds_path(run_id)
+
     
-    # reproducibility
-    OUT_MOD.mkdir(parents=True, exist_ok=True)
-    OUT_MET.mkdir(parents=True, exist_ok=True)
-    OUT_PRED.mkdir(parents=True, exist_ok=True)
+    # make directories
+    model_dir.mkdir(parents=True, exist_ok=True)
+    metrics_dir.mkdir(parents=True, exist_ok=True)
+    preds_dir.mkdir(parents=True, exist_ok=True)
 
     # save model
-    joblib.dump(model, OUT_MOD / "baseline_ridge.joblib")
+    joblib.dump(model, model_dir / "baseline_ridge.joblib")
 
     # save metrics
-    (OUT_MET / "baseline_ridge.json").write_text(
+    (metrics_dir / "baseline_ridge.json").write_text(
         json.dumps(metrics, indent=2)
     )
 
     # save preds (plotting + EDA)
-    preds.to_parquet(OUT_PRED / "baseline_ridge.parquet", index=False)
+    preds.to_parquet(preds_dir / "baseline_ridge.parquet", index=False)
 
     # output
     print(f"Baseline ridge RMSE: {metrics['rmse']:.4f}")
-    print("Saved:", OUT_MOD / "baseline_ridge.joblib")
-    print("Saved:", OUT_MET / "baseline_ridge.json")
-    print("Saved:", OUT_PRED / "baseline_ridge.parquet")
+    print("Saved:", model_dir / "baseline_ridge.joblib")
+    print("Saved:", metrics_dir / "baseline_ridge.json")
+    print("Saved:", preds_dir / "baseline_ridge.parquet")
 
 
 if __name__ == "__main__":
