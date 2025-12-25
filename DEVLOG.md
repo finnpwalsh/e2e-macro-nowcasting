@@ -12,6 +12,31 @@
 - 
 
 ## V1
+## December 25, 2025
+**NEXT**
+- FastAPI serving
+
+**DONE**
+- refactored train_ridge into a clean driver script
+- implemented run-scoped I/O (`src/runs/io.py`) for models, metrics, preds, and `run.json`
+- added MLflow tracking layer (`src/runs/tracking.py`) for params, metrics, and artifacts
+- integrated MLflow with Airflow/Docker (SQLite backend, local artifact store)
+- ignored `mlruns/` noise
+- tag v1.2.0
+
+## December 24, 2025
+**NEXT**
+- mlflow
+
+**DONE**
+- full documentation
+- docstrings
+- config refactor
+- push v1.0.1
+- run identity
+- run-scoped artifacts
+- push v1.1.0
+
 ### December 23, 2025
 **NEXT**
 - docstrings for all necessary modules and functions
