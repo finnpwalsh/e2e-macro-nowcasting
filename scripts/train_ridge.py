@@ -9,9 +9,11 @@ RESPONSIBILITIES:
     - model to models/
     - metrics to metrics/
     - preds to predicions/
+- write run metadata to artifacts/{run_id}/run.json
 - confirm run successful
 
 OUTPUTS:
+- artifacts/{run_id}/run.json
 - artifacts/{run_id}/models/baseline_ridge.joblib
 - artifacts/{run_id}/metrics/baseline_ridge.json
 - artifacts/{run_id}/predictions/baseline_ridge.parquet
@@ -24,7 +26,7 @@ import joblib
 
 from src.config.run import generate_run_id
 from src.pipelines.baseline import train_ridge
-from src.pipelines.paths import model_path, metrics_path, preds_path
+from src.pipelines.paths import get_paths
 
 def main() -> None:
     # generate run id
@@ -37,22 +39,31 @@ def main() -> None:
     metrics["run_id"] = run_id
 
     # get directories
-    model_dir = model_path(run_id)
-    metrics_dir = metrics_path(run_id)
-    preds_dir = preds_path(run_id)
+    run_dir, model_dir, metrics_dir, preds_dir = get_paths(run_id)
 
-    
     # make directories
     model_dir.mkdir(parents=True, exist_ok=True)
     metrics_dir.mkdir(parents=True, exist_ok=True)
     preds_dir.mkdir(parents=True, exist_ok=True)
+
+    # write run metadata to run directory
+    run_meta = {
+        "run_id": run_id,
+        "pipeline": "baseline_ridge",
+        "target": metrics.get("target"),
+        "split_date": metrics.get("split_date"),
+        "alpha": metrics.get("alpha"),
+    }
+    (run_dir / "run.json").write_text(
+        json.dumps(run_meta, indent=2) + "\n"
+    )
 
     # save model
     joblib.dump(model, model_dir / "baseline_ridge.joblib")
 
     # save metrics
     (metrics_dir / "baseline_ridge.json").write_text(
-        json.dumps(metrics, indent=2)
+        json.dumps(metrics, indent=2) + "\n"
     )
 
     # save preds (plotting + EDA)
