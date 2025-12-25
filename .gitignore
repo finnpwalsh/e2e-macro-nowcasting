@@ -5,6 +5,7 @@
 # Pipeline outputs
 data/
 artifacts/
+mlruns/
 
 # Airflow generated files
 airflow/logs/**
