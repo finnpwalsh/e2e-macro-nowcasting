@@ -9,9 +9,13 @@ End-to-end inflation nowcasting system built with production-flavored MLOps pipe
 
 ### Version Scopes
 **V0**: prototype ingestion &rarr cleaning &rarr baseline training
+
 **V1**: production-ready pipeline (infra, serving, cloud storage)
+
 **V2** (planned): modeling improvements
+
 **V3** (planned): production hardening (monitoring, CI/CD)
+
 **V4** (planned): real-time nowcasting + performance/scale
 
 ### Version History
