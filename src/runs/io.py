@@ -31,6 +31,8 @@ def write_run_meta(
     outpath = run_dir / "run.json"
     outpath.write_text(json.dumps(run_meta, indent = 2) + "\n")
 
+    return outpath
+
 
 def write_run_artifacts(
         *,
