@@ -4,12 +4,13 @@ End-to-end inflation nowcasting system built with production-flavored MLOps pipe
 
 ## Status
 **Dec 22, 2025**: Under active development.
-**v1.0.0** released — documentation + config robustness improvements.
+**v1.1.0** released — model run identity and run-scoped artifacts.
 
 ### Version History
-- **v1.0.1** (current): documentation + full docstrings, robust config refactor
+- **v1.1.0** (current): run identity, run-scoped artifacts
+- **v1.0.1**: full documentation, docstrings, config refactor
 - **v1.0.0**: reproducible macro data pipeline (Airflow + Docker)
-- **v0.4.0**: baseline ridge pipeline implemented
+- **v0.4.0**: baseline ridge training pipeline
 - **v0.3.0**: model-ready FRED wide dataset
 - **v0.2.0**: multi-series FRED ingestion
 - **v0.1.0**: single-series FRED ingestion
@@ -17,12 +18,14 @@ End-to-end inflation nowcasting system built with production-flavored MLOps pipe
 ### V1
 **Goal:** A reproducible, production-style inflation nowcasting pipeline.
 
-#### Specs
-- Reliable macro ingestion
-- Data validation and contracts 
-- Storage: raw → processed
-- Orchestration with Apache Airflow
+#### Scope
+- Reliable macroeconomic ingestion
+- Data validation and schema contracts 
+- Deterministic storage: raw → processed
+- Run-scoped model artifacts with unique run identity
+- Pipeline orchestration with Apache Airflow
 - Containerization with Docker
+- Full documentation
 
 #### Data (FRED)
 **Target**
@@ -35,7 +38,7 @@ End-to-end inflation nowcasting system built with production-flavored MLOps pipe
 - Unemployment Rate (UNRATE)
 
 #### Non-goals
-Planned for later versions:
+Intentionally deferred to later versions:
 - Model optimization tuning
 - Real-time serving or latency guarantees
 - Cloud deployment
@@ -78,8 +81,8 @@ This will:
 - initialize Airflow metadata database
 - create an admin user
 - launch the Airflow webserver and scheduler
-Access the Airflow UI at http://localhost:8080
-**Login**: Username: admin | Password: admin
+Access the Airflow UI at: http://localhost:8080
+**Login**: Username: `admin` | Password: `admin`
 
 #### 5. Run pipeline
 Trigger DAG `fred_pipeline` via:
@@ -93,38 +96,37 @@ make down
 ```
 
 #### Note: Local Dev
-Use `make ingest`, `make clean`, and `make train` for local dev use + `make test` for data contract testing via pytest.
+Use:
+- `make ingest`
+- `make clean`
+- `make train`
+- `make test` (data contract testing via pytest)
 
 
 ## Repo Structure
 ### V1 (Current)
 ```
 ├── airflow/
-│   ├── dags/
-│   └── logs/
-├── artifacts/
-│   └── models/         # saved models
+│   └── dags/
 ├── data/
 │   ├── raw/
 │   └── processed/
-├── notebooks/          # exploratory analysis ONLY
 ├── scripts/            # program drivers
 ├── src/
 │   ├── config/         # series lists and constants
+│   ├── evaluation/     # model eval logic
 │   ├── features/       
 │   ├── ingestion/      
 │   ├── models/         
 │   ├── pipelines/      # end-to-end logic
-│   ├── serving/        # API
 │   └── validation/     # data checks
 └── tests/
-    └── data/
 ```
 
 ## Roadmap
 ### V2
-- Intraday market shock sensors via yfinance
-- Stronger baseline models(regularized regression, rolling backtests)
+- Intraday market shock sensors via `yfinance`
+- Stronger baseline models (regularized regression, rolling backtests)
 - Experiment tracking and model registry via MLflow
 - FastAPI serving (minimal)
 
