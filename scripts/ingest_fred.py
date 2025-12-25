@@ -44,20 +44,12 @@ def main() -> None:
     # initialize dataframe for concatinated series
     dfs = []
     
-    # write each FRED series into data/raw
+    # append each FRED series to combined
     for series_id in FRED_SERIES:
         # ingest series
         df = ingest_fred_series(fred, series_id)
-
-        # make out-path, save data as parquet
-        out_path = OUTDIR / f"fred_{series_id}.parquet"
-        df.to_parquet(out_path, index=False)
-
-        # append to dfs
         dfs.append(df)
-
-        # confirm the task ran successfully
-        print(f"[OK] wrote {len(df):,} rows -> {out_path}")
+        print(f"[OK] fetched {series_id}: {len(df):,} rows.")
     
     # write combined series into data/raw
     out_path = OUTDIR / "fred_all.parquet"
