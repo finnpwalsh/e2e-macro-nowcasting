@@ -3,8 +3,8 @@ Train baseline ridge model, generate run_id, and write model,
 metrics, and predictions to artifacts/{run_id}.
 
 RESPONSIBILITIES:
-- generate run id
-- call train_ridge
+- generate a unique run id
+- call train_ridge() to produce model, metrics, and preds
 - save artifacts/{run_id}:
     - model to models/
     - metrics to metrics/
@@ -26,7 +26,7 @@ import joblib
 
 from src.config.run import generate_run_id
 from src.pipelines.baseline import train_ridge
-from src.pipelines.paths import get_paths
+from src.runs.io import write_run_meta, write_run_artifacts
 
 def main() -> None:
     # generate run id
@@ -34,47 +34,26 @@ def main() -> None:
 
     # train
     model, metrics, preds = train_ridge()
-
-    # add run_id to metrics
     metrics["run_id"] = run_id
 
-    # get directories
-    run_dir, model_dir, metrics_dir, preds_dir = get_paths(run_id)
-
-    # make directories
-    model_dir.mkdir(parents=True, exist_ok=True)
-    metrics_dir.mkdir(parents=True, exist_ok=True)
-    preds_dir.mkdir(parents=True, exist_ok=True)
-
-    # write run metadata to run directory
-    run_meta = {
-        "run_id": run_id,
-        "pipeline": "baseline_ridge",
-        "target": metrics.get("target"),
-        "split_date": metrics.get("split_date"),
-        "alpha": metrics.get("alpha"),
-    }
-    (run_dir / "run.json").write_text(
-        json.dumps(run_meta, indent=2) + "\n"
+    # write run metadata
+    write_run_meta(
+        run_id=run_id,
+        metrics=metrics,
+        pipeline="baseline_ridge",
     )
 
-    # save model
-    joblib.dump(model, model_dir / "baseline_ridge.joblib")
-
-    # save metrics
-    (metrics_dir / "baseline_ridge.json").write_text(
-        json.dumps(metrics, indent=2) + "\n"
+    # write run artifacts
+    write_run_artifacts(
+        run_id=run_id,
+        model=model,
+        metrics=metrics,
+        preds=preds,
+        artifact_name="baseline_ridge",
     )
 
-    # save preds (plotting + EDA)
-    preds.to_parquet(preds_dir / "baseline_ridge.parquet", index=False)
-
-    # output
     print(f"Run: {run_id}")
     print(f"Baseline ridge RMSE: {metrics['rmse']:.4f}")
-    print("Saved:", model_dir / "baseline_ridge.joblib")
-    print("Saved:", metrics_dir / "baseline_ridge.json")
-    print("Saved:", preds_dir / "baseline_ridge.parquet")
 
 
 if __name__ == "__main__":
