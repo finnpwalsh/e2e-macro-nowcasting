@@ -16,6 +16,6 @@ YF_TICKERS = [
 
 YF_REQUIRED_COLS = [
     "date",
-    "ticker",
     "value",
+    "ticker",
 ]
