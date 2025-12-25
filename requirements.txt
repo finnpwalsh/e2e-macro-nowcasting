@@ -4,8 +4,9 @@ pandas
 # secrets
 python-dotenv
 
-# apis
+# in data
 fredapi
+yfinance
 
 # parquet
 pyarrow
