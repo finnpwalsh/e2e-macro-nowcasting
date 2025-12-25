@@ -35,8 +35,13 @@ shell:
 	docker compose exec $(AIRFLOW_SERVICE) bash
 
 # dev utilities (manual)
-ingest:
+ingest: ingest_fred ingest_yf
+
+ingest_fred:
 	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/ingest_fred.py"
+
+ingest_yf:
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/ingest_yf.py"
 
 clean:
 	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/clean_fred.py"
