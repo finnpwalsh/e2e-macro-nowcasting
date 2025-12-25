@@ -29,6 +29,8 @@ services:
       AIRFLOW__LOGGING__BASE_LOG_FOLDER: /opt/airflow/logs
       PYTHONPATH: /opt/project
       FRED_API_KEY: ${FRED_API_KEY}
+      MLFLOW_TRACKING_URI: "sqlite:////opt/project/artifacts/mlflow.db"
+      MLFLOW_DEFAULT_ARTIFACT_ROOT: "file:///opt/project/artifacts/mlflow"
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./:/opt/project
