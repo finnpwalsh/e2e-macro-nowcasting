@@ -13,7 +13,7 @@ def write_run_meta(
         run_id: str,
         metrics: dict[str, Any],
         pipeline: str,
-) -> None:
+) -> Path:
     """
     Write run-level metadata to artifacts/{run_id}/run.json
     """
@@ -39,7 +39,7 @@ def write_run_artifacts(
         metrics: dict[str, Any],
         preds: pd.DataFrame,
         artifact_name: str,
-) -> None:
+) -> dict[str, Any]:
     # get directories
     model_dir, metrics_dir, preds_dir = get_artifact_dirs(run_id)
 
