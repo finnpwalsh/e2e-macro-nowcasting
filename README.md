@@ -143,8 +143,11 @@ Use:
 ### V1
 **Scope**: infra foundation
 
+
 **1.3.0**: Daily market tickers via `yfinance`
+
 **1.3.0**: FastAPI serving
+
 **1.4.0**: S3-backed storage
 
 ### V2
