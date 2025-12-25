@@ -1,0 +1,32 @@
+from __future__ import annotations
+
+import pandas as pd
+from pathlib import Path
+
+from src.ingestion.yf import ingest_yf_series
+from src.config.yf import YF_TICKERS
+
+OUTDIR = Path("data/raw")
+
+def main() -> None:
+    OUTDIR.mkdir(parents=True, exist_ok=True)
+
+    dfs = []
+
+    for ticker in YF_TICKERS:
+        df = ingest_yf_series(ticker=ticker)
+        dfs.append(df)
+        print(f"[OK] fetched {ticker}:  {len(df):,} rows.")
+    
+    # write combined series into data/raw
+    outpath = OUTDIR / "yf_all.parquet"
+    combined = pd.concat(dfs, ignore_index=True)
+    combined.to_parquet(outpath, index=False)
+
+    # confirm the task ran successfully
+    print(f"[OK] wrote {len(combined):,} rows -> {outpath}")
+
+# run
+if __name__ == "__main__":
+    main()
+
