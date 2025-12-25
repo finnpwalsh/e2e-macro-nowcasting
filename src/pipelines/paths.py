@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from src.config.paths import ARTIFACTS_DIR
 
-def get_artifact_paths(run_id: str) -> tuple[Path, Path, Path, Path]:
+def get_artifact_dirs(run_id: str) -> tuple[Path, Path, Path, Path]:
     """
     Return run-scoped artifact directories.
 
