@@ -32,7 +32,7 @@ def validate_fred(df: pd.DataFrame) -> pd.DataFrame:
         raise ValueError(f"Missing required columns: {sorted(missing)}")
 
     # coerce types
-    df["date"] = pd.to_datetime(df["date"], errors="coerce")
+    df["date"] = pd.to_datetime(df["date"], errors="coerce").dt.normalize()
     df["value"] = pd.to_numeric(df["value"], errors = "coerce")
     df["series_id"] = df["series_id"].astype("string")
 
