@@ -32,12 +32,14 @@ End-to-end inflation nowcasting system built with production-flavored MLOps pipe
 **Goals:** A reproducible, production-style inflation nowcasting pipeline.
 
 #### Scope
-- Reliable macroeconomic ingestion
+- Reliable macroeconomic and market data ingestion
 - Data validation and schema contracts 
-- Deterministic storage: raw → processed
+- Deterministic, s3-backed storage: raw → processed
 - Run-scoped model artifacts with explicit run identity
+- Mlflow tracking
 - Pipeline orchestration with Apache Airflow
 - Containerization with Docker
+- Serving via FastAPI
 - Full documentation
 
 #### Data (FRED)
@@ -141,13 +143,14 @@ Use:
 ### V1
 **Scope**: infra foundation
 
+**1.3.0**: Daily market tickers via `yfinance`
 **1.3.0**: FastAPI serving
 **1.4.0**: S3-backed storage
 
 ### V2
 **Scope**: Modeling
 
-- Intraday market shock sensors via `yfinance`
+- Feature expansion (`FRED`, `yfinance`)
 - Feature aggregation and lag structure
 - Rolling and expanding-window backtests
 - Stronger baseline models (ridge / elastic net)
