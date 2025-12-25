@@ -65,7 +65,7 @@ def main() -> None:
     # link mlflow run id into run.json
     run_meta = json.loads(run_meta_path.read_text())
     run_meta["mlflow_run_id"] = mlflow_run_id
-    run_meta_path.write_text(json.dumps(run_meta, index=2) + "\n")
+    run_meta_path.write_text(json.dumps(run_meta, indent=2) + "\n")
 
     print(f"Run: {run_id}")
     print(f"MLflow run: {mlflow_run_id}")
