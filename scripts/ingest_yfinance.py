@@ -1,11 +1,11 @@
 """
-Ingest all yfinance tickers, combine, and write combined df to 
-data/raw as parquet.
+Ingest all yfinance tickers, combine, and write combined
+DataFrame to data/raw as parquet.
 
 RESPONSIBILITIES:
 - ingest all yf tickers
 - append to combined DataFrame
-- write combined df to data/raw/yf_long.parquet
+- write combined DataFrame to data/raw/yf_long.parquet
 - confirm task ran successfully
 
 OUTPUTS:
@@ -22,10 +22,10 @@ from src.config.yfinance import YF_TICKERS
 OUTDIR = Path("data/raw")
 
 def main() -> None:
+    # make output directory if not exists
     OUTDIR.mkdir(parents=True, exist_ok=True)
 
     dfs = []
-
     for ticker in YF_TICKERS:
         df = ingest_yf_series(ticker=ticker)
         dfs.append(df)

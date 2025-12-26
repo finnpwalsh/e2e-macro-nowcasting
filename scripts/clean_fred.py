@@ -1,12 +1,12 @@
 """
 Clean raw FRED combined time series and write long- and 
 wide-form data to parquet under data/processed/. Wide-form
-is ready for modeling.
+is ready for merging.
 
 RESPONSIBILITIES:
 - ingest raw FRED series
 - call prep_fred
-- write long- and wide-form data to data/processed/
+- write long- and wide-form DataFrame to data/processed/ as parquet
 - confirm task ran successfully
 
 OUTPUTS:
@@ -24,7 +24,7 @@ INPATH = Path("data/raw/fred_all.parquet")
 OUTDIR = Path("data/processed")
 
 def main() -> None:
-    # ingest raw
+    # comfirm inpath exists
     if not INPATH.exists():
         raise FileNotFoundError(f"Missing raw FRED file: {INPATH}")
     
@@ -38,7 +38,6 @@ def main() -> None:
     OUTDIR.mkdir(parents = True, exist_ok=True)
     df_long.to_parquet(OUTDIR / "fred_long.parquet", index=False)
     df_wide.to_parquet(OUTDIR / "fred_wide.parquet", index=False)
-
 
     # confirm
     print(f"[OK] wrote df_long shape={df_long.shape} -> {OUTDIR / 'fred_long.parquet'}")
