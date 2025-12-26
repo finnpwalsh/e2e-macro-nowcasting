@@ -1,18 +1,20 @@
+"""
+FRED raw data ingestion and validation.
+
+RESPONSIBILITIES:
+- Fetch series from FRED
+- Enforce raw data schema
+- Write validated data to raw parquet
+
+OUTPUT:
+Raw FRED DataFrame
+"""
 from __future__ import annotations
 
 import pandas as pd
 from fredapi import Fred
 
 from src.config.fred import FRED_REQUIRED_COLS as REQUIRED_COLS
-
-"""
-FRED raw data ingestion and validation.
-
-Responsibilities:
-- Fetch series from FRED
-- Enforce raw data schema
-- Write validated data to raw parquet
-"""
 
 def validate_fred(df: pd.DataFrame) -> pd.DataFrame:
     '''
