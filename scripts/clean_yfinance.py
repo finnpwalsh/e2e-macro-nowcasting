@@ -1,3 +1,20 @@
+"""
+Clean raw yfinance data.
+
+Ingest long-form raw yfinance parquet, clean and pivot, and write
+cleaned long- and wide-form yfinance DataFrames to data/processed.
+
+RESPONSIBILITIES:
+- affirm inpath exists
+- ingest raw long-form yfinance parquet as DataFrame
+- pivot and clean raw long-form yfinance DataFrame
+- write cleaned long- and wide-form yfinance DataFrames to data/processed
+- affirm task ran successfully
+
+OUTPUTS:
+- data/processed/yf_long.parquet
+- data/processed/yf_wide.parquet
+"""
 from __future__ import annotations
 
 import pandas as pd
@@ -22,7 +39,6 @@ def main() -> None:
     OUTDIR.mkdir(parents = True, exist_ok=True)
     df_long.to_parquet(OUTDIR / "yf_long.parquet", index=False)
     df_wide.to_parquet(OUTDIR / "yf_wide.parquet", index=False)
-
 
     # confirm
     print(f"[OK] wrote df_long shape={df_long.shape} -> {OUTDIR / 'yf_long.parquet'}")
