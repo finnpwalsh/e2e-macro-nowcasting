@@ -16,11 +16,10 @@ def clean_fred_long(df_raw: pd.DataFrame) -> pd.DataFrame:
     
     Returns:
         pd.DataFrame: cleaned long-form FRED dataset which
+        - has enforced dtypes (datetime, numeric, string)
             - contains no missing values in date, value, or series_id
-            - is deduped on (series_id, date)
-                -> keeps last
+            - is deduped on (series_id, date) (keeps last)
             - is sorted by series_id, then date
-            - has enforced dtypes (datetime, numeric, string)
     
     Raises:
         ValueError: if the input DataFrame is empty or missing required 

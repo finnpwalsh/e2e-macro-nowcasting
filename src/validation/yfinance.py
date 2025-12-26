@@ -19,9 +19,12 @@ def clean_yf_long(df_raw: pd.DataFrame) -> pd.DataFrame:
             - contains no missing values in any column
             - is deduped on (ticker, date) (keeps last)
             - is sorted on ticker then date
+    
+    Raises:
+        ValueError: if raw or cleaned DataFrame is empty
     """
     if df_raw.empty:
-        raise ValueError(f"YF long dataframe (raw) is empty.")
+        raise ValueError(f"YF long DataFrame (raw) is empty.")
     
     # enforce only required cols exist
     df = df_raw[REQUIRED_COLS].copy()
