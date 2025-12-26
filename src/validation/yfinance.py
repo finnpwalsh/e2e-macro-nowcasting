@@ -8,7 +8,7 @@ def clean_yf_long(df_raw: pd.DataFrame) -> pd.DataFrame:
         raise ValueError(f"YF long dataframe (raw) is empty.")
     
     # enforce only required cols exist
-    df = df_raw[REQUIRED_COLS].copy
+    df = df_raw[REQUIRED_COLS].copy()
 
     # coerce types
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
