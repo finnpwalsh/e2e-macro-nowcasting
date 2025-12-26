@@ -6,6 +6,7 @@ RESPONSIBILITIES:
 - ingest wide-form FRED, yfinance parquets
 - build merged DataFrame
 - write model-ready merged DataFrame to data/processed/merged.parquet
+- confirm task ran successfully
 
 OUTPUTS:
 - data/processed/merged.parquet
