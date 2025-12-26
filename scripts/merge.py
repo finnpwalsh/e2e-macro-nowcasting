@@ -1,3 +1,15 @@
+"""
+Merge FRED and yfinance data and write model-ready merged 
+file to data/processed.
+
+RESPONSIBILITIES:
+- ingest wide-form FRED, yfinance parquets
+- build merged DataFrame
+- write model-ready merged DataFrame to data/processed/merged.parquet
+
+OUTPUTS:
+- data/processed/merged.parquet
+"""
 from __future__ import annotations
 import pandas as pd
 from pathlib import Path
