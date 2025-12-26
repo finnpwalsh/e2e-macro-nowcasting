@@ -7,6 +7,9 @@ def build_merged(
         fred: pd.DataFrame,
         yf: pd.DataFrame,
 ) -> pd.DataFrame:
+    """
+    Index fred and yf on end-of-month and merge.
+    """
     fred = to_month_index(fred)
     yf = to_month_index(yf)
     return fred.join(yf, how="inner").sort_index()
