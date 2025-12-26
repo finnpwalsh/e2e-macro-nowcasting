@@ -7,16 +7,8 @@ def clean_yf_long(df_raw: pd.DataFrame) -> pd.DataFrame:
     if df_raw.empty:
         raise ValueError(f"YF long dataframe (raw) is empty.")
     
-    # check only and all required cols exist
-    missing = [c for c in REQUIRED_COLS if c not in df_raw.columns]
-    if missing:
-        raise ValueError(f"Missing required columns in raw YF: {missing}")
-    
-    excess = [c for c in df_raw.columns if c not in REQUIRED_COLS]
-    if excess:
-        raise ValueError(f"Found excess columns: {excess}")
-    
-    df = df_raw.copy()
+    # enforce only required cols exist
+    df = df_raw[REQUIRED_COLS].copy
 
     # coerce types
     df["date"] = pd.to_datetime(df["date"], errors="coerce")

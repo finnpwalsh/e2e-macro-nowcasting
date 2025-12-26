@@ -3,22 +3,20 @@ from __future__ import annotations
 import pandas as pd
 import yfinance as yf
 
-from src.config.yfinance import YF_REQUIRED_COLS
+from src.config.yfinance import YF_REQUIRED_COLS as REQUIRED_COLS
 
 START_DATE = "2010-01-01"
 
-def validate_yf(df: pd.DataFrame) -> pd.DataFrame:
-    # check required cols exist
-    missing = [c for c in YF_REQUIRED_COLS if c not in df.columns]
-    if missing:
-        raise ValueError(f"yf DataFrame missing column(s): {missing}")
-    
-    # coerce types
-    df["date"] = pd.to_datetime(df["date"], errors="coerce").dt.normalize()
-    df["value"] = pd.to_numeric(df["value"], errors = "coerce")
-    df["ticker"] = df["ticker"].astype("string")
+def assert_yf_schema(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty:
+        raise ValueError("YF DataFrame is empty.")
 
-    # date and series_id must be valid, must have at least 1 valid value
+    # assert required cols exist
+    missing = [c for c in REQUIRED_COLS if c not in df.columns]
+    if missing:
+        raise ValueError(f"YF DataFrame missing column(s): {missing}")
+
+    # assert non NaNs
     if df["date"].isna().sum() == len(df):
         raise ValueError(f"All dates are NaN.")
     if df["value"].isna().sum() == len(df):
@@ -50,5 +48,5 @@ def ingest_yf_series(
     # assign ticker to new col
     df["ticker"] = ticker
 
-    df = validate_yf(df)
+    df = assert_yf_schema(df)
     return df
