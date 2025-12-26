@@ -1,3 +1,15 @@
+"""
+Ingest raw yfinance data and output raw DataFrame with
+minimal schema enforcement.
+
+RESPONSIBILITIES:
+- Ingest raw yfinance data as DataFrame
+- Add ticker column to DataFrame
+- Assert minimal schema
+
+OUTPUT:
+Raw DataFrame with minimal schema enforcement.
+"""
 from __future__ import annotations
 
 import pandas as pd
@@ -8,6 +20,13 @@ from src.config.yfinance import YF_REQUIRED_COLS as REQUIRED_COLS
 START_DATE = "2010-01-01"
 
 def assert_yf_schema(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    ASSERTS:
+    - df is not empty
+    - all required columns exist
+    - date and value are not all null
+    - ticker is not null
+    """
     if df.empty:
         raise ValueError("YF DataFrame is empty.")
 
