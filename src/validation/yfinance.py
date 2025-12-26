@@ -1,0 +1,37 @@
+from __future__ import annotations
+import pandas as pd
+
+from src.config.yfinance import YF_REQUIRED_COLS as REQUIRED_COLS
+
+def clean_yf_long(df_raw: pd.DataFrame) -> pd.DataFrame:
+    if df_raw.empty:
+        raise ValueError(f"YF long dataframe (raw) is empty.")
+    
+    # check only and all required cols exist
+    missing = [c for c in REQUIRED_COLS if c not in df_raw.columns]
+    if missing:
+        raise ValueError(f"Missing required columns in raw YF: {missing}")
+    
+    excess = [c for c in df_raw.columns if c not in REQUIRED_COLS]
+    if excess:
+        raise ValueError(f"Found excess columns: {excess}")
+    
+    df = df_raw.copy()
+
+    # coerce types
+    df["date"] = pd.to_datetime(df["date"], errors="coerce")
+    df["value"] = pd.to_numeric(df["value"], errors = "coerce")
+    df["ticker"] = df["ticker"].astype("string")
+
+    # handle NaNs (DROP in v1)
+    df = df.dropna(subset=["date", "value", "ticker"])
+
+    if df.empty:
+        raise ValueError("All rows dropped after type coersion and NaN drop.")
+    
+    # dedupe, sort
+    df = df.sort_values(["ticker", "date"])
+    df = df.drop_duplicates(subset=["ticker", "date"], keep="last")
+    df = df.reset_index(drop=True)
+
+    return df
