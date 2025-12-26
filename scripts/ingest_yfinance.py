@@ -19,7 +19,7 @@ def main() -> None:
         print(f"[OK] fetched {ticker}:  {len(df):,} rows.")
     
     # write combined series into data/raw
-    outpath = OUTDIR / "yf_all.parquet"
+    outpath = OUTDIR / "yf_long.parquet"
     combined = pd.concat(dfs, ignore_index=True)
     combined.to_parquet(outpath, index=False)
 
