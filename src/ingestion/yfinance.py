@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import yfinance as yf
 
-from src.config.yf import YF_TICKERS, YF_REQUIRED_COLS
+from src.config.yfinance import YF_REQUIRED_COLS
 
 START_DATE = "2010-01-01"
 

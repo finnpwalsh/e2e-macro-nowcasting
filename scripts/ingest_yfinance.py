@@ -3,8 +3,8 @@ from __future__ import annotations
 import pandas as pd
 from pathlib import Path
 
-from src.ingestion.yf import ingest_yf_series
-from src.config.yf import YF_TICKERS
+from src.ingestion.yfinance import ingest_yf_series
+from src.config.yfinance import YF_TICKERS
 
 OUTDIR = Path("data/raw")
 
