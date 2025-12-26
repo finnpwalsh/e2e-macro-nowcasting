@@ -12,28 +12,38 @@ RESPONSIBILITIES:
 - write run metadata to artifacts/{run_id}/run.json
 - confirm run successful
 
-OUTPUTS:
+OUTPUTS (Local):
 - artifacts/{run_id}/run.json
 - artifacts/{run_id}/models/baseline_ridge.joblib
 - artifacts/{run_id}/metrics/baseline_ridge.json
 - artifacts/{run_id}/predictions/baseline_ridge.parquet
+
+OUTPUTS (MLflow):
+- artifacts/mlflow/mlflow.db
+- artifacts/mlflow/{run_id}/models/baseline_ridge.joblib
+- artifacts/mlflow/{run_id}/metrics/baseline_ridge.json
+- artifacts/mlflow/{run_id}/predictions/baseline_ridge.parquet
+
 """
 
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 from src.config.run import generate_run_id
 from src.pipelines.baseline import train_ridge
 from src.runs.io import write_run_meta, write_run_artifacts
 from src.runs.tracking import setup_mlflow_local, log_run_to_mlflow
 
+INPATH = Path("data/processed/merged.py")
+
 def main() -> None:
     # generate run id
     run_id = generate_run_id()
 
     # train
-    model, metrics, preds = train_ridge()
+    model, metrics, preds = train_ridge(infile=INPATH)
     metrics["run_id"] = run_id
 
     # write run metadata, return run path
