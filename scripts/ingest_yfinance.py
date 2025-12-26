@@ -1,3 +1,17 @@
+"""
+Ingest all yfinance tickers, combine, and write combined df to 
+data/raw as parquet.
+
+RESPONSIBILITIES:
+- ingest all yf tickers
+- append to combined DataFrame
+- write combined df to data/raw/yf_long.parquet
+- confirm task ran successfully
+
+OUTPUTS:
+- data/raw/yf_long.parquet
+"""
+
 from __future__ import annotations
 
 import pandas as pd
