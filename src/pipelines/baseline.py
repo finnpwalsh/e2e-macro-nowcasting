@@ -36,7 +36,7 @@ from src.models.baseline import make_ridge_pipeline
 from src.evaluation.metrics import regression_metrics
 
 def train_ridge(
-       infile: Path = Path("data/processed/fred_wide.parquet"),
+       infile: Path = Path("data/processed/merged.parquet"),
        target: str = "CPIAUCSL",
        split_date: str = "2020-01-01",
        alpha: float = 1.0,
