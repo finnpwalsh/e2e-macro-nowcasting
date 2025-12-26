@@ -4,6 +4,22 @@ import pandas as pd
 from src.config.yfinance import YF_REQUIRED_COLS as REQUIRED_COLS
 
 def clean_yf_long(df_raw: pd.DataFrame) -> pd.DataFrame:
+    """
+    Clean yfinance long-form data.
+
+    Performs schema validation, data-type coercion, drop invalid rows, 
+    dedupes observations (keeps last), and sorts the data.
+
+    Args:
+    - df_raw (pd.DataFrame): raw long-form yfinance data
+
+    Returns:
+        pd.DataFrame: cleaned long-form data which:
+            - has enforced dtypes (datetime, numeric, string)
+            - contains no missing values in any column
+            - is deduped on (ticker, date) (keeps last)
+            - is sorted on ticker then date
+    """
     if df_raw.empty:
         raise ValueError(f"YF long dataframe (raw) is empty.")
     
