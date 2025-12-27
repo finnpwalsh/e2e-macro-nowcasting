@@ -10,4 +10,4 @@ def prep_yf(df_raw: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     df_long = clean_yf_long(df_raw)
     df_wide = build_and_resample_yf(df_long)
-    return df_wide
+    return df_long, df_wide
