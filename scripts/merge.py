@@ -34,3 +34,6 @@ def main() -> None:
 
     # confirm
     print(f"[OK] wrote {len(df)} rows -> {OUTPATH}")
+
+if __name__ == "__main__":
+    main()
