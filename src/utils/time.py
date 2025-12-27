@@ -6,9 +6,11 @@ def to_month_index(df: pd.DataFrame) -> pd.DataFrame:
     Normalize a DatetimeIndex to month-end timestamps.
     """
     out = df.copy()
+    out["date"] = pd.to_datetime(out["date"])
+    out = out.set_index("date")
     out.index = (
         pd.to_datetime(out.index)
-        .to_period("M")
-        .to_timestamp("M")
+        .to_period("ME")
+        .to_timestamp("ME")
     )
     return out
