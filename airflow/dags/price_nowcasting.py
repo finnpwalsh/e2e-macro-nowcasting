@@ -6,8 +6,10 @@ time-series data, cleans and prepares modeling datasets, merges,
 and trains a baseline Ridge regression model for evaluation.
 """
 from datetime import datetime, timedelta
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.models.baseoperator import chain
 
 from scripts.ingest_fred import main as ingest_fred
 from scripts.ingest_yfinance import main as ingest_yfinance
@@ -62,5 +64,9 @@ with DAG(
         python_callable=train_ridge,
     )
 
-    [ingest_fred_task, ingest_yfinance_task] >> [clean_fred_task, clean_yfinance_task]
-    [clean_fred_task, clean_yfinance_task] >> merge_task >> train_task
+    chain(
+        [ingest_fred_task, ingest_yfinance_task],
+        [clean_fred_task, clean_yfinance_task],
+        merge_task,
+        train_task,
+    )
