@@ -14,6 +14,8 @@
 ## V1
 ### December 27, 2025
 **NEXT**
+- update airflow DAG
+- update Makefile
 - finalize docs
 - tag v1.3.0
 
