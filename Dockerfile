@@ -12,4 +12,4 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 # runtime behavior
-CMD ["python", "scripts/ingest_fred.py"]
+CMD ["bash"]
