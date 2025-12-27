@@ -3,12 +3,15 @@ APP_NAME    := e2e-macro-nowcasting
 IMAGE       := $(APP_NAME):dev
 PROJECT_DIR := /opt/project
 
+# local python dev
+PYTHON := .venv/bin/python
+
 # Airflow service to run CLI commands
 AIRFLOW_SERVICE := airflow-scheduler
-DAG_ID := fred_pipeline
+DAG_ID := price_nowcasting
 
 .PHONY: build up init down logs ps shell \
-		ingest clean train test \
+		ingest clean merge train test \
 		trigger run
 
 # build
@@ -35,16 +38,16 @@ shell:
 	docker compose exec $(AIRFLOW_SERVICE) bash
 
 # dev utilities (manual)
-ingest: ingest_fred ingest_yf
-
-ingest_fred:
+ingest:
 	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/ingest_fred.py"
-
-ingest_yf:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/ingest_yf.py"
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/ingest_yfinance.py"
 
 clean:
 	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/clean_fred.py"
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/clean_yfinance.py"
+
+merge:
+	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/merge.py"
 
 train:
 	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/train_ridge.py"
