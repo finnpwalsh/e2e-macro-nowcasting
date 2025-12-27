@@ -36,7 +36,7 @@ from src.pipelines.baseline import train_ridge
 from src.runs.io import write_run_meta, write_run_artifacts
 from src.runs.tracking import setup_mlflow_local, log_run_to_mlflow
 
-INPATH = Path("data/processed/merged.py")
+INPATH = Path("data/processed/merged.parquet")
 
 def main() -> None:
     # generate run id
