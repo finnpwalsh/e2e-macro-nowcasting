@@ -1,6 +1,6 @@
 # Activity Log
 ## Template
-## December 2X, 2025
+### December 2X, 2025
 **NEXT**
 - 
 - 
@@ -12,9 +12,28 @@
 - 
 
 ## V1
-## December 25, 2025
+### December 27, 2025
 **NEXT**
-- FastAPI serving
+- finalize docs
+- tag v1.3.0
+
+**DONE**
+- merge
+- update train
+- update docs
+
+### December 26, 2025
+**NEXT**
+- merge
+- update train infile
+
+**DONE**
+- yf ingestion
+- yf clean
+
+### December 25, 2025
+**NEXT**
+- integrate yfinance
 
 **DONE**
 - refactored train_ridge into a clean driver script
