@@ -31,6 +31,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 from src.config.run import generate_run_id
 from src.pipelines.baseline import train_ridge
 from src.runs.io import write_run_meta, write_run_artifacts
@@ -39,6 +41,7 @@ from src.runs.tracking import setup_mlflow_local, log_run_to_mlflow
 INPATH = Path("data/processed/merged.parquet")
 
 def main() -> None:
+    load_dotenv()
     # generate run id
     run_id = generate_run_id()
 
