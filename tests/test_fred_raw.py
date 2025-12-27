@@ -20,9 +20,9 @@ def test_fred_raw():
     missing_cols = [c for c in REQUIRED_COLS if c not in df.columns]
     assert not missing_cols, f"Missing required columns: {missing_cols}"
     
-    # check missing  or extra tickers
+    # check missing or extra series
     expected = set(FRED_SERIES)
-    actual = set(df["ticker"].unique())
+    actual = set(df["series_id"].unique())
 
     missing_tickers = expected - actual
     extra_tickers = actual - expected
