@@ -34,7 +34,7 @@ class LocalStorage:
 
         return pd.read_parquet(path)
 
-    def write_parquet(self, df: pd.DataFrame, key: str) -> None:
+    def write_parquet(self, df: pd.DataFrame, key: str, **kwargs) -> None:
         """
         Write a DataFrame to local storage as parquet.
         
@@ -49,7 +49,7 @@ class LocalStorage:
         """
         path = Path(key)
         path.parent.mkdir(parents=True, exist_ok=True)
-        df.to_parquet(path)
+        df.to_parquet(path, **kwargs)
     
     def read_bytes(self, key: str) -> bytes:
         """
