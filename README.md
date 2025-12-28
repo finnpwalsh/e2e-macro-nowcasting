@@ -42,8 +42,7 @@ Intentionally deferred to later versions:
 - Cloud compute deployment (beyond storage)
 - Monitoring, drift detection, or CI/CD
 
-### Data
-#### FRED
+### Data – FRED
 **Target**
 - CPI (CPIAUCSL): headline CPI price level
 
@@ -53,7 +52,7 @@ Intentionally deferred to later versions:
 - Federal Funds Rate (FEDFUNDS)
 - Unemployment Rate (UNRATE)
 
-#### yfinance
+### Data – yfinance
 **Daily financial market tickers (end-of-month)**
 - Equities risk (SPY)
 - Volatility (^VIX)
@@ -123,7 +122,8 @@ make down
 ```
 
 #### Intermediate Containerized Development
-Use:
+These targets run individual pipeline stages inside containers without requiring a full DAG execution.
+
 - `make ingest`
 - `make clean`
 - `make train`
@@ -152,7 +152,7 @@ Call scripts via module, e.g.
 python -m scripts.train_ridge
 ```
 
-5. Shut down
+#### 5. Shut down
 
 ```
 deactivate
