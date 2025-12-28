@@ -5,11 +5,18 @@ End-to-end inflation nowcasting system built as a production-style ML pipeline w
 This repository demonstrates how to design, version, and operate an end-to-end macroeconomic ML pipeline with production-grade infrastructure practices. 
 
 ### Status
-**Dec 25, 2025**: Under active development
+**Dec 27, 2025**: Under active development
 
 **v1.3.0** released — yfinance integration
 
-## V1
+## Contents
+- [V1 Overview](#v1-overview)
+- [Quickstart](#quickstart)
+- [Repo Structure](#repo-structure--v1-current)
+- [Roadmap](#roadmap)
+- [Version History](#version-history)
+
+## V1 Overview
 **Goals:** A reproducible, production-style inflation nowcasting pipeline.
 
 ### Version Philosophy
@@ -114,8 +121,8 @@ make run
 make down
 ```
 
-#### Note: Local Dev
-**Use:**
+#### Intermediate Containerized Development
+Use:
 - `make ingest`
 - `make clean`
 - `make train`
@@ -123,28 +130,29 @@ make down
 - `make test` (data contract testing via pytest)
 
 ### Local Setup & Run
-1. Install Python 3.11
+#### 1. Install Python 3.11
 ```
 brew install python@3.11
 ```
 
-2. Create `.venv` (already .gitignore(d))
+#### 2. Create `.venv` (already .gitignore(d))
 ```
 python3.11 -m venv .venv
 ```
 
-3. Activate `.venv`
+#### 3. Activate `.venv`
 ```
 source .venv/bin/activate
 ```
 
-4. Local dev
+#### 4. Local dev
 Call scripts via module, e.g.
 ```
 python -m scripts.train_ridge
 ```
 
 5. Shut down
+
 ```
 deactivate
 ```
@@ -168,22 +176,17 @@ deactivate
 
 ## Roadmap
 ### Version Scopes
-**V0**: prototype ingestion &rarr cleaning &rarr baseline training
-
-**V1**: production-ready pipeline (infra, serving, cloud storage)
-
-**V2** (planned): modeling improvements
-
-**V3** (planned): production hardening (monitoring, CI/CD)
-
-**V4** (planned): real-time nowcasting + performance/scale
+- **V0**: prototype ingestion &rarr cleaning &rarr baseline training
+- **V1**: production-ready pipeline (infra, serving, cloud storage)
+- **V2** (planned): modeling improvements
+- **V3** (planned): production hardening (monitoring, CI/CD)
+- **V4** (planned): real-time nowcasting + performance/scale
 
 ### V1 Roadmap
 **Scope**: infra foundation
 
-**1.4.0**: S3-backed storage
-
-**1.5.0**: FastAPI serving
+- **1.4.0**: S3-backed storage
+- **1.5.0**: FastAPI serving
 
 ### V2 Roadmap
 **Scope**: Modeling
@@ -247,6 +250,8 @@ deactivate
 - **v1.1.0**: run identity, run-scoped artifacts
 - **v1.0.1**: full documentation, docstrings, config refactor
 - **v1.0.0**: reproducible macro data pipeline (Airflow + Docker)
+
+#### V0
 - **v0.4.0**: baseline ridge training pipeline
 - **v0.3.0**: model-ready FRED wide dataset
 - **v0.2.0**: multi-series FRED ingestion
