@@ -15,32 +15,26 @@ OUTPUTS:
 """
 from __future__ import annotations
 
-import pandas as pd
-from pathlib import Path
-
 from src.pipelines.fred import prep_fred
-
-INPATH = Path("data/raw/fred_all.parquet")
-OUTDIR = Path("data/processed")
+from src.storage.factory import get_storage
+from src.storage.paths import raw_fred_all, processed_fred_wide
 
 def main() -> None:
-    # comfirm inpath exists
-    if not INPATH.exists():
-        raise FileNotFoundError(f"Missing raw FRED file: {INPATH}")
+    # load env
+    storage = get_storage()
     
     # read infile
-    df_raw = pd.read_parquet(INPATH)
+    in_key = raw_fred_all()
+    df_raw = storage.read_parquet(key=in_key)
     
     # clean
-    df_long, df_wide = prep_fred(df_raw)
+    df_wide = prep_fred(df_raw)
 
-    # write to data/processed
-    OUTDIR.mkdir(parents = True, exist_ok=True)
-    df_long.to_parquet(OUTDIR / "fred_long.parquet", index=False)
-    df_wide.to_parquet(OUTDIR / "fred_wide.parquet", index=False)
+    # write cleaned wide-form DataFrame to storage
+    out_key = processed_fred_wide()
+    storage.write_parquet(df=df_wide, key=out_key, index=False)
 
-    # confirm
-    print(f"[OK] wrote df_long shape={df_long.shape} -> {OUTDIR / 'fred_long.parquet'}")
+    # confirm task was successful
     print(f"[OK] wrote df_wide shape={df_wide.shape} -> {OUTDIR / 'fred_wide.parquet'}")
 
 
