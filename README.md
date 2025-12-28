@@ -1,48 +1,42 @@
 # End-to-End Macro Nowcasting
 ## Overview
-End-to-end inflation nowcasting system built with production-flavored MLOps pipeline.
+End-to-end inflation nowcasting system built as a production-style ML pipeline with orchestration, artifact tracking, and reproducible infrastructure.
 
-## Status
+This repository demonstrates how to design, version, and operate an end-to-end macroeconomic ML pipeline with production-grade infrastructure practices. 
+
+### Status
 **Dec 25, 2025**: Under active development
 
-**v1.2.0** released — MLflow tracking
+**v1.3.0** released — yfinance integration
 
-### Version Scopes
-**V0**: prototype ingestion &rarr cleaning &rarr baseline training
-
-**V1**: production-ready pipeline (infra, serving, cloud storage)
-
-**V2** (planned): modeling improvements
-
-**V3** (planned): production hardening (monitoring, CI/CD)
-
-**V4** (planned): real-time nowcasting + performance/scale
-
-### Version History
-- **v1.2.0**: MLflow tracking
-- **v1.1.0**: run identity, run-scoped artifacts
-- **v1.0.1**: full documentation, docstrings, config refactor
-- **v1.0.0**: reproducible macro data pipeline (Airflow + Docker)
-- **v0.4.0**: baseline ridge training pipeline
-- **v0.3.0**: model-ready FRED wide dataset
-- **v0.2.0**: multi-series FRED ingestion
-- **v0.1.0**: single-series FRED ingestion
-
-### V1
+## V1
 **Goals:** A reproducible, production-style inflation nowcasting pipeline.
 
-#### Scope
+### Version Philosophy
+- Reproducibility over performance
+- Explicit data and model contracts
+- Infrastructure-first design before model optimization
+
+### Scope
 - Reliable macroeconomic and market data ingestion
 - Data validation and schema contracts 
-- Deterministic, s3-backed storage: raw → processed
+- Deterministic, S3-backed storage: raw → processed
 - Run-scoped model artifacts with explicit run identity
-- Mlflow tracking
+- MLflow tracking
 - Pipeline orchestration with Apache Airflow
 - Containerization with Docker
 - Serving via FastAPI
 - Full documentation
 
-#### Data (FRED)
+### Non-goals (V1)
+Intentionally deferred to later versions:
+- Hyperparameter tuning or model selection
+- Real-time serving or latency guarantees
+- Cloud compute deployment (beyond storage)
+- Monitoring, drift detection, or CI/CD
+
+### Data
+#### FRED
 **Target**
 - CPI (CPIAUCSL): headline CPI price level
 
@@ -52,15 +46,22 @@ End-to-end inflation nowcasting system built with production-flavored MLOps pipe
 - Federal Funds Rate (FEDFUNDS)
 - Unemployment Rate (UNRATE)
 
-#### Non-goals
-Intentionally deferred to later versions:
-- Model optimization tuning
-- Real-time serving or latency guarantees
-- Cloud deployment (compute / hosting)
-- Monitoring, drift detection, CI/CD
+#### yfinance
+**Daily financial market tickers (end-of-month)**
+- Equities risk (SPY)
+- Volatility (^VIX)
+- Rates Expectations (IEF)
+- Energy Prices (CL=F)
+- USD Strength (UUP)
 
 ## Quickstart
-### Setup + Run
+**Note**: Docker is the source of truth for runtime behavior. `.venv` is used only for local development and testing. 
+
+### Python Version
+- **Local Development**: Python 3.11
+- **Containers**: `python:3.11-slim`
+
+### Containerized Setup + Run
 #### Prerequisites
 - Docker + Docker Compose
 - Make
@@ -114,15 +115,41 @@ make down
 ```
 
 #### Note: Local Dev
-Use:
+**Use:**
 - `make ingest`
 - `make clean`
 - `make train`
+- `make merge`
 - `make test` (data contract testing via pytest)
 
+### Local Setup & Run
+1. Install Python 3.11
+```
+brew install python@3.11
+```
 
-## Repo Structure
-### V1 (Current)
+2. Create `.venv` (already .gitignore(d))
+```
+python3.11 -m venv .venv
+```
+
+3. Activate `.venv`
+```
+source .venv/bin/activate
+```
+
+4. Local dev
+Call scripts via module, e.g.
+```
+python -m scripts.train_ridge
+```
+
+5. Shut down
+```
+deactivate
+```
+
+## Repo Structure – V1 (Current)
 ```
 ├── airflow/
 │   └── dags/           # DAG orchestration
@@ -140,16 +167,25 @@ Use:
 ```
 
 ## Roadmap
-### V1
-**Scope**: infra foundation
+### Version Scopes
+**V0**: prototype ingestion &rarr cleaning &rarr baseline training
 
-**1.3.0**: Daily market tickers via `yfinance`
+**V1**: production-ready pipeline (infra, serving, cloud storage)
+
+**V2** (planned): modeling improvements
+
+**V3** (planned): production hardening (monitoring, CI/CD)
+
+**V4** (planned): real-time nowcasting + performance/scale
+
+### V1 Roadmap
+**Scope**: infra foundation
 
 **1.4.0**: S3-backed storage
 
 **1.5.0**: FastAPI serving
 
-### V2
+### V2 Roadmap
 **Scope**: Modeling
 
 - Feature expansion (`FRED`, `yfinance`)
@@ -203,3 +239,15 @@ Use:
 │   ├── data/
 │   └── pipeline/
 ```
+
+### Version History
+#### V1
+- **v1.3.0**: yfinance integration
+- **v1.2.0**: MLflow tracking
+- **v1.1.0**: run identity, run-scoped artifacts
+- **v1.0.1**: full documentation, docstrings, config refactor
+- **v1.0.0**: reproducible macro data pipeline (Airflow + Docker)
+- **v0.4.0**: baseline ridge training pipeline
+- **v0.3.0**: model-ready FRED wide dataset
+- **v0.2.0**: multi-series FRED ingestion
+- **v0.1.0**: single-series FRED ingestion
