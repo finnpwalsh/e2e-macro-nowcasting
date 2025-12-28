@@ -238,10 +238,10 @@ deactivate
 │   ├── pipelines/
 │   ├── serving/
 │   └── validation/
-├── tests
-│   ├── api/
-│   ├── data/
-│   └── pipeline/
+└── tests
+    ├── api/
+    ├── data/
+    └── pipeline/
 ```
 
 ### Version History
