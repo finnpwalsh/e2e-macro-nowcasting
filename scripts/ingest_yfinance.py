@@ -14,7 +14,6 @@ OUTPUTS:
 from __future__ import annotations
 
 import pandas as pd
-from pathlib import Path
 
 from src.ingestion.yfinance import ingest_yf_series
 from src.config.yfinance import YF_TICKERS
