@@ -107,6 +107,7 @@ This will:
 - initialize Airflow metadata database
 - create an admin user
 - launch the Airflow webserver and scheduler
+
 Access the Airflow UI at: http://localhost:8080
 **Login**: Username: `admin` | Password: `admin`
 
