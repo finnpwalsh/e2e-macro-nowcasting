@@ -1,0 +1,24 @@
+# data
+pandas
+
+# secrets
+python-dotenv
+
+# in data
+fredapi
+yfinance
+
+# parquet
+pyarrow
+
+# test
+pytest
+
+# models
+scikit-learn
+
+# model artifacts
+joblib
+
+# artifact tracking
+mlflow
