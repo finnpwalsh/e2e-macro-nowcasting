@@ -1,12 +1,13 @@
 """
-Clean raw FRED combined time series and write long- and 
-wide-form data to parquet under data/processed/. Wide-form
-is ready for merging.
+Clean raw FRED data.
+
+Ingest raw long-form FRED data parquet, clean and pivot, and
+write wide-form DataFrame to data/processed.
 
 RESPONSIBILITIES:
 - ingest raw FRED series
 - call prep_fred
-- write long- and wide-form DataFrame to data/processed/ as parquet
+- write wide-form DataFrame to data/processed/ as parquet
 - confirm task ran successfully
 
 OUTPUTS:

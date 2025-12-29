@@ -2,7 +2,7 @@
 Clean raw yfinance data.
 
 Ingest long-form raw yfinance parquet, clean and pivot, and write
-cleaned long- and wide-form yfinance DataFrames to data/processed.
+wide-form yfinance DataFrame to data/processed.
 
 RESPONSIBILITIES:
 - confirm inpath exists
