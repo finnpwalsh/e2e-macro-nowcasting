@@ -62,3 +62,21 @@ def eval_predictions(model_name: str, run_id: str) -> str:
 
 def eval_summary(model_name: str, run_id: str) -> str:
     return f"{eval_dir(model_name, run_id)}/summary.json"
+
+
+# ----------- MLflow Artifacts ------------
+def mlflow_db() -> str:
+    # sqlite backend store file
+    return "artifacts/mlflow/mlflow.db"
+
+def mlflow_run_dir(run_id: str) -> str:
+    return f"artifacts/mlflow/{run_id}"
+
+def mlflow_model_file(model_name: str, run_id: str) -> str:
+    return f"{mlflow_run_dir(run_id)}/models/{model_name}.joblib"
+
+def mlflow_metrics_file(model_name: str, run_id: str) -> str:
+    return f"{mlflow_run_dir(run_id)}/metrics/{model_name}.json"
+
+def mlflow_predictions_file(model_name: str, run_id: str) -> str:
+    return f"{mlflow_run_dir(run_id)}/predictions/{model_name}.parquet"
