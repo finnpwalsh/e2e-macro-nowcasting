@@ -8,4 +8,8 @@ def build_merged(
     """
     Merge FRED and yfinance.
     """
-    return fred.join(yf, how="inner").sort_index()
+    return (
+        fred.merge(yf, on="date", how="inner")
+        .sort_values("date")
+        .reset_index(drop=True)
+    )
