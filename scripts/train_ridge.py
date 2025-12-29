@@ -22,6 +22,8 @@ from src.storage.factory import get_storage
 from src.storage.paths import utc_run_id, processed_merged
 from src.materialization.model import write_model_artifacts
 
+MODEL_NAME = "baseline"
+
 def main() -> None:
     # load env
     load_dotenv()
@@ -40,7 +42,7 @@ def main() -> None:
     # write
     written = write_model_artifacts(
         storage=storage,
-        model_name="baseline",
+        model_name=MODEL_NAME,
         run_id=run_id,
         model=model,
         metrics=metrics,
@@ -49,11 +51,17 @@ def main() -> None:
     )
 
     # Confirm
-    print(f"Run: {run_id}")
-    print(f"Baseline ridge RMSE: {metrics['rmse']:.4f}")
-    
-    for k in written.keys():
-        print(f"Wrote: {written.get(k)}")
+    INDENT = "    "
+    print(INDENT)
+    print(f"Run")
+    print(f"{INDENT}ID:    {run_id}")
+    print(f"{INDENT}Model: {MODEL_NAME}")
+    print(f"{INDENT}RMSE:  {metrics['rmse']:.4f}")
+    print(INDENT)
+    print("Artifacts")
+    print(f"{INDENT}model: {written['model_key']}")
+    print(f"{INDENT}preds: {written['predictions_key']}")
+    print(INDENT)
 
 
 if __name__ == "__main__":
