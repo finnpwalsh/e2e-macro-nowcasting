@@ -20,6 +20,7 @@ def write_model_artifacts(
         model: Any,
         metrics: dict,
         preds: pd.DataFrame,
+        input_key: str,
 ) -> dict:
     """
     Write canonical artifacts for the inputted model.
@@ -43,6 +44,7 @@ def write_model_artifacts(
             "model_name": model_name,
             "run_id": run_id,
             "created_utc": run_id,
+            "input_key": input_key,
             "metrics": metrics,
         }
     )
