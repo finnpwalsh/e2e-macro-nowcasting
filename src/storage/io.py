@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from typing import Any
+from io import BytesIO
 
 import joblib
 
@@ -16,9 +17,12 @@ def read_json(storage: Storage, key: str) -> dict:
     return json.loads(data.decode("utf-8"))
 
 def write_joblib(storage: Storage, key: str, obj: Any) -> None:
-    data = joblib.dump(obj)
-    storage.write_bytes(data, key)
+    buffer = BytesIO()
+    joblib.dump(obj, buffer)
+    buffer.seek(0)
+    storage.write_bytes(buffer.read(), key)
 
 def read_joblib(storage: Storage, key: str) -> Any:
     data = storage.read_bytes(key)
-    return joblib.load(data)
+    buffer = BytesIO(data)
+    return joblib.load(buffer)
