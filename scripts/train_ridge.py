@@ -1,29 +1,18 @@
 """
-Train baseline ridge model, generate run_id, and write model,
-metrics, and predictions to artifacts/{run_id}.
+Train baseline ridge model and write canonical artifacts.
 
 RESPONSIBILITIES:
-- generate a unique run id
-- call train_ridge() to produce model, metrics, and preds
-- save artifacts/{run_id}:
-    - model to models/
-    - metrics to metrics/
-    - preds to predicions/
-- write run metadata to artifacts/{run_id}/run.json
-- confirm run successful
+- generate a unique run id (UTC)
+- read model-ready dataset from storage
+- train baseline ridge model
+- write model artifacts and eval (canonical)
 
-OUTPUTS (Local):
-- artifacts/{run_id}/run.json
-- artifacts/{run_id}/models/baseline_ridge.joblib
-- artifacts/{run_id}/metrics/baseline_ridge.json
-- artifacts/{run_id}/predictions/baseline_ridge.parquet
-
-OUTPUTS (MLflow):
-- artifacts/mlflow/mlflow.db
-- artifacts/mlflow/{run_id}/models/baseline_ridge.joblib
-- artifacts/mlflow/{run_id}/metrics/baseline_ridge.json
-- artifacts/mlflow/{run_id}/predictions/baseline_ridge.parquet
-
+OUTPUTS:
+- artifacts/models/baseline_ridge/<run_id>/model.joblib
+- artifacts/models/basline_ridge/<run_id>/metrics.json
+- artifacts/models/basline_ridge/latest.json
+- artifacts/eval/baseline_ridge/<run_id>/predictions.parquet
+- artifacts/eval/baseline_ridge/<run_id>/summary.json
 """
 
 from __future__ import annotations
