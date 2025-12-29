@@ -66,7 +66,7 @@ def write_model_artifacts(
     )
 
     return {
-        "model_key": run_id,
+        "model_key": k_model,
         "metrics_key": k_metrics,
         "latest_key": k_latest,
         "predictions_key": k_preds,
