@@ -10,7 +10,6 @@ RESPONSIBILITIES:
 - confirm task ran successfully
 
 OUTPUTS:
-- data/processed/fred_long.parquet
 - data/processed/fred_wide.parquet
 """
 from __future__ import annotations
@@ -35,7 +34,7 @@ def main() -> None:
     storage.write_parquet(df=df_wide, key=out_key, index=False)
 
     # confirm task was successful
-    print(f"[OK] wrote df_wide shape={df_wide.shape} -> {OUTDIR / 'fred_wide.parquet'}")
+    print(f"[OK] wrote df_wide shape={df_wide.shape} -> {out_key}")
 
 
 if __name__ == "__main__":
