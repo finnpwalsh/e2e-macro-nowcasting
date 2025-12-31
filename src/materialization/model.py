@@ -116,7 +116,7 @@ def write_model_artifacts(
         # model -> MLflow + registry
         model_info = mlflow.sklearn.log_model(
             sk_model=model,
-            artifact_path="model",
+            name="model",
             registered_model_name=registry_name,
         )
 
