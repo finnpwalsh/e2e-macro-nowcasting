@@ -13,6 +13,8 @@ services:
       timeout: 5s
       retries: 10
     restart: unless-stopped
+    networks:
+      - appnet
 
   airflow-init:
     image: e2e-macro-nowcasting:dev
@@ -27,18 +29,22 @@ services:
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
       AIRFLOW__LOGGING__BASE_LOG_FOLDER: /opt/airflow/logs
+      
       PYTHONPATH: /opt/project
       FRED_API_KEY: ${FRED_API_KEY}
-      MLFLOW_TRACKING_URI: "sqlite:////opt/project/artifacts/mlflow.db"
-      MLFLOW_DEFAULT_ARTIFACT_ROOT: "file:///opt/project/artifacts/mlflow"
+      
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
+      MLFLOW_EXPERIMENT_NAME: ${MLFLOW_EXPERIMENT_NAME:-nowcasting}
+      MLFLOW_REGISTRY_MODEL_NAME: ${MLFLOW_REGISTRY_MODEL_NAME:-nowcasting-models}
+      MLFLOW_MODEL_ALIAS: ${MLFLOW_MODEL_ALIAS:-champion}
+      
       AWS_PROFILE: ${AWS_PROFILE:-nowcasting-dev}
-      AWS_DEFAULT_REGION: ${AWS_S3_REGION:-us-east-1}
       AWS_REGION: ${AWS_S3_REGION:-us-east-1}
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/dags:/opt/airflow/dags
       - ./:/opt/project
       - ~/.aws:/root/.aws:ro
-      - ~/.aws:/home/airflow/.aws:ro
     command:
       - bash
       - -lc
@@ -53,6 +59,8 @@ services:
           --email admin@example.com || true
     restart: "no"
     working_dir: "/opt/project"
+    networks:
+      - appnet
 
   airflow-webserver:
     image: e2e-macro-nowcasting:dev
@@ -67,12 +75,13 @@ services:
       - ./airflow/logs:/opt/airflow/logs
       - ./:/opt/project
       - ~/.aws:/root/.aws:ro
-      - ~/.aws:/home/airflow/.aws:ro
     ports:
       - "8080:8080"
     command: bash -lc "airflow webserver"
     restart: unless-stopped
     working_dir: "/opt/project"
+    networks:
+      - appnet
 
   airflow-scheduler:
     image: e2e-macro-nowcasting:dev
@@ -87,10 +96,46 @@ services:
       - ./airflow/logs:/opt/airflow/logs
       - ./:/opt/project
       - ~/.aws:/root/.aws:ro
-      - ~/.aws:/home/airflow/.aws:ro
     command: bash -lc "airflow scheduler"
     restart: unless-stopped
     working_dir: "/opt/project"
+    networks:
+      - appnet
+
+  mlflow:
+    build: 
+      context: .
+      dockerfile: infra/mlflow/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AWS_PROFILE: ${AWS_PROFILE:-nowcasting-dev}
+      AWS_REGION: ${AWS_S3_REGION:-us-east-1}
+      AWS_S3_BUCKET_ARTIFACTS: ${AWS_S3_BUCKET_ARTIFACTS}
+      MLFLOW_BACKEND_STORE_URI: ${MLFLOW_BACKEND_STORE_URI}
+    volumes:
+      - ~/.aws:/root/.aws:ro
+    ports:
+      - "5001:5000"
+    command:
+      - bash
+      - -lc
+      - |
+        mlflow server \
+        --host 0.0.0.0 \
+        --port 5000 \
+        --backend-store-uri ${MLFLOW_BACKEND_STORE_URI} \
+        --default-artifact-root s3://${AWS_S3_BUCKET_ARTIFACTS}/mlflow \
+        --allowed-hosts mlflow:5000,mlflow,localhost:*,127.0.0.1:* \
+        --cors-allowed-origins http://localhost:*
+    restart: unless-stopped
+    networks:
+      - appnet
 
 volumes:
   postgres-db-volume:
+
+networks:
+  appnet:
+    name: e2e-macro-nowcasting-net
