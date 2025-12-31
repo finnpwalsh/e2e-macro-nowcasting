@@ -26,10 +26,6 @@ def get_storage() -> Storage:
         return LocalStorage()
 
     elif backend == "s3":
-        return S3Storage(
-            data_bucket=os.environ["AWS_S3_BUCKET_DATA"],
-            artifacts_bucket=os.environ["AWS_S3_BUCKET_ARTIFACTS"],
-            region=os.getenv("AWS_S3_REGION", "us-east-1")
-        )
+        return S3Storage()
     
     raise ValueError(f"Unknown STORAGE_BACKEND: {backend}")
