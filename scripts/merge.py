@@ -36,7 +36,7 @@ def main() -> None:
 
     # write merged DataFrame to storage
     out_key = processed_merged()
-    df.to_parquet(out_key)
+    storage.write_parquet(df, out_key)
 
     # confirm
     print(f"[OK] wrote {len(df)} rows -> {out_key}")
