@@ -2,10 +2,10 @@
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONNUNBUFFERED=1
+ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-WORKDIR /app
+WORKDIR /opt/project
 
 # dependencies
 COPY requirements.txt /app/requirements.txt

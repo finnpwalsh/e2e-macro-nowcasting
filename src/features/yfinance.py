@@ -35,6 +35,7 @@ def make_yf_monthly_features(df_wide_daily: pd.DataFrame) -> pd.DataFrame:
     return (
         df_wide_daily
         .sort_index()
-        .resample("M")
+        .resample("MS")
         .last()
+        .reset_index()
     )

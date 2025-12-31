@@ -22,7 +22,7 @@ import pandas as pd
 from src.validation.fred import clean_fred_long
 from src.features.fred import build_fred_wide
 
-def prep_fred(df_raw: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+def prep_fred(df_raw: pd.DataFrame) -> pd.DataFrame:
     """
     Orchestrates cleaning and transformation of raw FRED data.
 
@@ -39,5 +39,5 @@ def prep_fred(df_raw: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     df_long = clean_fred_long(df_raw)
     df_wide = build_fred_wide(df_long)
-    return df_long, df_wide
+    return df_wide
 
