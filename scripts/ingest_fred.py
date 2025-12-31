@@ -1,63 +1,56 @@
 """
-Ingest FRED time series and write data to parquet files under data/raw/.
+Ingest FRED time series and write data to parquet files under data/raw/fred/.
 
 RESPONSIBILITIES:
 - load FRED api
 - call ingest_fred_series
-- write raw data to data/raw/
+- write raw data to data/raw/fred/
 - confirm task ran successfully
 
 OUTPUTS:
-- data/raw/fred_{SERIES_ID}.parquet
-- data/raw/fred_all.parquet
+- data/raw/fred/fred_all.parquet
 """
 from __future__ import annotations
 
 import os
 import pandas as pd
-from pathlib import Path
 
 from dotenv import load_dotenv
 from fredapi import Fred
 
 from src.ingestion.fred import ingest_fred_series
 from src.config.fred import FRED_SERIES
-
-OUTDIR = Path("data/raw")
+from src.storage.paths import raw_fred_all
+from src.storage.factory import get_storage
 
 def main() -> None:
-    # load secrets
+    # load env
     load_dotenv()
-    api_key = os.getenv("FRED_API_KEY")
+    storage = get_storage()
 
-    # handle missing 
+    # load FRED
+    api_key = os.getenv("FRED_API_KEY") 
     if not api_key:
         raise RuntimeError("Missing FRED_API_KEY. Add it to .env")
     
-    # make out directory (and all parent directories) if
-    # doesn't exist. Do not throw error if it does exist
-    OUTDIR.mkdir(parents=True, exist_ok=True)
-
-    # create Fred variable
     fred = Fred(api_key = api_key)
-
-    # initialize dataframe for concatinated series
-    dfs = []
     
-    # append each FRED series to combined
+    # append each FRED series to list
+    dfs = []
     for series_id in FRED_SERIES:
-        # ingest series
         df = ingest_fred_series(fred, series_id)
         dfs.append(df)
         print(f"[OK] fetched {series_id}: {len(df):,} rows.")
     
-    # write combined series into data/raw
-    out_path = OUTDIR / "fred_all.parquet"
+    # concatinate FRED series list -> combined DataFrame
     combined = pd.concat(dfs, ignore_index=True)
-    combined.to_parquet(out_path, index=False)
+    
+    # write concatinated DataFrame to storage
+    out_key = raw_fred_all()
+    storage.write_parquet(df=combined, key=out_key, index=False)
 
     # confirm the task ran successfully
-    print(f"[OK] wrote {len(combined):,} rows -> {out_path}")
+    print(f"[OK] wrote {len(combined):,} rows -> {out_key}")
 
 # run
 if __name__ == "__main__":

@@ -29,14 +29,14 @@ Called by scripts/train_ridge.py.
 from __future__ import annotations
 
 import pandas as pd
-from pathlib import Path
+
 from sklearn.pipeline import Pipeline
 
 from src.models.baseline import make_ridge_pipeline
 from src.evaluation.metrics import regression_metrics
 
 def train_ridge(
-       infile: Path = Path("data/processed/merged.parquet"),
+       df: pd.DataFrame,
        target: str = "CPIAUCSL",
        split_date: str = "2020-01-01",
        alpha: float = 1.0,
@@ -47,9 +47,6 @@ def train_ridge(
     Returns the fitted model, eval metrics, and a DataFrame
     of out-of-sample predictions.
     """
-    # read
-    df = pd.read_parquet(infile)
-    
     # prep
     df["date"] = pd.to_datetime(df["date"])
     df = df.sort_values("date")

@@ -1,43 +1,47 @@
 """
 Ingest all yfinance tickers, combine, and write combined
-DataFrame to data/raw as parquet.
+DataFrame to data/raw/yfinance/ as parquet.
 
 RESPONSIBILITIES:
 - ingest all yf tickers
 - append to combined DataFrame
-- write combined DataFrame to data/raw/yf_long.parquet
+- write combined DataFrame to data/raw/yfinance/
 - confirm task ran successfully
 
 OUTPUTS:
-- data/raw/yf_long.parquet
+- data/raw/yfinance/yf_all.parquet
 """
 from __future__ import annotations
 
 import pandas as pd
-from pathlib import Path
+from dotenv import load_dotenv
 
 from src.ingestion.yfinance import ingest_yf_series
 from src.config.yfinance import YF_TICKERS
-
-OUTDIR = Path("data/raw")
+from src.storage.paths import raw_yfinance_all
+from src.storage.factory import get_storage
 
 def main() -> None:
-    # make output directory if not exists
-    OUTDIR.mkdir(parents=True, exist_ok=True)
+    # load env
+    load_dotenv()
+    storage = get_storage()
 
+    # append each yfinance tickers to list
     dfs = []
     for ticker in YF_TICKERS:
         df = ingest_yf_series(ticker=ticker)
         dfs.append(df)
         print(f"[OK] fetched {ticker}:  {len(df):,} rows.")
     
-    # write combined series into data/raw
-    outpath = OUTDIR / "yf_long.parquet"
+    # concatinate yfinance ticker list to combined DataFrame
     combined = pd.concat(dfs, ignore_index=True)
-    combined.to_parquet(outpath, index=False)
+    
+    # write out
+    out_key = raw_yfinance_all()
+    storage.write_parquet(df=combined, key=out_key, index=False)
 
     # confirm the task ran successfully
-    print(f"[OK] wrote {len(combined):,} rows -> {outpath}")
+    print(f"[OK] wrote {len(combined):,} rows -> {out_key}")
 
 # run
 if __name__ == "__main__":

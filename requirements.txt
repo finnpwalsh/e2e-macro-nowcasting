@@ -26,3 +26,6 @@ psycopg2-binary
 
 # artifact tracking
 mlflow
+
+# S3
+boto3>=1.34

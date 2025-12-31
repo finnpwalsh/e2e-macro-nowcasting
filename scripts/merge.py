@@ -12,28 +12,34 @@ OUTPUTS:
 - data/processed/merged.parquet
 """
 from __future__ import annotations
-import pandas as pd
-from pathlib import Path
+
+from dotenv import load_dotenv
 
 from src.pipelines.merge import build_merged
-
-FRED_INPATH = Path("data/processed/fred_wide.parquet")
-YF_INPATH = Path("data/processed/yf_wide.parquet")
-OUTPATH = Path("data/processed/merged.parquet")
+from src.storage.factory import get_storage
+from src.storage.paths import processed_fred_wide, processed_yfinance_features, processed_merged
 
 def main() -> None:
+    # load env
+    load_dotenv()
+    storage = get_storage()
+
     # read infiles
-    fred = pd.read_parquet(FRED_INPATH)
-    yf = pd.read_parquet(YF_INPATH)
+    fred_in = processed_fred_wide()
+    yf_in = processed_yfinance_features()
+
+    fred = storage.read_parquet(fred_in)
+    yf = storage.read_parquet(yf_in)
 
     # merge
     df = build_merged(fred=fred, yf=yf)
 
-    # write out
-    df.to_parquet(OUTPATH)
+    # write merged DataFrame to storage
+    out_key = processed_merged()
+    storage.write_parquet(df, out_key)
 
     # confirm
-    print(f"[OK] wrote {len(df)} rows -> {OUTPATH}")
+    print(f"[OK] wrote {len(df)} rows -> {out_key}")
 
 if __name__ == "__main__":
     main()
