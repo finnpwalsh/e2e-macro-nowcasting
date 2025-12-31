@@ -14,6 +14,7 @@ OUTPUTS:
 from __future__ import annotations
 
 import pandas as pd
+from dotenv import load_dotenv
 
 from src.ingestion.yfinance import ingest_yf_series
 from src.config.yfinance import YF_TICKERS
@@ -22,6 +23,7 @@ from src.storage.factory import get_storage
 
 def main() -> None:
     # load env
+    load_dotenv()
     storage = get_storage()
 
     # append each yfinance tickers to list
