@@ -3,15 +3,37 @@
 ### December 2X, 2025
 **NEXT**
 - 
-- 
-- 
 
 **DONE**
 - 
-- 
-- 
 
 ## V1
+### December 30, 2025
+**NEXT**
+- v1.5.0 – cloud-native serving
+
+**DONE**
+- configured MLflow to support remote (S3) artifact storagr
+- create data and artifact S3 buckets via terraform
+- S3-backed storage for data
+
+### December 29, 2025
+**NEXT**
+- implement S3-backed storage
+
+**DONE**
+- Create Storage generic class
+- implement Local Storage
+
+### December 28, 2025
+**NEXT**
+- start 1.4.0 – S3-backed storage
+
+**DONE**
+- update Makefile, airflow DAG
+- finalize docs
+- tag + ship 1.3.0
+
 ### December 27, 2025
 **NEXT**
 - update airflow DAG
