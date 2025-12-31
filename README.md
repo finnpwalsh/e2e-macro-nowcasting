@@ -1,13 +1,14 @@
 # End-to-End Macro Nowcasting
 ## Overview
-End-to-end inflation nowcasting system built as a production-style ML pipeline with orchestration, artifact tracking, and reproducible infrastructure.
+End-to-end inflation nowcasting system built as a production-grade ML platform emphasizing reproducibility and governed model lifecycle management.
 
-This repository demonstrates how to design, version, and operate an end-to-end macroeconomic ML pipeline with production-grade infrastructure practices. 
+This repository demonstrates how to design, version, evaluate and operate a macroeconomic ML system end-to-end, with explicit separation between infrastructure, modeling, and serving responsibilities. 
 
 ### Status
-**Dec 27, 2025**: Under active development
+**Dec 31, 2025**: Under active development
 
-**v1.3.0** released — yfinance integration
+**v1.4.0** released — full S3-backed storage integration
+
 
 ## Contents
 - [V1 Overview](#v1-overview)
@@ -16,31 +17,34 @@ This repository demonstrates how to design, version, and operate an end-to-end m
 - [Roadmap](#roadmap)
 - [Version History](#version-history)
 
+
 ## V1 Overview
-**Goals:** A reproducible, production-style inflation nowcasting pipeline.
+**Theme:** ML platform & infrastructure
 
 ### Version Philosophy
-- Reproducibility over performance
-- Explicit data and model contracts
-- Infrastructure-first design before model optimization
+- Reproducibility over raw performance
+- Explicit data, feature, and model contracts
+- Infrastructure-first design before model complexity
+- Clear ownership boundaries between pipeline stages
 
 ### Scope
-- Reliable macroeconomic and market data ingestion
-- Data validation and schema contracts 
+- Reliable macroeconomic and market data ingestion 
 - Deterministic, S3-backed storage: raw → processed
+- Data validation and schema contracts
 - Run-scoped model artifacts with explicit run identity
-- MLflow tracking
+- Experiment tracking and artifact logging with MLflow
 - Pipeline orchestration with Apache Airflow
 - Containerization with Docker
-- Serving via FastAPI
-- Full documentation
+- Model serving via FastAPI
+- Cloud-native deployment (ECS Fargate, IaC via Terraform)
+- Promotion and rollback mechanisms
+- Production-oriented documentation (architecture, ops, contracts)
 
 ### Non-goals (V1)
 Intentionally deferred to later versions:
-- Hyperparameter tuning or model selection
-- Real-time serving or latency guarantees
-- Cloud compute deployment (beyond storage)
-- Monitoring, drift detection, or CI/CD
+- Model selection or hyperparameter optimization
+- Online learning or real-time retraining
+- Latency or throughput optimization
 
 ### Data – FRED
 **Target**
@@ -60,68 +64,59 @@ Intentionally deferred to later versions:
 - Energy Prices (CL=F)
 - USD Strength (UUP)
 
+
 ## Quickstart
-**Note**: Docker is the source of truth for runtime behavior. `.venv` is used only for local development and testing. 
+**Note**: Docker is the source of truth for runtime behavior. This runs the full pipeline locally using Airflow and S3-backed storage
 
-### Python Version
-- **Local Development**: Python 3.11
-- **Containers**: `python:3.11-slim`
-
-### Containerized Setup + Run
-#### Prerequisites
+**Prerequisites**
 - Docker + Docker Compose
 - Make
 - A FRED API key ([get one here](https://fred.stlouisfed.org/docs/api/api_key.html))
 
-#### 1. Clone the repo
+### 1. Clone the repository
 ```
 git clone https://github.com/finnpwalsh/e2e-macro-nowcasting.git
 cd e2e-macro-nowcasting
 ```
 
-#### 2. Set environment variables
-Create a `.env` file in project root:
+### 2. Configure environment variables
+Copy the example file and fill in required values:
+
 ```
-# FRED API
-FRED_API_KEY=your_api_key_here
-
-# Airflow Secret Key
-AIRFLOW__WEBSERVER__SECRET_KEY=dev_secret_key
-
-# suppress GitPython warnings for mlflow
-GIT_PYTHON_REFRESH=quiet
+cp .env.example .env
 ```
 
-#### 3. Build Docker image
+At minimum, set:
+`FRED_API_KEY` • `AIRFLOW__WEBSERVER__SECRET_KEY` • `AWS_S3_BUCKET_DATA` • `AWS_S3_BUCKET_ARTIFACTS` • `AWS_S3_REGION` • `AWS_PROFILE`
+
+### 3. Build Containers
 ```
 make build
 ```
 
-#### 4. Start Airflow
+### 4. Start Airflow
 ``` 
 make up
 ```
-This will:
-- start Postgres
-- initialize Airflow metadata database
-- create an admin user
-- launch the Airflow webserver and scheduler
 
 Access the Airflow UI at: http://localhost:8080
 **Login**: Username: `admin` | Password: `admin`
 
-#### 5. Run pipeline
-Trigger DAG `fred_pipeline` via:
+Access the MLflow UI at: http://localhost:5000
+
+### 5. Run the pipeline
 ```
 make run
 ```
 
-#### 6. Shut down
+This executes the full pipeline end-to-end
+
+### 6. Shut down
 ```
 make down
 ```
 
-#### Intermediate Containerized Development
+### Optional: Run individual stages
 These targets run individual pipeline stages inside containers without requiring a full DAG execution.
 
 - `make ingest`
@@ -130,122 +125,66 @@ These targets run individual pipeline stages inside containers without requiring
 - `make merge`
 - `make test` (data contract testing via pytest)
 
-### Local Setup & Run
-#### 1. Install Python 3.11
-```
-brew install python@3.11
-```
-
-#### 2. Create `.venv` (already .gitignore(d))
-```
-python3.11 -m venv .venv
-```
-
-#### 3. Activate `.venv`
-```
-source .venv/bin/activate
-```
-
-#### 4. Local dev
-Call scripts via module, e.g.
-```
-python -m scripts.train_ridge
-```
-
-#### 5. Shut down
-
-```
-deactivate
-```
 
 ## Repo Structure – V1 (Current)
 ```
 ├── airflow/
 │   └── dags/           # DAG orchestration
+├── docs/
+├── infra/
+│   ├── mlflow/         # mlflow tracking infra (service config)
+│   └── terraform/      # IaC for cloud-native deployment
+│       └── s3/
 ├── scripts/            # program drivers
 ├── src/
 │   ├── config/         # configuration and constants
 │   ├── evaluation/     # model evaluation logic
 │   ├── features/       # feature definitions / config
 │   ├── ingestion/      # ingestion logic
+│   ├── materialization # write model artifacts to storage
 │   ├── models/         # model implementations
 │   ├── pipelines/      # end-to-end logic
-│   ├── runs/           # run identity and artifact I/O
+│   ├── storage/        # Storage interface with local, S3 implementations
 │   └── validation/     # data checks and contracts
 └── tests/
 ```
 
+
 ## Roadmap
 ### Version Scopes
-- **V0**: prototype ingestion &rarr cleaning &rarr baseline training
-- **V1**: production-ready pipeline (infra, serving, cloud storage)
-- **V2** (planned): modeling improvements
-- **V3** (planned): production hardening (monitoring, CI/CD)
-- **V4** (planned): real-time nowcasting + performance/scale
+- **V0**: prototype ingestion and baseline modeling
+- **V1**: production ML platform (infra, orchestration, serving)
+- **V2** (planned): Applied regression + governed modeling lifecycle
+- **V3** (planned): Production hardening (monitoring, reliability)
+- **V4** (planned): Real-time nowcasting and performance scaling
 
 ### V1 Roadmap
-**Scope**: infra foundation
+**Theme**: infrastructure platform – MLOps
 
 - **1.4.0**: S3-backed storage
-- **1.5.0**: FastAPI serving
+- **1.5.0**: FastAPI + ECS Fargate serving
+- **1.6.0**: Terraform + CI/CD
+- **1.7.0**: Model promotion Loop
+- **1.8.0**: Ops hardening + Docs
 
-### V2 Roadmap
-**Scope**: Modeling
+### V2 Scope
+**Theme**: Applied regression with governed model lifecycle
 
-- Feature expansion (`FRED`, `yfinance`)
-- Feature aggregation and lag structure
-- Rolling and expanding-window backtests
-- Stronger baseline models (ridge / elastic net)
-- Model comparison and error diagnostics
+- SQL-first analytical layer (Postgres/Snowflake) producing reproducible, versioned feature and prediction tables
+- Deterministic feature pipeline with explicit schemas, manifests, and training-serving parity checks
+- Small, governed regression model set (OLS, Ridge, Elastic Net) with a unified interface
+- Walk-forward evaluation with strict temporal split and explicit promotion rules
+- Champion model selection integrated with the existing serving layer
+- Diagnostics, visuals, and documentation for modeling analysis and ops context
 
-### V3+ (Planned Architecture)
-```
-├── airflow/
-│   └── dags/
-│   ├── logs/
-│   └── plugins/
-├── api/
-│   └── deployment/
-├── data/
-│   ├── external/
-│   ├── interim/
-│   ├── processed/
-│   └── raw/
-├── deploy/
-│   ├── aws/
-│   └── k8s/
-├── docs/
-├── infra/
-│   ├── github-actions/
-│   └── terraform/
-├── mlflow/
-│   ├── artifacts/
-│   └── tracking/
-├── monitoring/
-│   ├── grafana/
-│   └── prometheus/
-├── notebooks/
-├── scripts/
-├── src/
-│   ├── config/
-│   ├── evaluation/
-│   ├── feature_store/
-│   │   ├── entities/
-│   │   └── registry/
-│   ├── features/
-│   ├── ingestion/
-│   ├── models/
-│   ├── pipelines/
-│   ├── serving/
-│   └── validation/
-└── tests
-    ├── api/
-    ├── data/
-    └── pipeline/
-```
+**Non-Goals (V2)**
+- New infrastructure services
+- Online learning or streaming ingestion
+- Complex ensembles or deep learning models
 
 ### Version History
 #### V1
+- **v1.4.0**: full S3-storage integration
 - **v1.3.0**: yfinance integration
 - **v1.2.0**: MLflow tracking
 - **v1.1.0**: run identity, run-scoped artifacts
