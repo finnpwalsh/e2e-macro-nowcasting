@@ -1,3 +1,30 @@
+x-airflow-env: &airflow_env
+  AIRFLOW__CORE__EXECUTOR: LocalExecutor
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+  AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+  AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
+  AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
+
+  # project
+  PYTHONPATH: /opt/project
+  FRED_API_KEY: ${FRED_API_KEY}
+
+  # MLflow (client)
+  MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
+  MLFLOW_EXPERIMENT_NAME: ${MLFLOW_EXPERIMENT_NAME:-nowcasting}
+  MLFLOW_REGISTRY_MODEL_NAME: ${MLFLOW_REGISTRY_MODEL_NAME:-nowcasting-models}
+  MLFLOW_MODEL_ALIAS: ${MLFLOW_MODEL_ALIAS:-champion}
+
+  # AWS (keep one region var)
+  AWS_PROFILE: ${AWS_PROFILE:-nowcasting-dev}
+  AWS_REGION: ${AWS_S3_REGION:-us-east-1}
+
+x-airflow-volumes: &airflow_vols
+  - ./:/opt/project
+  - ./airflow/dags:/opt/airflow/dags
+  - ./airflow/logs:/opt/airflow/logs
+  - ~/.aws:/root/.aws:ro
+
 services:
   postgres:
     image: postgres:16
@@ -13,38 +40,16 @@ services:
       timeout: 5s
       retries: 10
     restart: unless-stopped
-    networks:
-      - appnet
+    networks: [appnet]
 
   airflow-init:
     image: e2e-macro-nowcasting:dev
     depends_on:
       postgres:
         condition: service_healthy
-    environment: &airflow_env
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
-      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
-      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
-      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
-      AIRFLOW__LOGGING__BASE_LOG_FOLDER: /opt/airflow/logs
-      
-      PYTHONPATH: /opt/project
-      FRED_API_KEY: ${FRED_API_KEY}
-      
-      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
-      MLFLOW_EXPERIMENT_NAME: ${MLFLOW_EXPERIMENT_NAME:-nowcasting}
-      MLFLOW_REGISTRY_MODEL_NAME: ${MLFLOW_REGISTRY_MODEL_NAME:-nowcasting-models}
-      MLFLOW_MODEL_ALIAS: ${MLFLOW_MODEL_ALIAS:-champion}
-      
-      AWS_PROFILE: ${AWS_PROFILE:-nowcasting-dev}
-      AWS_REGION: ${AWS_S3_REGION:-us-east-1}
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/dags:/opt/airflow/dags
-      - ./:/opt/project
-      - ~/.aws:/root/.aws:ro
+    environment: *airflow_env
+    volumes: *airflow_vols
+    working_dir: /opt/project
     command:
       - bash
       - -lc
@@ -57,10 +62,7 @@ services:
           --lastname User \
           --role Admin \
           --email admin@example.com || true
-    restart: "no"
-    working_dir: "/opt/project"
-    networks:
-      - appnet
+    networks: [appnet]
 
   airflow-webserver:
     image: e2e-macro-nowcasting:dev
@@ -70,18 +72,13 @@ services:
       airflow-init:
         condition: service_completed_successfully
     environment: *airflow_env
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./:/opt/project
-      - ~/.aws:/root/.aws:ro
+    volumes: *airflow_vols
+    working_dir: /opt/project
     ports:
       - "8080:8080"
     command: bash -lc "airflow webserver"
     restart: unless-stopped
-    working_dir: "/opt/project"
-    networks:
-      - appnet
+    networks: [appnet]
 
   airflow-scheduler:
     image: e2e-macro-nowcasting:dev
@@ -91,19 +88,14 @@ services:
       airflow-init:
         condition: service_completed_successfully
     environment: *airflow_env
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./:/opt/project
-      - ~/.aws:/root/.aws:ro
+    volumes: *airflow_vols
+    working_dir: /opt/project
     command: bash -lc "airflow scheduler"
     restart: unless-stopped
-    working_dir: "/opt/project"
-    networks:
-      - appnet
+    networks: [appnet]
 
   mlflow:
-    build: 
+    build:
       context: .
       dockerfile: infra/mlflow/Dockerfile
     depends_on:
@@ -130,8 +122,7 @@ services:
         --allowed-hosts mlflow:5000,mlflow,localhost:*,127.0.0.1:* \
         --cors-allowed-origins http://localhost:*
     restart: unless-stopped
-    networks:
-      - appnet
+    networks: [appnet]
 
 volumes:
   postgres-db-volume:
