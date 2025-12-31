@@ -16,12 +16,15 @@ OUTPUTS:
 """
 from __future__ import annotations
 
+from dotenv import load_dotenv
+
 from src.pipelines.yfinance import prep_yf
 from src.storage.factory import get_storage
 from src.storage.paths import raw_yfinance_all, processed_yfinance_features
 
 def main() -> None:
     # load env
+    load_dotenv()
     storage = get_storage()
     
     # read infile

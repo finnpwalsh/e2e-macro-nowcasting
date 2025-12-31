@@ -13,12 +13,15 @@ OUTPUTS:
 """
 from __future__ import annotations
 
+from dotenv import load_dotenv
+
 from src.pipelines.merge import build_merged
 from src.storage.factory import get_storage
 from src.storage.paths import processed_fred_wide, processed_yfinance_features, processed_merged
 
 def main() -> None:
     # load env
+    load_dotenv()
     storage = get_storage()
 
     # read infiles

@@ -15,12 +15,15 @@ OUTPUTS:
 """
 from __future__ import annotations
 
+from dotenv import load_dotenv
+
 from src.pipelines.fred import prep_fred
 from src.storage.factory import get_storage
 from src.storage.paths import raw_fred_all, processed_fred_wide
 
 def main() -> None:
     # load env
+    load_dotenv()
     storage = get_storage()
     
     # read infile
