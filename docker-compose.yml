@@ -31,9 +31,14 @@ services:
       FRED_API_KEY: ${FRED_API_KEY}
       MLFLOW_TRACKING_URI: "sqlite:////opt/project/artifacts/mlflow.db"
       MLFLOW_DEFAULT_ARTIFACT_ROOT: "file:///opt/project/artifacts/mlflow"
+      AWS_PROFILE: ${AWS_PROFILE:-nowcasting-dev}
+      AWS_DEFAULT_REGION: ${AWS_S3_REGION:-us-east-1}
+      AWS_REGION: ${AWS_S3_REGION:-us-east-1}
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./:/opt/project
+      - ~/.aws:/root/.aws:ro
+      - ~/.aws:/home/airflow/.aws:ro
     command:
       - bash
       - -lc
@@ -47,6 +52,7 @@ services:
           --role Admin \
           --email admin@example.com || true
     restart: "no"
+    working_dir: "/opt/project"
 
   airflow-webserver:
     image: e2e-macro-nowcasting:dev
@@ -60,10 +66,13 @@ services:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
       - ./:/opt/project
+      - ~/.aws:/root/.aws:ro
+      - ~/.aws:/home/airflow/.aws:ro
     ports:
       - "8080:8080"
     command: bash -lc "airflow webserver"
     restart: unless-stopped
+    working_dir: "/opt/project"
 
   airflow-scheduler:
     image: e2e-macro-nowcasting:dev
@@ -77,8 +86,11 @@ services:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
       - ./:/opt/project
+      - ~/.aws:/root/.aws:ro
+      - ~/.aws:/home/airflow/.aws:ro
     command: bash -lc "airflow scheduler"
     restart: unless-stopped
+    working_dir: "/opt/project"
 
 volumes:
   postgres-db-volume:
