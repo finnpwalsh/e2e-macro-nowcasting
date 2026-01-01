@@ -3,6 +3,9 @@ x-airflow-env: &airflow_env
   AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW_DB_URI}
   AIRFLOW__CORE__LOAD_EXAMPLES: "False"
   AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
+  AIRFLOW__CORE__STORE_SERIALIZED_DAGS: "True"
+  AIRFLOW__CORE__MIN_SERIALIZED_DAG_UPDATE_INTERVAL: "30"
+
   AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
 
   # project
@@ -21,8 +24,8 @@ x-airflow-env: &airflow_env
 
 x-airflow-volumes: &airflow_vols
   - ./:/opt/project
-  - ./airflow/dags:/opt/airflow/dags
-  - ./airflow/logs:/opt/airflow/logs
+  - ./airflow/dags:/root/airflow/dags
+  - ./airflow/logs:/root/airflow/logs
   - ~/.aws:/root/.aws:ro
 
 services:
