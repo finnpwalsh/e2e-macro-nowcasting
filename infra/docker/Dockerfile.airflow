@@ -1,0 +1,11 @@
+FROM apache/airflow:2.9.3-python3.11
+
+USER root
+WORKDIR /opt/project
+
+COPY requirements/ /opt/project/requirements/
+RUN pip install --no-cache-dir -r requirements/base.txt
+
+COPY . /opt/project
+
+ENV PYTHONPATH=/opt/project/
