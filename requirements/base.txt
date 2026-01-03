@@ -1,0 +1,20 @@
+# data
+pandas
+pyarrow
+
+# secrets
+python-dotenv
+
+# in data
+fredapi
+yfinance
+
+# models
+scikit-learn
+joblib
+
+# artifact tracking
+mlflow
+
+# S3
+boto3>=1.34
