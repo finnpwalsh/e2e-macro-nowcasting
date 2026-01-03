@@ -36,7 +36,7 @@ def main() -> None:
     merged = storage.read_parquet(merged_key)
 
     # train
-    model, metrics, preds = train_ridge(merged)
+    model, metrics, preds, features = train_ridge(merged)
 
     # write
     written = write_model_artifacts(
@@ -47,6 +47,7 @@ def main() -> None:
         metrics=metrics,
         preds=preds,
         input_key=merged_key,
+        features=features,
     )
 
     # Confirm
@@ -57,8 +58,9 @@ def main() -> None:
     print(f"{INDENT}Mlflow run:  {written['mlflow_run_id']}")
     print(f"{INDENT}Experiment:  {os.getenv('MLFLOW_EXPERIMENT_NAME')}")
     print(f"{INDENT}Model:       {written['registry_model_name']}@{written['alias']}")
+    print(f"{INDENT}Model URI:   {written['model_uri']}")
     print(f"{INDENT}RMSE:        {metrics['rmse']:.4f}")
-    
+
     print()
     print("Outputs")
     print(f"{INDENT}preds key:   {written['predictions_key']}")
