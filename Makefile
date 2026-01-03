@@ -1,6 +1,5 @@
 # config
 APP_NAME    := e2e-macro-nowcasting
-IMAGE       := $(APP_NAME):dev
 PROJECT_DIR := /opt/project
 
 # local python dev
@@ -16,7 +15,7 @@ DAG_ID := price_nowcasting
 
 # build
 build:
-	docker build -t $(IMAGE) .
+	docker compose build
 
 # infra
 up:
