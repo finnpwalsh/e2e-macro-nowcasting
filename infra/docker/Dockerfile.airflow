@@ -9,3 +9,5 @@ RUN pip install --no-cache-dir -r requirements/base.txt
 COPY . /opt/project
 
 ENV PYTHONPATH=/opt/project/
+
+USER airflow
