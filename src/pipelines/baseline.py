@@ -23,6 +23,7 @@ Output:
     - date (datetime64[ns])
     - y (float): observed target value
     - y_hat (float): model predictions
+- features (list[str]): ordered feature columns used for training
 
 Called by scripts/train_ridge.py.
 """
@@ -40,23 +41,30 @@ def train_ridge(
        target: str = "CPIAUCSL",
        split_date: str = "2020-01-01",
        alpha: float = 1.0,
-) -> tuple[Pipeline, dict, pd.DataFrame]:
+) -> tuple[Pipeline, dict, pd.DataFrame, list[str]]:
     """
     Train and evaluate a baseline Ridge regression model.
 
-    Returns the fitted model, eval metrics, and a DataFrame
-    of out-of-sample predictions.
+    Returns:
+    - (Pipeline): fitted model
+    - (dict): eval metrics
+    - (pd.DataFrame): out-of-sample predictions
+    - (list[str]): feature columns
     """
     # prep
+    df = df.copy()
     df["date"] = pd.to_datetime(df["date"])
     df = df.sort_values("date")
+
+    # build feature cols
+    feature_cols = [c for c in df.columns if c not in ("date", target)]
 
     # drop rows w missing target
     df = df.dropna(subset=[target]).copy()
 
     # split target + feats
     y = df[target]
-    X = df.drop(columns=["date", target])
+    X = df[feature_cols]
 
     # split train + validate
     train = df["date"] < split_date
@@ -79,6 +87,7 @@ def train_ridge(
         "n_valid": int(valid.sum()),
         "n_feats": len(X.columns),
         "target": target,
+        "features": list(feature_cols),
         }
     )
     # for plotting / EDA
@@ -90,4 +99,4 @@ def train_ridge(
         }
     )
 
-    return model, metrics, preds
+    return model, metrics, preds, feature_cols
