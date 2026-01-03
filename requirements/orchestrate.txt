@@ -1,2 +1,2 @@
-apache-airflow-providers-amazon>=8.0.0
-psycopg2-binary # DB
+apache-airflow-providers-amazon==8.27.0
+psycopg2-binary=2.9.9 # DB
