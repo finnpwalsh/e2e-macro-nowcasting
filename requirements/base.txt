@@ -18,3 +18,6 @@ mlflow
 
 # S3
 boto3>=1.34
+
+# MOVE to orchestrate.txt once we stop running PythonOperator
+apache-airflow-providers-amazon>=8.0.0
