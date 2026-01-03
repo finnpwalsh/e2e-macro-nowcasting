@@ -41,6 +41,7 @@ def write_model_artifacts(
         model: Any,
         metrics: dict,
         preds: pd.DataFrame,
+        features: list[str],
         input_key: str, # pointer to data
 ) -> dict:
     """
@@ -70,6 +71,10 @@ def write_model_artifacts(
 
     registry_name = os.getenv("MLFLOW_REGISTRY_MODEL_NAME", model_name)
     alias_name = os.getenv("MLFLOW_MODEL_ALIAS", "champion")
+    promote = True
+
+    # canonical model uri for serving
+    model_uri = f"models:/{registry_name}@{alias_name}"
 
     # write full preds to data store
     k_preds = eval_predictions(model_name, run_id)
@@ -84,6 +89,8 @@ def write_model_artifacts(
                 "run_id": run_id,
                 "input_key": input_key,
                 "eval.predictions_key": k_preds,
+                "deploy.model_uri": model_uri,
+                "deploy.promote": str(promote).lower(),
             }
         )
 
@@ -113,6 +120,15 @@ def write_model_artifacts(
             artifact_file="eval_summary.json",
         )
 
+        # feature schema
+        mlflow.log_dict(
+            {
+                "features": list(features),
+                "n_features": len(features),
+            },
+            artifact_file="features.json",
+        )
+
         # model -> MLflow + registry
         model_info = mlflow.sklearn.log_model(
             sk_model=model,
@@ -133,13 +149,15 @@ def write_model_artifacts(
                     "Model registered but could not resolve version for alias assignment."
                 )
             version = hits[0].version
+
         
-        # set alias = "latest"
-        client.set_registered_model_alias(
-            name=registry_name,
-            alias=alias_name,
-            version=str(version),
-        )
+        # optional promotion: alias -> version (default on)
+        if promote:
+            client.set_registered_model_alias(
+                name=registry_name,
+                alias=alias_name,
+                version=str(version),
+            )
 
         return {
             "mlflow_run_id": run.info.run_id,
@@ -147,5 +165,7 @@ def write_model_artifacts(
             "registry_model_name": registry_name,
             "registry_model_version": str(version),
             "alias": alias_name,
+            "model_uri": model_uri,
+            "promoted": promote,
             "predictions_key": k_preds,
         }
