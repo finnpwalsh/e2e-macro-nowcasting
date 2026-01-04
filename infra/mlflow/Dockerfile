@@ -1,4 +1,4 @@
-FROM ghcr.io/mlflow/mlflow:2.14.3
+FROM ghcr.io/mlflow/mlflow:v2.14.3
 
 # Add Postgres driver + AWS SDK so:
 # - backend-store-uri can be postgres
