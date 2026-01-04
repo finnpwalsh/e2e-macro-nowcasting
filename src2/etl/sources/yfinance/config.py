@@ -14,7 +14,7 @@ YF_TICKERS = [
     "UUP",  # USD strength
 ]
 
-YF_REQUIRED_COLS = [
+YF_RAW_SCHEMA_COLS = [
     "date",
     "value",
     "ticker",
