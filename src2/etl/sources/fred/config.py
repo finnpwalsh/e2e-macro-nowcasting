@@ -1,4 +1,4 @@
-FRED_SERIES = [
+FRED_SERIES_IDS = [
     "CPIAUCSL",
     "CPIENGSL",
     "CPIHOSSL",
@@ -6,7 +6,7 @@ FRED_SERIES = [
     "UNRATE",
 ]
 
-FRED_REQUIRED_COLS = [
+FRED_RAW_SCHEMA_COLS = [
     "date",
     "value",
     "series_id"
