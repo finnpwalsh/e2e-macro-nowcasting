@@ -18,6 +18,7 @@ airflow/webserver_config.py
 .terraform/
 *.tfstate
 *.tfstate.*
+**/terraform.tfstate*
 
 # macOS
 .DS_Store
