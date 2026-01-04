@@ -14,19 +14,29 @@ x-airflow-env: &airflow_env
 
   # MLflow (client)
   MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
-  MLFLOW_EXPERIMENT_NAME: ${MLFLOW_EXPERIMENT_NAME:-nowcasting}
-  MLFLOW_REGISTRY_MODEL_NAME: ${MLFLOW_REGISTRY_MODEL_NAME:-nowcasting-models}
-  MLFLOW_MODEL_ALIAS: ${MLFLOW_MODEL_ALIAS:-champion}
+  MLFLOW_EXPERIMENT_NAME: ${MLFLOW_EXPERIMENT_NAME}
+  MLFLOW_REGISTRY_MODEL_NAME: ${MLFLOW_REGISTRY_MODEL_NAME}
+  MLFLOW_MODEL_ALIAS: ${MLFLOW_MODEL_ALIAS}
 
   # AWS (keep one region var)
-  AWS_PROFILE: ${AWS_PROFILE:-nowcasting-dev}
-  AWS_REGION: ${AWS_S3_REGION:-us-east-1}
+  AWS_SHARED_CREDENTIALS_FILE: /home/airflow/.aws/credentials
+  AWS_REGION: ${AWS_REGION}
+
+  # remote logging
+  AIRFLOW__LOGGING__REMOTE_LOGGING: "True"
+  AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER: "s3://${AWS_S3_BUCKET_AIRFLOW_LOGS}/airflow/logs"
+  AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID: "aws_default"
 
 x-airflow-volumes: &airflow_vols
   - ./:/opt/project
-  - ./airflow/dags:/root/airflow/dags
-  - ./airflow/logs:/root/airflow/logs
-  - ~/.aws:/root/.aws:ro
+  - ./airflow/dags:/opt/airflow/dags
+  - ~/.aws:/home/airflow/.aws:ro
+
+x-airflow-image: &airflow_image
+  image: e2e-macro-nowcasting-airflow:dev
+  build:
+    context: .
+    dockerfile: infra/docker/Dockerfile.airflow
 
 services:
   postgres:
@@ -37,6 +47,7 @@ services:
       POSTGRES_DB: airflow
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U airflow -d airflow"]
       interval: 5s
@@ -46,7 +57,7 @@ services:
     networks: [appnet]
 
   airflow-init:
-    image: e2e-macro-nowcasting:dev
+    <<: *airflow_image
     depends_on:
       postgres:
         condition: service_healthy
@@ -64,11 +75,14 @@ services:
           --firstname Admin \
           --lastname User \
           --role Admin \
-          --email admin@example.com || true
+          --email admin@example.com || true && \
+        airflow connections add aws_default \
+          --conn-type aws \
+          --conn-extra "{\"region_name\":\"${AWS_REGION}\"}" || true
     networks: [appnet]
 
   airflow-webserver:
-    image: e2e-macro-nowcasting:dev
+    <<: *airflow_image
     depends_on:
       postgres:
         condition: service_healthy
@@ -84,7 +98,7 @@ services:
     networks: [appnet]
 
   airflow-scheduler:
-    image: e2e-macro-nowcasting:dev
+    <<: *airflow_image
     depends_on:
       postgres:
         condition: service_healthy
@@ -98,6 +112,7 @@ services:
     networks: [appnet]
 
   mlflow:
+    image: e2e-macro-nowcasting-mlflow:dev
     build:
       context: .
       dockerfile: infra/mlflow/Dockerfile
@@ -105,12 +120,17 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      AWS_PROFILE: ${AWS_PROFILE:-nowcasting-dev}
-      AWS_REGION: ${AWS_S3_REGION:-us-east-1}
+      AWS_REGION: ${AWS_REGION}
       AWS_S3_BUCKET_ARTIFACTS: ${AWS_S3_BUCKET_ARTIFACTS}
       MLFLOW_BACKEND_STORE_URI: ${MLFLOW_BACKEND_STORE_URI}
+      AWS_SHARED_CREDENTIALS_FILE: /home/mlflow/.aws/credentials
     volumes:
-      - ~/.aws:/root/.aws:ro
+      - ~/.aws:/home/mlflow/.aws:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     ports:
       - "5001:5000"
     command:
@@ -121,9 +141,7 @@ services:
         --host 0.0.0.0 \
         --port 5000 \
         --backend-store-uri ${MLFLOW_BACKEND_STORE_URI} \
-        --default-artifact-root s3://${AWS_S3_BUCKET_ARTIFACTS}/mlflow \
-        --allowed-hosts mlflow:5000,mlflow,localhost:*,127.0.0.1:* \
-        --cors-allowed-origins http://localhost:*
+        --default-artifact-root s3://${AWS_S3_BUCKET_ARTIFACTS}/mlflow
     restart: unless-stopped
     networks: [appnet]
 
