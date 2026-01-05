@@ -19,8 +19,8 @@ Called by scripts/clean_fred.py.
 from __future__ import annotations
 import pandas as pd
 
-from src.validation.fred import clean_fred_long
-from src.features.fred import build_fred_wide
+from .clean import clean_fred_long
+from .build_wide import build_fred_wide
 
 def prep_fred(df_raw: pd.DataFrame) -> pd.DataFrame:
     """

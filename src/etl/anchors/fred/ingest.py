@@ -14,7 +14,7 @@ from __future__ import annotations
 import pandas as pd
 from fredapi import Fred
 
-from src.config.fred import FRED_REQUIRED_COLS as REQUIRED_COLS
+from .schema import FRED_RAW_SCHEMA_COLS as REQUIRED_COLS
 
 def validate_fred(df: pd.DataFrame) -> pd.DataFrame:
     '''
