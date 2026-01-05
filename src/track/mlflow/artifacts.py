@@ -9,8 +9,8 @@ import mlflow
 import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 
-from src.storage.base import Storage
-from src.storage.paths import eval_predictions
+from src.common.storage.base import Storage
+from src.common.storage.paths import eval_predictions
 
 # --- helpers ---
 def _require_env(var: str) -> str:
