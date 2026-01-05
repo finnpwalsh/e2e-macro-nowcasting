@@ -1,8 +1,8 @@
 ## repo refactor
 
-1. refactor `src/etl/sources` into `src/etl/anchors` and `src/etl/shocks`
-2. update modular `src/` calls with refactored `src/` directory naming, e.g. `src.config.baseline` -> `src.train.baseline.contracts`
-3. add README.md for `src/`
+1. create + implement tracking script
+2. refactor etl scripts (sources)
+3. add README.md for `src/` + update README for `scripts/`
 4. refactor `tests/`
 
 ```
