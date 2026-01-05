@@ -1,7 +1,7 @@
 from __future__ import annotations
 import pandas as pd
 
-from src.config.yfinance import YF_REQUIRED_COLS as REQUIRED_COLS
+from .schema import YF_RAW_SCHEMA_COLS as REQUIRED_COLS
 
 def clean_yf_long(df_raw: pd.DataFrame) -> pd.DataFrame:
     """

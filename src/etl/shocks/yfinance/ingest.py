@@ -15,7 +15,7 @@ from __future__ import annotations
 import pandas as pd
 import yfinance as yf
 
-from src.config.yfinance import YF_REQUIRED_COLS as REQUIRED_COLS
+from .schema import YF_RAW_SCHEMA_COLS as REQUIRED_COLS
 
 START_DATE = "2010-01-01"
 

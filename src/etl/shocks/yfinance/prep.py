@@ -1,8 +1,8 @@
 from __future__ import annotations
 import pandas as pd
 
-from src.validation.yfinance import clean_yf_long
-from src.features.yfinance import build_and_resample_yf
+from .clean import clean_yf_long
+from .build_monthly import build_and_resample_yf
 
 def prep_yf(df_raw: pd.DataFrame) -> pd.DataFrame:
     """
