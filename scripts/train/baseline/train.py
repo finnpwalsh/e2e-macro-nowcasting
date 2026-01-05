@@ -1,69 +1,100 @@
 """
-Train baseline ridge model and materialize outputs.
+Train baseline ridge model and write outputs to storage.
 
 RESPONSIBILITIES:
 - generate a unique run id (UTC)
 - read model-ready dataset from storage
 - train baseline model
-- write full eval preds to data storage(local/S3)
-- log metrics + run metadata to MLflow
-- log model to MLflow and register it
-- update MLflow Registry alias (e.g. champion) to point to this version (latest)
+- write versioned artifacts to data store (local/S3):
+  - model.joblib
+  - metrics.json
+  - predictions.parquet
+  - summary.json
+- print a clear success message
 
-OUTPUTS (Data store — local/S3):
-- artifacts/eval/baseline/<run_id>/predictions.parquet
+NOTE:
+- No MLflow logging here. Tracking happens in scripts/track/.
 """
 from __future__ import annotations
 
 import os
 from dotenv import load_dotenv
 
-from src.pipelines.baseline import train_ridge
-from src.storage.factory import get_storage
-from src.storage.paths import utc_run_id, processed_merged
-from src.materialization.model import write_model_artifacts
+from src.train.baseline.train import train_ridge
+from src.common.storage.factory import get_storage
+from src.common.storage import paths
 
 def main() -> None:
-    # load env
+    # 1) load environment/config
     load_dotenv()
     storage = get_storage()
 
-    # get run id
-    run_id = utc_run_id()
+    # 2) resolve I/O paths
+    run_id = paths.utc_run_id()
+    model_name="baseline"
 
-    # get merged
-    merged_key = processed_merged()
-    merged = storage.read_parquet(merged_key)
+    k_merged = paths.processed_merged()
 
-    # train
+    k_model = paths.model_file(model_name, run_id)
+    k_metrics = paths.model_metrics(model_name, run_id)
+    k_preds = paths.eval_predictions(model_name, run_id)
+    k_summary = paths.eval_summary(model_name, run_id)
+    k_latest = paths.model_latest(model_name)
+
+    # 3) read inputs from storage
+    merged = storage.read_parquet(k_merged)
+
+    # 4) call reusable logic from src/
     model, metrics, preds, features = train_ridge(merged)
 
-    # write
-    written = write_model_artifacts(
-        storage=storage,
-        model_name="baseline",
-        run_id=run_id,
-        model=model,
-        metrics=metrics,
-        preds=preds,
-        input_key=merged_key,
-        features=features,
-    )
+    # 5) write versioned artifacts back to storage
+    storage.write_joblib(model, k_model)
+    storage.write_json(metrics, k_metrics)
+    storage.write_parquet(preds, k_preds)
+    storage.write_json(
+        {
+            "model_name": model_name,
+            "run_id": run_id,
+            "input_key": k_merged,
+            "predictions_key": k_preds,
+            "n_rows": len(preds),
+            "n_cols": preds.shape[1],
+            "columns": list(preds.columns),
+            "n_features": len(features),
+            "features": list(features),
+        },
+        k_summary,
+    ) # eval summary
 
-    # Confirm
+    storage.write_json(
+        {
+            "model_name": model_name,
+            "run_id": run_id,
+            "model_key": k_model,
+            "metrics_key": k_metrics,
+            "predictions_key": k_preds,
+            "summary_key": k_summary,
+            "input_key": k_merged,
+        },
+        k_latest,
+    ) # latest pointer
+    
+
+    # 6) print a clear success message
     INDENT = "    "
     print()
-    print(f"Run")
-    print(f"{INDENT}ID:          {run_id}")
-    print(f"{INDENT}Mlflow run:  {written['mlflow_run_id']}")
-    print(f"{INDENT}Experiment:  {os.getenv('MLFLOW_EXPERIMENT_NAME')}")
-    print(f"{INDENT}Model:       {written['registry_model_name']}@{written['alias']}")
-    print(f"{INDENT}Model URI:   {written['model_uri']}")
+    print("Train complete")
+    print(f"{INDENT}Model:       {model_name}")
+    print(f"{INDENT}Run ID:       {run_id}")
+    print(f"{INDENT}Input:       {k_merged}")
     print(f"{INDENT}RMSE:        {metrics['rmse']:.4f}")
-
     print()
-    print("Outputs")
-    print(f"{INDENT}preds key:   {written['predictions_key']}")
+    print("Outputs (data store)")
+    print(f"{INDENT}model:       {k_model}")
+    print(f"{INDENT}metrics:     {k_metrics}")
+    print(f"{INDENT}preds:       {k_preds}")
+    print(f"{INDENT}summary:     {k_summary}")
+    print(f"{INDENT}latest:      {paths.model_latest(model_name)}")
     print()
 
 
