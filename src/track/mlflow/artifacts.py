@@ -9,15 +9,12 @@ import mlflow
 import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 
-from src.common.storage.base import Storage
-from src.common.storage.paths import eval_predictions
 
 # --- helpers ---
 def _require_env(var: str) -> str:
     v = os.getenv(var, "").strip()
     if not v:
         raise RuntimeError(f"Missing required env var: {var}")
-    
     return v
 
 
@@ -32,37 +29,26 @@ def _flatten_metrics(metrics: dict) -> dict[str, float]:
     return out
 
 
-# --- write artifacts ---
-def write_model_artifacts(
-        *,
-        storage: Storage,
-        model_name: str,
-        run_id: str, # utc
-        model: Any,
-        metrics: dict,
-        preds: pd.DataFrame,
-        features: list[str],
-        input_key: str, # pointer to data
+def log_and_register_model(
+    *,
+    model_name: str,
+    run_id: str,  # utc
+    model: Any,
+    metrics: dict,
+    preds: pd.DataFrame,
+    features: list[str],
+    input_key: str,          # pointer to data
+    predictions_key: str,    # pointer to preds already written to data store
+    promote: bool | None = None,
 ) -> dict:
     """
-    Write canonical artifacts for the inputted model.
-    
-    - prediction window -> data store (S3/local) via storage
-    - Metrics + model -> MLflow
-    - Latest pointer -> MLflow Model Registry alias (e.g. "champion")
+    MLflow source-of-truth:
+      - experiment tracking
+      - model registry
+      - alias promotion / rollback primitive
 
-    MLflow is source of truth for:
-    - experiment tracking
-    - model registry
-    - promotion / rollback
-
-    Data store is the source of truth for:
-    - datasets
-    - evaluation window outputs
-
-    Returns a dict of written storage keys for easy printing/testing.
+    This function performs ZERO data-store writes. It only logs pointers.
     """
-    # --- required MLflow config
     tracking_uri = _require_env("MLFLOW_TRACKING_URI")
     mlflow.set_tracking_uri(tracking_uri)
 
@@ -71,24 +57,18 @@ def write_model_artifacts(
 
     registry_name = os.getenv("MLFLOW_REGISTRY_MODEL_NAME", model_name)
     alias_name = os.getenv("MLFLOW_MODEL_ALIAS", "champion")
-    promote = True
+    promote = True if promote is None else bool(promote)
 
-    # canonical model uri for serving
+    # canonical model uri for serving (alias-based)
     model_uri = f"models:/{registry_name}@{alias_name}"
 
-    # write full preds to data store
-    k_preds = eval_predictions(model_name, run_id)
-    storage.write_parquet(preds, k_preds, index=False)
-
-    # MLflow run
     with mlflow.start_run(run_name=f"{model_name}:{run_id}") as run:
-        # tags (searchable)
         mlflow.set_tags(
             {
                 "model_name": model_name,
                 "run_id": run_id,
                 "input_key": input_key,
-                "eval.predictions_key": k_preds,
+                "eval.predictions_key": predictions_key,
                 "deploy.model_uri": model_uri,
                 "deploy.promote": str(promote).lower(),
             }
@@ -104,13 +84,13 @@ def write_model_artifacts(
                 "run_id": run_id,
                 "created_utc": run_id,
                 "input_key": input_key,
-                "predictions_key": k_preds,
+                "predictions_key": predictions_key,
                 "metrics": metrics,
             },
             artifact_file="metrics.json",
         )
 
-        # minimal eval summary
+        # minimal eval summary (derived from preds, but not writing preds)
         mlflow.log_dict(
             {
                 "n_rows": int(len(preds)),
@@ -136,7 +116,6 @@ def write_model_artifacts(
             registered_model_name=registry_name,
         )
 
-        # resolve registered version
         client = MlflowClient()
 
         version = getattr(model_info, "registered_model_version", None)
@@ -150,8 +129,6 @@ def write_model_artifacts(
                 )
             version = hits[0].version
 
-        
-        # optional promotion: alias -> version (default on)
         if promote:
             client.set_registered_model_alias(
                 name=registry_name,
@@ -167,5 +144,5 @@ def write_model_artifacts(
             "alias": alias_name,
             "model_uri": model_uri,
             "promoted": promote,
-            "predictions_key": k_preds,
+            "predictions_key": predictions_key,
         }
