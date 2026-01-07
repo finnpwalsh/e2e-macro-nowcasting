@@ -1,23 +1,16 @@
 """
-Build processed feature tables from raw anchor and shock datasets.
+Build processed feature tables from raw anchor datasets.
 
 This script reads raw long-form datasets from storage, applies cleaning and
 feature construction, and writes processed artifacts back to storage.
 
 RESPONSIBILITIES:
 - Read raw FRED (anchors) long-form data, clean, pivot to wide monthly table
-- Read raw Yahoo Finance (shocks) long-form data, clean, build monthly features
 - Write processed feature tables to storage
 - Print a clear success message on completion
 
 OUTPUTS:
 - anchors: `paths.processed_fred_wide()`        (e.g., data/processed/fred_wide.parquet)
-- shocks:  `paths.processed_yfinance_features()` (e.g., data/processed/yfinance_features.parquet)
-
-NOTES:
-- This script currently builds both anchors and shocks features unconditionally.
-- Future versions may parameterize which groups/sources to run and support
-  additional frequencies (e.g., intraday shocks).
 """
 from __future__ import annotations
 
