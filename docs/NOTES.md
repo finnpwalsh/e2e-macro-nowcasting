@@ -1,17 +1,17 @@
 ## repo refactor
 
-1. create + implement tracking script
-2. refactor etl scripts (sources)
+1. refactor scripts (anchors, shocks, assemble)
+2. create + implement tracking script
 3. add README.md for `src/` + update README for `scripts/`
 4. refactor `tests/`
 
 ```
 tests/
     etl/
-        sources/
+        anchors/
             fred/
+        shocks/
             yfinance/
-    
         assemble/
     
     train/
