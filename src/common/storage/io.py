@@ -6,7 +6,7 @@ from io import BytesIO
 
 import joblib
 
-from src.storage.base import Storage
+from src.common.storage.base import Storage
 
 def write_json(storage: Storage, key: str, payload: dict) -> None:
     data = json.dumps(payload, indent=2, sort_keys=True).encode("utf-8")
