@@ -5,7 +5,7 @@ WORKDIR /opt/project
 COPY requirements/ /opt/project/requirements/
 
 USER airflow
-RUN pip install --no-cache-dir -r requirements/base.txt
+RUN pip install --no-cache-dir -r requirements/airflow.txt
 
 COPY . /opt/project
 
