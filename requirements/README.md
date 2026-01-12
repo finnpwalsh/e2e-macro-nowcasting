@@ -1,94 +1,72 @@
-# Requirements Overview
+# Requirements
 
-This directory defines dependency boundaries by execution context. Each file is intentionally scoped to a specific runtime to keep images small, builds reproducible, and responsibilities clear.
+Role-specific dependency files for each stage of the ML lifecycle.
 
-## Files
+---
 
-### `base.txt`
-Core dependencies shared across **training, evaluation, and serving**.
+## `base.txt`
+Shared runtime dependencies for all job containers.
 
 Used by:
-- local training scripts
-- batch jobs
-- CI test environment (via `dev.txt`)
-- FastAPI serving (via `serve.txt`)
-
-Includes:
-- data processing (`pandas`, `pyarrow`)
-- modeling (`scikit-learn`, `joblib`)
-- artifact tracking (`mlflow`)
-- cloud access (`boto3`)
+- ETL
+- Train
+- Track
+- Serve
 
 ---
 
-### `serve.txt`
-Dependencies required to **serve models in production**.
+## `etl.txt`
+Data ingestion and preprocessing.
 
-Used by:
-- FastAPI inference service
-- ECS / Fargate runtime container
-
-Includes:
-- FastAPI
-- Uvicorn
-- all shared deps via `base.txt`
-
-Does NOT include:
-- pytest
-- airflow
-- orchestration or dev-only tools
+Extends:
+mmm
+-r base.txt
+mmm
 
 ---
 
-### `dev.txt`
-Dependencies for **local development and CI**.
+## `train.txt`
+Model training and evaluation.
 
-Used by:
-- GitHub Actions
-- local testing
-
-Includes:
-- pytest
-- all shared deps via `base.txt`
-
-This file is never installed in production containers.
+Extends:
+mmm
+-r base.txt
+mmm
 
 ---
 
-### `orchestrate.txt`
-Dependencies for **workflow orchestration only**.
+## `track.txt`
+Experiment tracking and model promotion.
 
-Used by:
-- Airflow scheduler
-- Airflow workers
-
-Includes:
-- apache-airflow (pinned)
-- database drivers (e.g. psycopg2)
-
-Airflow is intentionally isolated here to avoid polluting training or serving environments.
+Extends:
+mmm
+-r base.txt
+mmm
 
 ---
 
-## Installation Matrix
-| Context | Install Matrix |
-| ------- | -------------- |
-| Local dev/CI | `pip install -r requirements/dev.txt` |
-| Training scripts | `pip install -r requirements/base.txt` |
-| FastAPI serving | `pip install -r requirements/serve.txt` |
-| Airflow runtime | `pip install -r requirements/orchestrate.txt` |
+## `serve.txt`
+Online inference.
+
+Extends:
+mmm
+-r base.txt
+mmm
 
 ---
 
-## Design Principles
+## `airflow.txt`
+Airflow scheduler/webserver dependencies only.
 
-- **Orchestration \neq execution**
-Airflow is an orchestrator, not a runtime dependency.
+Notes:
+- Does **not** extend `base.txt`
+- No ML or application runtime deps
 
-- **Serving stays minimal**
-No pytest, no airflow, no unused tooling.
+---
 
-- **CI mirrors execution, not production**
-CI installs dev dependencies, production does not.
+## `dev.txt`
+Local development and CI utilities.
 
-This separation supports clean separation between training, orchestration, serving, and testing.
+Notes:
+- Union of job dependencies
+- Not used to build production images
