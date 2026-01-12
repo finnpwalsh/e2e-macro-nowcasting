@@ -1,6 +1,6 @@
 # Activity Log
 ## Template
-### December 2X, 2025
+### January XX, 2026
 **NEXT**
 - 
 
@@ -8,6 +8,21 @@
 - 
 
 ## V1
+### January 12, 2026
+**CONTEXT**
+- Resumed work after gap
+    - Note that work from Dec 30 -> now has been ongoing but has not been logged. All work has been focused on v1.4.1 refactor.
+- Focus: v1.4.1 refactor, infra + requirements + docker
+
+DONE
+- finalized requirements split (base + runtimes)
+- standardized docker layout (infra/docker/*)
+- clarified MLflow vs track responsibilities
+
+NEXT
+- finish Dockerfiles
+- smoke test pipeline
+
 ### December 30, 2025
 **NEXT**
 - v1.5.0 – cloud-native serving

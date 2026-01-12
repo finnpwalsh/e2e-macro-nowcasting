@@ -1,7 +1,6 @@
-## repo refactor
+## tests refactor
 
-1. add README.md for `src/` + update README for `scripts/`
-2. refactor `tests/`
+1. refactor `tests/`
 
 ```
 tests/
@@ -23,44 +22,21 @@ tests/
         storage/
 ```
 
-3. update modular `test/` calls with refactored `src/` directory naming, e.g. `src.config.baseline` -> `src.train.baseline.contracts`
-4. add lightweight README for `tests/`
-5. (maybe) add README for `src/` subfolders
+2. update modular `test/` calls with refactored `src/` directory naming, e.g. `src.config.baseline` -> `src.train.baseline.contracts`
+3. add lightweight README for `tests/`
 
 ---
 
 
 ## containerized orchestraction refactor
 
-1. Refactor requirement files
+1. Add infra/docker README
+2. restructure requirements
+
 ```
 requirements/
     base.txt
-    etl.txt
-    train.txt
-    track.txt
-    serve.txt
-    dev.txt
-```
-
-2. Docker refactor
-
-```
-infra/docker/
-  base/
-    Dockerfile
-
-  etl/
-    Dockerfile
-
-  train/
-    Dockerfile
-
-  track/
-    Dockerfile
-
-  serve/
-    Dockerfile
+    runtimes/
 ```
 
 3. Build images (ETL/Train/Track/Serve)
