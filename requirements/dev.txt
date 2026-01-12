@@ -1,2 +1,7 @@
 -r base.txt
+-r etl.txt
+-r train.txt
+-r track.txt
+-r serve.txt
+
 pytest

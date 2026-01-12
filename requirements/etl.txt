@@ -1,0 +1,5 @@
+-r base.txt
+
+# data sources
+fredapi
+yfinance==0.2.43
