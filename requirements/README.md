@@ -14,6 +14,11 @@ Objectives:
 - Clean separation of concerns
 - Reproducible runtimes
 
+Rules:
+
+- Production images must not install `requirements/dev/*`.
+- `requirements/runtimes/*.txt` must not include `-r ../base.txt` (shared deps come from base image).
+
 ---
 
 ## Folder Layout
@@ -123,8 +128,8 @@ Used by:
 
 Notes:
 
-- Does NOT extend base image
-- Is intentionally isolated from ML/runtime dependencies
+- Does NOT extend `base.txt`
+- Airflow image uses `apache/airflow:*` (separate runtime) so dependencies are intentionally isolated.
 - Contains only Airflow-specific providers and operations
 
 ---
@@ -151,7 +156,10 @@ Union of job dependencies for local development.
 
 Inherits:
 
-- `base.txt`
+- `../base.txt`
+
+From `/runtimes/`:
+
 - `etl.txt`
 - `train.txt`
 - `track.txt`
