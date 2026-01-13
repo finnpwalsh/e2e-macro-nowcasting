@@ -1,7 +1,8 @@
--r base.txt
--r etl.txt
--r train.txt
--r track.txt
--r serve.txt
+-r ../base.txt
+
+-r ../runtimes/etl.txt
+-r ../runtimes/train.txt
+-r ../runtimes/track.txt
+-r ../runtimes/serve.txt
 
 pytest
