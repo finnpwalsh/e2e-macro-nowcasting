@@ -30,14 +30,7 @@ tests/
 
 ## containerized orchestraction refactor
 
-1. Add infra/docker README
-2. restructure requirements
-
-```
-requirements/
-    base.txt
-    runtimes/
-```
-
+1. Add infra/docker/runtimes and services READMEs (copy/paste from infra/Docker README) OR restructure infra/docker README by runtimes vs. services
+2. Update Docker requirements installs with new directories (e.g. requirements/runtimes/etl.txt)
 3. Build images (ETL/Train/Track/Serve)
 4. Swap DAG tasks to container execution (DockerOperator locally then ECSOperator next)
