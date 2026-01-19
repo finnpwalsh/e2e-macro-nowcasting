@@ -2,6 +2,13 @@
 
 **Pipeline entrypoints** that orchestrate logic from `src` and perform all I/O. 
 
+- `jobs/` = execution & orchestration
+- `src/` = library code
+
+---
+
+## Contract
+
 Jobs adhere to the following 6-step contract:
 
 1. load environment / config
@@ -16,7 +23,7 @@ Jobs adhere to the following 6-step contract:
 ## Layout
 
 ```
-scripts/
+jobs/
   etl/
   train/
   track/
@@ -25,7 +32,7 @@ scripts/
 
 ---
 
-## Scopes
+## Job categories
 ### etl/
 **Role:** Produce raw, processed, and model-ready datasets
 
@@ -59,12 +66,5 @@ scripts/
 **Role:** Run and validate the inference service
 
 - start the API service
-- perform smoke tests (`/health`, `predict/`)
+- perform smoke tests (`/health`, `/predict`)
 - print active model pointer / version
-
----
-
-## Mental Model
-
-- `jobs/` = execution & orchestration
-- `src/` = library code
