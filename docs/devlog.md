@@ -30,6 +30,27 @@ Production-flavored infra hardening.
 
 ---
 
+### January 19, 2026
+
+**CONTEXT**
+
+- Continued V1.4.1 cleanup and consolidation
+- Repo-level clarity and presentation
+- Goal: lock in final layout + documentation boundaries before moving forward
+
+**NEXT**
+
+- Add thin README.md files for `docs/`, `orchestration/`, `tests/`, and `src/` components `etl/`, `track/`, and `train/`
+- Resume implementation work toward V1.5.0 (FastAPI serving + ECS/Fargate)
+
+**DONE**
+
+- Finalized root `README.md` as a lean platform entrypoint
+- Locked in top-level repo layout (`docs / infra / jobs / orchestration / requirements / src / tests`)
+- Improved documentation for `docs/`, `infra/docker`, `jobs/` 
+
+---
+
 ### January 13, 2026
 
 **CONTEXT**

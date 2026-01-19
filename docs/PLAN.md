@@ -1,36 +1,23 @@
-## tests refactor
+# Plan
 
-1. refactor `tests/`
+Near-term execution plans and task breakdown.
 
-```
-tests/
-    etl/
-        anchors/
-            fred/
-        shocks/
-            yfinance/
-        assemble/
-    
-    train/
-        baseline/
-    
-    track/
-        mlflow/
-    
-    common/
-        evaluation/
-        storage/
-```
+## Documentation
 
-2. update modular `test/` calls with refactored `src/` directory naming, e.g. `src.config.baseline` -> `src.train.baseline.contracts`
-3. add lightweight README for `tests/`
+- Add thin README.md files for `docs/`, `orchestration/`, and `src/` components `etl/`, `track/`, and `train/`
 
 ---
 
+## Tests refactor
 
-## containerized orchestraction refactor
+- update modular `test/` calls with refactored `src/` directory naming, e.g. `src.config.baseline` -> `src.train.baseline.contracts`
+- add missing unit/contract tests for refactored modules
 
-1. Add infra/docker/runtimes and services READMEs (copy/paste from infra/Docker README) OR restructure infra/docker README by runtimes vs. services
-2. Update Docker requirements installs with new directories (e.g. requirements/runtimes/etl.txt)
-3. Build images (ETL/Train/Track/Serve)
-4. Swap DAG tasks to container execution (DockerOperator locally then ECSOperator next)
+---
+
+## Containerized orchestraction
+
+- Update Docker requirements to install from `requirements/runtimes/*.txt`
+- Build images (ETL / Train / Track / Serve)
+- Smoke test each image by running its primary job locally
+- Swap DAG tasks to container execution (DockerOperator locally, ECSOperator later)
