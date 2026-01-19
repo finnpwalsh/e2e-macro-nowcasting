@@ -2,7 +2,7 @@
 
 Container images for each stage of the ML lifecycle and supporting infrastructure.
 
---
+---
 
 ## Design
 
@@ -25,6 +25,10 @@ infra/docker/
   runtimes/
   services/
 ```
+
+**Components:**
+- [Runtime images](runtimes/README.md)
+- [Service images](services/README.md)
 
 ---
 
