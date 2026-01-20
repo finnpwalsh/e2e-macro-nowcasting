@@ -1,4 +1,4 @@
-← [Back to Nowcast](../README.md)
+← [Back to Source](../README.md)
 
 # Common
 
@@ -16,10 +16,10 @@ Shared domain utilities used across the nowcasting lifecycle.
 ## Layout
 
 ```
-src/nowcast/common/
+common/
   evaluation/
   storage/
 ```
 
-- **Evaluation** – shared model evaluation metrics and diagnostics
-- **Storage** – shared storage abstractions and path helpers
+- **[Evaluation](./evaluation/README.md)** – shared model evaluation metrics and diagnostics
+- **[Storage](./storage/README.md)** – shared storage abstractions and path helpers
