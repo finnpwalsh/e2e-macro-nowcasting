@@ -1,14 +1,19 @@
-# services/
+← [Back to Docker](../README.md)
 
-Long-running infrastructure services that support the ML pipeline. These images are shared across jobs and kept separate from runtimes to keep dependencies lightweight.
+# Service Images
 
-Services are typically:
+Container images for long-running infrastructure services that support the ML pipeline.
 
-- Started once (e.g. via `docker-compose` or ECS)
-- Long-lived and stateful
-- Used by multiple jobs
+Service images are kept separate from runtimes to isolate dependencies and avoid coupling infrastructure services to job execution environments.
 
 ---
+
+## Contract
+
+- Service images define long-running infrastructure only
+- Services do not extend the shared base runtime image
+- Services are started once and shared across multiple jobs
+- Job execution happens exclusively in runtime images
 
 ## Layout
 
@@ -18,39 +23,4 @@ infra/docker/services/
   mlflow/
 ```
 
----
-
-## Images
-### `airflow`
-**Role:** Workflow orchestration (scheduler + webserver)
-
-- Based on: `apache/airflow:<version>-python3.11`
-- Installs: `requirements/runtimes/airflow.txt`
-- Copies project source into the image (for DAGs and imports)
-
-**Notes:**
-- Acts as infra
-- Does not install `requirements/base.txt` or ML job dependencies
-- Orchestrates jobs but does not execute ML workloads itself
-
----
-
-### `mlflow`
-**Role:** Experiment tracking and model registry server
-
-- Based on: `ghcr.io/mlflow/mlflow:<version>`
-- Adds:
-  - Postgres driver (backend store)
-  - AWS SDK (S3 artifact store)
-- Exposes: `5000`
-
-Notes:
-- Runs the MLflow **server**, not the client
-- Client-side logging and model registration happen in the `track` runtime
-
----
-
-## Mental Model
-
-- **Services** = control plane (coordination, tracking, orchestration)
-- **Runtimes** = execution plane (ETL, training, tracking jobs, serving)
+Each folder defines a single infrastructure service image.

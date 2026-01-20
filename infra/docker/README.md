@@ -4,17 +4,18 @@
 
 Container images for each stage of the ML lifecycle and supporting infrastructure.
 
-- **`base`** – shared runtime layer
-- **Runtimes** – job-specific layers on top of base
+- **Runtimes** – execution images for pipeline jobs
+  - `base` – shared runtime foundation
+  - stage-specific runtimes layered on top
 - **Services** – always-on infrastructure images
 
 ---
 
 ## Contract
 
-- The base image installs `requirements/base.txt`
-- Runtime images extend the base image and install only their corresponding `requirements/runtimes/*.txt`
-- Service images do **not** extend the base image and install only dependencies required to run the service
+- The base runtime image installs `requirements/base.txt`
+- All runtime images extend the base runtime image and install only their corresponding `requirements/runtimes/*.txt`
+- Service images do **not** extend the base runtime image and install only dependencies required to run the service
 
 ---
 
@@ -26,5 +27,5 @@ infra/docker/
   services/
 ```
 
-- [Runtime images](runtimes/README.md)
-- [Service images](services/README.md)
+- **[Runtime images](runtimes/README.md)**
+- **[Service images](services/README.md)**

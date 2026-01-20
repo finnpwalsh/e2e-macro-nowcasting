@@ -1,12 +1,20 @@
-# runtimes/
+← [Back to Docker](../README.md)
 
-Containerized execution environments for each stage of the ML lifecycle. Each runtime is built for a single phase and layered on top of a shared `base` image.
+# Runtime Images
 
-Runtimes are designed to:
+Containerized execution environments for pipeline jobs.
 
-- Stay lightweight via incremental dependencies
-- Run the same way locally, in Airflow, and on ECS/Fargate
-- Scale cleanly as new pipeline stages are added
+Runtime images are built on top of a shared base imsge and provide stage-specific dependencies for executing jobs.
+
+---
+
+## Contract
+
+- Runtime images extend the shared base image
+- Each runtime installs only its own incremental dependencies
+- Runtimes are used for batch execution (local, Airflow, ECS)
+
+Runtime images do not define services or long-running processes.
 
 ---
 
@@ -21,56 +29,4 @@ infra/docker/runtimes/
   serve/
 ```
 
----
-
-## Images
-### `base`
-**Role:** Shared foundation for all job runtimes
-
-- Based on: `python:3.11-slim`
-- Installs: `requirements/base.txt`
-- Sets: `PYTHONPATH=/opt/project`
-- Default CMD: `bash`
-
-Used by all runtime stages.
-
----
-
-### `etl`
-**Role:** Data ingestion and preprocessing jobs
-
-- Extends: `base`
-- Installs: `requirements/runtimes/etl.txt`
-
----
-
-### `train`
-**Role:** Model training and evaluation jobs
-
-- Extends: `base`
-- Installs: `requirements/runtimes/train.txt`
-
----
-
-### `track`
-**Role:** Experiment tracking and model lifecycle runtime
-
-- Parent: `base`
-- Installs: `requirements/runtimes/track.txt`
-
----
-
-### `serve`
-**Purpose:** Online inference API runtime
-
-- Parent: `base`
-- Installs: `requirements/runtimes/serve.txt` 
-- Exposes: `8000`
-- Default CMD: `uvicorn src.serve.app:app ...`
-
----
-
-## Mental Model
-
-- **Runtimes** = execution environments for pipeline jobs
-- **Services** = long-running infrastructure
+Each folder defines a single runtime image.
