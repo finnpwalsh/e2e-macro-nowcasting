@@ -14,11 +14,11 @@ For easy copy/paste logging:
 
 - 
 
-**NEXT**
+**DONE**
 
 - 
 
-**DONE**
+**NEXT**
 
 - 
 
@@ -27,6 +27,36 @@ For easy copy/paste logging:
 ## V1
 
 Production-flavored infra hardening.
+
+---
+
+### January 20, 2026
+
+**CONTEXT**
+
+- Ongoing v1.4.1 refactor focused on repo structure and documentation hygeine
+- Goal: align project with clean ML system abstractions before moving into v1.5.0 (serving)
+
+**DONE**
+
+- Standardize README pattern across the repo
+    - overview-contract-layout
+    - links to parent and child READMEs
+    - thin, contract-based, boundary-focused
+- Added and refined READMEs for
+    - `infra/` and all applicable subfolders
+    - `requirements/`
+    - `src/`
+    - `jobs/`
+    - `orchestration/`
+- Finalized Terraform split: `storage/` vs `serving/`
+
+**NEXT**
+
+- Add and refine READMEs for:
+    - `requirements/dev` and `requirements/runtimes`
+    - All applicable `src/` subfolders
+- Ensure ALL READMEs have links to parent and child READMEs
 
 ---
 

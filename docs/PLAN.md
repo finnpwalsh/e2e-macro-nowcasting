@@ -1,10 +1,10 @@
-# Plan
+# V1.4.1 Plan
 
 Near-term execution plans and task breakdown.
 
 ## Documentation
 
-- Add thin README.md files for `docs/`, `orchestration/`, and `src/` components `etl/`, `track/`, and `train/`
+- Add thin README.md files for `docs/` and `src/` components `etl/`, `track/`, and `train/`
 
 ---
 
