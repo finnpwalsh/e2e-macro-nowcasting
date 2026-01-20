@@ -1,24 +1,21 @@
-# track/
-Tracking scripts log and register **already-produced artifacts** into metadata systems (MLflow today). Tracking is **control-plane**: it should not retrain models and should not decide artifact schemas.
+← [Back to Jobs](../README.md)
 
-## `track/`
-job entrypoints that:
-  - read `run.json` (and referenced artifacts) from storage
-  - call tracking backends in `src/track/track.py` (e.g., MLflow)
-  - register/alias models as needed
+# Track
+
+Tracking entrypoints log and register already-produced artifacts into metadata systems. Tracking is control-plane: it should not retrain models nor define artifact schemas.
 
 ---
 
+## Contract
 
-## Implementation notes
-- MLflow-specific logic lives in `src/track/mlflow.py` so scripts remain backend-agnostic.
-- Tracking is best-effort; training artifacts are valid even if tracking fails.
+- Read `run.json` and referenced artifacts from storage
+- Delegate backend-specific tracking to `src`
+- Treat tracking as best-effort: training artifacts remain valid even if tracking fails
 
 ---
 
+## Layout
 
-## Example structure
 ```
-track/
-  track.py                # reads run.json + artifacts, calls src.track.mlflow
+jobs/track/
 ```

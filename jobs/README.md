@@ -1,4 +1,6 @@
-# jobs/
+← [Back to Root](../README.md)
+
+# Jobs
 
 **Pipeline entrypoints** that orchestrate logic from `src` and perform all I/O. 
 
@@ -28,3 +30,8 @@ jobs/
   track/
   serve/ # future
 ```
+
+- **[ETL](./etl/README.md)** – batch ingestion, cleaning, and feature construction entrypoints
+- **[Train](./train/README.md)** – model training and evaluation entrypoints
+- **[Track](./track/README.md)** – experiment tracking and model registration entrypoints
+- **Serve** – online inference and model serving entrypoints (future)

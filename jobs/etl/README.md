@@ -1,44 +1,29 @@
-# etl/
-ETL scripts are responsible for producing **raw** and **processed** datasets and assembling **model-ready** training tables.
+← [Back to Jobs](../README.md)
 
 
-## `etl/anchors/` and `etl/shocks/`
-*Sources-specific jobs (raw boundary + processed features)*
+# ETL
 
-  - Each source owns its own ingestion and processed feature artifacts.
-  - Source types: 
-    - `anchors`: monthly macroeconomic data
-    - `shocks`: intra-daily financial market tickers
-  - Pattern:
-    - `ingest.py` → writes raw source data
-    - `build_wide.py` (or `build_<freq>_features.py`) → writes processed feature tables
+ETL pipeline entrypoints responsible for producing raw, processed, and model-ready datasets used by downstream training jobs.
 
 ---
 
+## Contract
 
-## `etl/assemble/`
-*cross-source assembly / alignment jobs*
-
-  - Combines source-level processed artifacts into a **model-ready dataset** used by training.
-  - In V1 this is typically a monthly dataset builder (may be a pure “merge” today).
-  - In V2 this is where frequency alignment can live (monthly anchors + intraday sensors), while keeping training scripts stable.
+- Produce raw source datasets and processed feature datasets
+- Assemble model-ready training tables consumed by downstream jobs
+- Organize ETL by domain (`anchors`, `shocks`) and cross-source assembly (`assemble`)
 
 ---
 
+## Layout
 
-## Example structure
 ```
-etl/
+jobs/etl/
   anchors/
-    fred/
-      ingest.py
-      build_wide.py
   shocks/
-    yfinance/
-      ingest.py
-      build_wide.py
   assemble/
-    monthly.py        # V1: build model-ready monthly dataset
 ```
 
----
+- **Anchors** – source-specific ingestion and feature construction for low-frequency macroeconomic data
+- **Shocks** – source-specific ingestion and feature construction for high-frequency financial market data
+- **Assemble** – cross-source dataset assembly and alignment into model-ready training tables
