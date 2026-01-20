@@ -1,86 +1,29 @@
 # src/
 
-Reusable library code for the project.
-
-`src/` contains pure logic that can be imported from:
-- local scripts
-- Docker containers
-- Airflow tasks
-- ECS services
-
-No orchestration lives here.
-
+Reusable library code for the project shared across all execution environments.
 
 ---
 
-## Rules
+## Contract
 
-Code in `src/`:
-- takes inputs and returns outputs
-- is safe to import anywhere
-
-Code in `src/` does not:
-- read environment variables
-- parse CLI arguments
-- control execution flow
-- print success messages
-
-Those belong in `scripts/`.
-
+- `src/` contains reusable logic only
+- How and when that logic runs is decided outside `src/`
 
 ---
 
-## Structure
+## Layout
 
+```
 src/
   common/
   etl/
   train/
   track/
+  serve/ #future
+```
 
-
----
-
-### common/
-Shared utilities.
-
-- evaluation/ — metrics
-- storage/ — local + S3 helpers
-
-
-### etl/
-Data ingestion and transformation logic.
-
-- anchors/ — low-frequency features
-- shocks/ — high-frequency features
-- assemble/ — dataset merging
-
-
-### train/
-Model training logic.
-
-- baseline/ — baseline models and contracts
-
-
-### track/
-Experiment and artifact tracking helpers.
-
-- mlflow/ — MLflow utilities
-
-
-### serve/ (future)
-Interface logic used by the FastAPI service.
-
-
----
-
-## Testing
-
-Tests mirror this structure under `tests/`.
-
----
-
-## Summary
-
-- `src/` = logic
-- `scripts/` = execution
+- `common/` – shared utilities
+- `etl/` – ingestion and feature logic
+- `train/` – model training logic
+- `track/`  – experiment and artifact tracking
+- `serve/` – inference interfaces

@@ -9,14 +9,13 @@
 
 ## Contract
 
-Jobs adhere to the following 6-step contract:
+Jobs are executable entrypoints that:
+- handle runtime setup and configuration
+- perform all external I/O
+- delegate core logic to `src/`
+- produce versioned outputs
 
-1. load environment / config
-2. resolve input / output paths
-3. read inputs from storage
-4. call reusable logic from `src/`
-5. write versioned artifacts back to storage
-6. print a clear success message
+Jobs define how the logic runs, not what the logic is.
 
 ---
 
@@ -27,44 +26,5 @@ jobs/
   etl/
   train/
   track/
-  serve/
+  serve/ # future
 ```
-
----
-
-## Job categories
-### etl/
-**Role:** Produce raw, processed, and model-ready datasets
-
-- ingest external sources
-- clean and validate data
-- build features
-- assemble training tables
-- write datasets
-
----
-
-### train/
-**Role:** Produce canonical model artifacts and evaluation outputs
-
-- fit models
-- compute metrics
-- write artifacts (models, predictions, summaries)
-
----
-
-### track/
-**Role:** log and register artifacts into metadata systems
-
-- log metrics and artifacts
-- register models
-- update aliases / pointers
-
----
-
-### serve/
-**Role:** Run and validate the inference service
-
-- start the API service
-- perform smoke tests (`/health`, `/predict`)
-- print active model pointer / version

@@ -1,166 +1,28 @@
 # Requirements
 
-Role-specific dependency files for each stage of the ML lifecycle.
+Role-scoped dependency files for each stage of the ML lifecycle.
 
-Follows layered runtime image design:
+Designed for layered Docker runtimes:
 
-- `base.txt` defines shared runtime dependencies
-- Role-specific files (`etl`, `train`, `track`, `serve`) define only **incremental** dependencies
-- Docker images install `base.txt` in the base image then layer role-specific deps on top
-
-Objectives:
-
-- Fast builds
-- Clean separation of concerns
-- Reproducible runtimes
-
-Rules:
-
-- Production images must not install `requirements/dev/*`.
-- `requirements/runtimes/*.txt` must not include `-r ../base.txt` (shared deps come from base image).
+- `base.txt` = shared deps installed in the base image
+- `runtimes/*.txt` = incremental staged deps installed on top of base
+- `dev/*.txt` = local/CI tooling (never used in production images)
 
 ---
 
-## Folder Layout
+## Contract
+
+- `Production images must not install `requirements/dev/*`
+- `requirements/runtimes/*.txt` must not include `-r ../base.txt` (shared deps come from the base image)
+- Airflow uses a separate runtime (official `apache/airflow` image) and keeps deps isolated in `runtimes/airflow.txt``
+
+---
+
+## Layout
 
 ```
 requirements/
-    base.txt
-    
-    runtimes/
-        etl.txt
-        train.txt
-        track.txt
-        serve.txt
-        airflow.txt
-    
-    dev/
-        dev.txt
-        # optional later:
-        # test.txt
-        # lint.txt
-        # cicd.txt
+  base.txt
+  runtimes/
+  dev/
 ```
-
-- `runtimes/`: ship/build images
-- `dev`: local + CI tooling, never used in production images
-
----
-
-## `base.txt`
-Shared runtime dependencies for all job containers.
-
-Installed in:
-
-- `nowcasting-base` Docker image
-
-Inherited by:
-- ETL
-- Train
-- Track
-- Serve
-
-Examples:
-
-- core Python libs
-- numpy / pandas
-- common IO, config, logging utils
-
----
-
-## `runtimes/`
-
-Layered runtime dependencies for building and shipping images. 
-
-Notes:
-
-- Files do NOT extend `base.txt`
-- Base dependencies will be inherited from base Docker image
-- contain only job-specific libraries
-
----
-
-### `etl.txt`
-Data ingestion and preprocessing dependencies.
-
-Used by:
-
-- ETL job containers
-- Airflow tasks / ECS batch jobs
-
----
-
-### `train.txt`
-Model training and evaluation dependencies.
-
-Used by:
-
-- Training job containers
-
----
-
-### `track.txt`
-Experiment tracking and model lifecycle dependencies.
-
-Used by:
-
-- Tracking jobs
-- Model-promotion scripts
-- Evaluation logging
-
----
-
-### `serve.txt`
-Online inference dependencies.
-
-Used by:
-
-- FastAPI / inference service containers
-
----
-
-### `airflow.txt`
-Airflow scheduler and webserver dependencies only.
-
-Used by:
-
-- Airflow image
-
-Notes:
-
-- Does NOT extend `base.txt`
-- Airflow image uses `apache/airflow:*` (separate runtime) so dependencies are intentionally isolated.
-- Contains only Airflow-specific providers and operations
-
----
-
-## `dev/`
-
-Local development and CI utilities.
-
-Notes:
-
-- Not used to build production images
-- May directly inherit `base.txt` dependencies
-
-Optional future files (V2+):
-- `test.txt`
-- `lint.txt`
-- `cicd.txt`
-
----
-
-### `dev.txt`
-
-Union of job dependencies for local development.
-
-Inherits:
-
-- `../base.txt`
-
-From `/runtimes/`:
-
-- `etl.txt`
-- `train.txt`
-- `track.txt`
-- `serve.txt`
