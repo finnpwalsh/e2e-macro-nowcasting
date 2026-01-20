@@ -4,7 +4,7 @@ Near-term execution plans and task breakdown.
 
 ## Documentation
 
-- Add thin README.md files for `docs/` and `src/` components `etl/`, `track/`, and `train/`
+- Add thin README.md files for `docs/`
 
 ---
 

@@ -34,6 +34,24 @@ Production-flavored infra hardening.
 
 **CONTEXT**
 
+- Ongoing v1.4.1 refactor focused on architectural clarity and long-term scalability
+
+**DONE**
+
+- Added and refined READMEs for all applicable `src/` folders
+
+**NEXT**
+
+- Add and refine READMEs for:
+    - `requirements/dev` and `requirements/runtimes`
+- Ensure ALL READMEs have links to parent and child READMEs
+
+---
+
+### January 20, 2026
+
+**CONTEXT**
+
 - Ongoing v1.4.1 refactor focused on repo structure and documentation hygeine
 - Goal: align project with clean ML system abstractions before moving into v1.5.0 (serving)
 
