@@ -1,4 +1,6 @@
-# src/
+← [Back to Root](../README.md)
+
+# Source
 
 Reusable library code for the project shared across all execution environments.
 
@@ -15,15 +17,7 @@ Reusable library code for the project shared across all execution environments.
 
 ```
 src/
-  common/
-  etl/
-  train/
-  track/
-  serve/ #future
+  nowcast/
 ```
 
-- `common/` – shared utilities
-- `etl/` – ingestion and feature logic
-- `train/` – model training logic
-- `track/`  – experiment and artifact tracking
-- `serve/` – inference interfaces
+- **[Nowcast](./nowcast/README.md)** – core domain logic for macroeconomic nowcasting
