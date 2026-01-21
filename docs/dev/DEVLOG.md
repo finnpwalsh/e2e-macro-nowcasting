@@ -30,6 +30,24 @@ Production-flavored infra hardening.
 
 ---
 
+### January XX, 2026
+
+**CONTEXT**
+
+- Clarifying long-term system evolution in ROADMAP
+- Introduced new documentation structure
+
+**DONE**
+
+- Finalized V0-V4 roadmap
+- Defined V2 (accuracy), V3 (production hardening), V4 (governance)
+
+**NEXT**
+
+- Finish v1.4.1 execution
+
+---
+
 ### January 20, 2026
 
 **CONTEXT**
