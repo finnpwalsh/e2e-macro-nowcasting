@@ -4,18 +4,22 @@ End-to-end inflation nowcasting system built as a production-grade ML platform e
 
 This repository demonstrates how to design, version, evaluate and operate a macroeconomic ML system end-to-end, with explicit separation between infrastructure, modeling, and serving responsibilities. 
 
+> See [`docs/README.md`](docs/README.md) for detailed project documentation.
+
 ---
 
 ## Status
-**Jan 19, 2026**: Under active development
 
-**v1.4.0** released — full S3-backed storage integration
+**Jan 21, 2026**: Under active development
+
+**Current**: v1.4.0 – S3-backed storage
+**In progress**: v1.4.1 – lifecycle refactor
 
 ---
 
-## Contents
+## Navigation
+
 - [Layout](#layout)
-- [Documentation](#documentation)
 - [Quickstart](#quickstart)
 
 ---
@@ -34,28 +38,13 @@ This repository demonstrates how to design, version, evaluate and operate a macr
 
 **Components**
 
-- **Docs** – design and reference documents
+- **[Docs](docs/README.md)** – design and reference documents
 - **[Infra](infra/docker/README.md)** – Docker and cloud infrastructure
 - **[Jobs](jobs/README.md)** – Executable pipeline entrypoints
-- **Orchestration** – Airflow DAGs
+- **[Orchestration](orchestration/README.md)** – Airflow DAGs
 - **[Requirements](requirements/README.md)** – dependency specs
 - **[Source](src/README.md)** – Reusable library code
 - **Tests** – Automated checks
-
----
-
-## Documentation
-
-Deeper design, architecture, and planning documents:
-
-- **[Architecture & System Design](docs/architecture.md)** – Overall V1 architecture, execution boundaries, and lifecycle contracts
-- **[Roadmap & Version Planning](docs/roadmap.md)** – Planned scope for V1-V4 and future modeling/ops work
-- **[Version History](docs/version-history.md)** – Tagged releases and major milestones
-
-Working documentss:
-
-- **[Development Log](docs/DEVLOG.md)** – chronological record of implementation progress and decisions
-- **[Project Plan](docs/PLAN.md)** – near-term execution plan and task breakdown
 
 ---
 
