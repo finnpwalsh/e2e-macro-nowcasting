@@ -8,17 +8,17 @@ This folder contains system documentation for the macro nowcasting pipeline.
 
 ## Core System Docs
 
-- **Architecture** – system overview and design principles
-- **Lifecycle** – end-to-end ML lifecycle semantics
-- **Contracts** – dataset and artifact interfaces
-- **Reproducibility** – guarantees and assumptions
-- **Deployment** – runtime and cloud execution model
-- **Operations** – observability and failure handling
-- **Roadmap** – version history and planned evolution
+- **[Architecture](./ARCHITECTURE.md)** – system overview and design principles
+- **[Lifecycle](./LIFECYCLE.md)** – end-to-end ML lifecycle semantics
+- **[Contracts](./CONTRACTS.md)** – dataset and artifact interfaces
+- **[Reproducibility](./REPRODUCIBILITY.md)** – guarantees and assumptions
+- **[Deployment](./DEPLOYMENT.md)** – runtime and cloud execution model
+- **[Operations](./OPERATIONS.md)** – observability and failure handling
+- **[Roadmap](./ROADMAP.md)** – version history and planned evolution
 
 ---
 
 ## Development Artifacts
 
-- `dev/DEVLOG.md` – historical development notes
-- `dev/PLAN.md` – short-term execution planning
+- [`dev/DEVLOG.md`](./dev/DEVLOG.md) – historical development notes
+- [`dev/PLAN.md`](./dev/PLAN.md) – short-term execution planning
