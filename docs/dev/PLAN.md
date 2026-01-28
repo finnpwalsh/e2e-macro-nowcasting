@@ -11,12 +11,6 @@ This document tracks short-term execution for the remaining V1 releases. It is i
 - Update architecture, lifecycle, contracts, reproducibility, deployment, and operations documentation
 
 
-### Tests refactor
-
-- update modular `test/` calls with refactored `src/` directory naming, e.g. `src.config.baseline` -> `src.train.baseline.contracts`
-- add missing unit/contract tests for refactored modules
-
-
 ### Containerized orchestration
 
 - Update Docker requirements to install from `requirements/runtimes/*.txt`

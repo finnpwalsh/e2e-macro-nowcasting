@@ -30,7 +30,26 @@ Production-flavored infra hardening.
 
 ---
 
-### January XX, 2026
+### January 28, 2026
+
+**CONTEXT**
+
+- polishing v1.4.1 – refactor
+
+**DONE**
+
+- tests refactor
+    - remove all current tests
+    - add minimal smoke test
+    - full tests refactor planned for later v1.4.x
+
+**NEXT**
+
+- 
+
+---
+
+### January 21, 2026
 
 **CONTEXT**
 
