@@ -48,6 +48,7 @@ Production-flavored infra hardening.
 
 **NEXT**
 
+- update old src names to reflect price_nowcast nesting
 - add docs
     - contracts, reproducibility, deployment, operations
 
