@@ -34,7 +34,7 @@ Production-flavored infra hardening.
 
 **CONTEXT**
 
-- polishing v1.4.1 – refactor
+- v1.4.1 – lifecycle refactor
 
 **DONE**
 
@@ -42,10 +42,14 @@ Production-flavored infra hardening.
     - remove all current tests
     - add minimal smoke test
     - full tests refactor planned for later v1.4.x
+- update docs
+    - add lifecycle, architecture
+    - move V1 info to plan
 
 **NEXT**
 
-- 
+- add docs
+    - contracts, reproducibility, deployment, operations
 
 ---
 
