@@ -6,15 +6,21 @@ This folder contains system documentation for the macro nowcasting pipeline.
 
 ---
 
+## Getting Started
+
+- **[Quickstart](./quickstart.md)** – running the system locally via Airflow
+
+---
+
 ## Core System Docs
 
-- **[Architecture](./ARCHITECTURE.md)** – system overview and design principles
-- **[Lifecycle](./LIFECYCLE.md)** – end-to-end ML lifecycle semantics
-- **[Contracts](./CONTRACTS.md)** – dataset and artifact interfaces
-- **[Reproducibility](./REPRODUCIBILITY.md)** – guarantees and assumptions
-- **[Deployment](./DEPLOYMENT.md)** – runtime and cloud execution model
-- **[Operations](./OPERATIONS.md)** – observability and failure handling
-- **[Roadmap](./ROADMAP.md)** – version history and planned evolution
+- **[Architecture](./architecture.md)** – system overview and design principles
+- **[Lifecycle](./lifecycle.md)** – end-to-end ML lifecycle semantics
+- **[Contracts](./contracts.md)** – dataset and artifact interfaces
+- **[Reproducibility](./reproducibility.md)** – guarantees and assumptions
+- **[Deployment](./deployment.md)** – runtime and cloud execution model
+- **[Operations](./operations.md)** – observability and failure handling
+- **[Roadmap](./roadmap.md)** – version history and planned evolution
 
 ---
 
