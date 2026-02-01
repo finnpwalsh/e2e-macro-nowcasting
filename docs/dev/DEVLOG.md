@@ -8,7 +8,7 @@ Doc for keeping track of development activity. Split by version + day.
 
 For easy copy/paste logging:
 
-### January XX, 2026
+### February XX, 2026
 
 **CONTEXT**
 
@@ -27,6 +27,25 @@ For easy copy/paste logging:
 ## V1
 
 Production-flavored infra hardening.
+
+---
+
+### February XX, 2026
+
+**CONTEXT**
+
+- v1.4.1 – lifecycle refactor. Hardening docs
+
+**DONE**
+
+- created `docs/contracts.md`
+- added to contracts doc:
+    - storage contract
+    - dataset, artifact contract skeletons
+
+**NEXT**
+
+- finishg dataset, artifact contract documentation
 
 ---
 
