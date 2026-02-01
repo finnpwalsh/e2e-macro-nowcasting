@@ -6,11 +6,13 @@ This repository demonstrates how to design, version, evaluate and operate a macr
 
 > See [`docs/README.md`](docs/README.md) for detailed project documentation.
 
+**Design Note:** Several components of the system are deliberately more elaborate than required for the current model in order to practice production-grade data, ML, and systems design patterns.
+
 ---
 
 ## Status
 
-**Jan 21, 2026**: Under active development
+**Feb 1, 2026**: Under active development
 
 - **Current**: v1.4.0 – S3-backed storage
 - **In progress**: v1.4.1 – lifecycle refactor
