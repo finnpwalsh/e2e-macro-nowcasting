@@ -51,6 +51,74 @@ This document tracks short-term execution for the remaining V1 releases. It is i
 - Move validation logic to source-owned modules
 - Add train-time merged dataset validation
 - Add contract tests
+- refactor data lakehouse
+
+```
+lake/
+  raw/
+    anchors/
+      fred/
+        ...
+    shocks/
+      yfinance/
+        ...
+  canonical/
+    anchors/
+      ...
+    shocks/
+      ...
+  curated/
+    targets/
+      monthly/
+        ...
+    features/
+      monthly_anchors/
+        ...
+      intraday_shocks/
+        ...
+      monthly_shocks/
+        ...
+    training_sets/
+      baseline_monthly/
+        ...
+      shocks_residual_monthly/
+        ...
+    residuals/
+      baseline_monthly/
+        ...
+    predictions/
+      baseline_monthly/
+        ...
+      corrected_monthly/
+        ...
+
+artifacts/
+  models/
+    baseline/
+      ...
+    shocks_corrector/
+      ...
+  eval/
+    baseline/
+      ...
+    corrected/
+      ...
+
+registry/
+  pointers/
+    datasets/
+      ...
+    models/
+      ...
+
+_meta/
+  manifests/
+    ...
+  lineage/
+    ...
+  schemas/
+    ...
+```
 
 ### v1.5.0 — Serving
 - Implement FastAPI service for inference

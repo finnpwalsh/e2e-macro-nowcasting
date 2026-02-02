@@ -2,76 +2,100 @@
 
 # Lifecycle
 
-This document describes the end-to-end lifecycle of the nowcasting system.
+This document describes the end-to-end execution lifecycle of the price nowcasting system.
+
+The lifecycle defines what runs, in what order, and with what responsibility. 
 
 ---
 
 ## Lifecycle Overview
 
-The nowcasting pipeline is composed of the following stages:
+The price nowcasting pipeline is composed of the following sequence of explicit lifecycle stages:
 
 ```
-ETL → Training → Tracking → Serving
+Prepare → Train → Select → Serve
 ```
 
 Each lifecycle stage:
 - has a single responsibility
-- executes in its own environment
-- has its own set of dependencies
-- produces observable and versionable outputs
+- executes via a dedicated job entrypoint
+- runs in its own isolated execution context
+- produces explicit outputs consumed by downstream stages
+
+Stages communicate only through persisted outputs; no stage sees or reuses another stage's internal logic.
+
+**Flow Model**
+- Prepare: data → datasets
+- Train: datasets → model candidates
+- Select: model candidates → chosen models
+- Serve: chosen models → predictions
 
 ---
 
 ## Lifecycle Stages
 
-### ETL
+### Prepare
 
-Transforms raw external data into datasets suitable for modeling.
+Transforms raw external data into modeling-ready datasets.
 
-**Scope**
-- Ingestion from external sources
-- Cleaning, normalization, and feature construction
+**Responsibilities**
+- Ingest data from external sources
+- Clean, normalize, and align time series
+- Construct features required for downstream modeling
 
-**Artifacts**
-- Produces modeling-ready datasets
+**Execution**
+- Implemented as preparation jobs under `jobs/prepare/`
+- Core logic lives in `src/prepare/`
 
----
-
-### Training
-
-Trains statistical or machine learning models on prepared data.
-
-**Scope**
-- Model specification and training
-- Feature transformations per modeling needs
-
-**Artifacts**
-- Produces model artifacts and predictions
-
-**Boundary**
-- Does not perform experiment tracking
+**Outputs**
+- Versioned datasets suitable for training
 
 ---
 
-### Tracking
+### Train
 
-Records, compares, and reasons about model behavior.
+Trains statistical or machine learning models on prepared datasets.
 
-**Scope**
-- Metric computation
-- Artifact versioning
-- Experiment comparison and selection
+**Responsibilities**
+- Specify models and transform features
+- Fit models to the transformed features
+- Compute run-scoped evaluation outputs
 
-**Boundary**
-- Does not influence training logic
+**Execution**
+- Implemented as training jobs under `jobs/train/`
+- Core logic lives in `src/train/`
+
+**Outputs**
+- Canonical model artifacts
+- Run-scoped evaluation outputs
 
 ---
 
-### Serving
+### Select
 
-Makes trained models available for inference.
+Evaluates trained models and determines which will be used for prediction.
 
-**Scope**
-- Loading approved model artifacts
-- Producing predictions in response to new inputs
-- Enforcing interface and performance guarantees
+**Responsibilities**
+- Log run metadata and references to trained model artifacts
+- Compare model performance across models and runs
+- Choose models to be used for inference
+- Record which models are chosen and preserve selection history
+
+**Execution**
+- Implemented as selection jobs under `jobs/select/`
+- Core logic lives in `src/select/`
+- May integrate with external tracking or metadata systems (e.g., MLflow)
+
+**Outputs**
+- Recorded selection state identifying the currently chosen models
+
+---
+
+### Serve (future)
+
+Uses the currently chosen models to generate predictions.
+
+**Responsibilities**
+- Load chosen model artifacts
+- Produce predictions in response to new inputs
+- Enforce interface, latency, and availability guarantees
