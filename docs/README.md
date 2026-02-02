@@ -26,5 +26,5 @@ This folder contains system documentation for the macro nowcasting pipeline.
 
 ## Development Artifacts
 
-- [`dev/DEVLOG.md`](./dev/DEVLOG.md) – historical development notes
-- [`dev/PLAN.md`](./dev/PLAN.md) – short-term execution planning
+- **[`dev/devlog.md`](./dev/devlog.md)** – historical development notes
+- **[`dev/plan.md`](./dev/plan.md)** – short-term execution planning
