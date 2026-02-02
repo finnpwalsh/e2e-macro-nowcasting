@@ -38,7 +38,7 @@ Production-flavored infra hardening.
 
 **DONE**
 
-- finalized `docs/lifecycle.md`
+- finalized `docs/lifecycle/`
 - planned lifecycle relabel (`etl | train | track | serve` → `prepare | train | select | serve`)
 - delayed `docs/contract.md` until v1.4.2
 - moved quickstart from `README.md` to `docs/quickstart.md`
@@ -46,6 +46,8 @@ Production-flavored infra hardening.
 **NEXT**
 
 - `docs/architecture/`
+- `docs/getting_started/`
+- `docs/evolution/`
 
 ---
 
