@@ -30,11 +30,30 @@ Production-flavored infra hardening.
 
 ---
 
-### February XX, 2026
+### February 2, 2026
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor. Hardening docs
+- v1.4.1 – lifecycle refactor: hardening docs
+
+**DONE**
+
+- finalized `docs/lifecycle.md`
+- planned lifecycle relabel (`etl | train | track | serve` → `prepare | train | select | serve`)
+- delayed `docs/contract.md` until v1.4.2
+- moved quickstart from `README.md` to `docs/quickstart.md`
+
+**NEXT**
+
+- `docs/architecture/`
+
+---
+
+### February 1, 2026
+
+**CONTEXT**
+
+- v1.4.1 – lifecycle refactor: hardening docs
 
 **DONE**
 
