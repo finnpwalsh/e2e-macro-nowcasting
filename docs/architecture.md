@@ -43,3 +43,29 @@ Depencies, runtime concerns, and execution details are scoped to the stage that 
 **Principle**: Lifecycle stages communicate exclusively through explicit artifacts.
 
 Artifacts represent the only contract between stages.
+
+---
+
+## Storage Architecture
+
+Data and artifacts are stored in object storage using a stage-oriented layout.
+
+```
+data/
+  raw/
+    fred/
+      ...
+    yfinance/
+      ...
+  processed/
+    ...
+
+artifacts/
+  eval/
+    baseline/
+      ...
+    
+mlflow/
+  1/
+    ...
+```
