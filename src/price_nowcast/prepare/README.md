@@ -1,34 +1,27 @@
 ← [Back to Source](../README.md)
 
-# ETL
+# Prepare
 
-Extraction, transformation, and feature construction logic for nowcasting.
-
----
-
-## Contract
-
-- Contains ETL-stage logic only for nowcasting
-- Must not assume training, tracking, or serving concerns
-- Produces model-ready datasets for downstream stages
+Domain-specific data ingestion, transformation, and feature construction logic for price nowcasting.
 
 ---
 
 ## Responsibilities
 
-- Ingest raw data from external sources
-- Validate and normalize inputs into canonical forms
-- Construct features used by training and inference
+- Ingest and normalize raw external data sources
+- Apply domain-specific transformations and feature construction
+
+---
 
 ## Layout
 
 ```
-etl/
+prepare/
   anchors/
   assemble/
   shocks/
 ```
 
-- **[Anchors](./anchors/README.md)** – slow-moving macro sources
-- **[Assemble](./assemble/README.md)** – combining anchor and shock datasets
-- **[Shocks](./shocks/README.md)** – fast-moving financial market sources
+- `anchors/` – slow-moving macro sources
+- `assemble/` – combining anchor and shock datasets
+- `shocks/` – fast-moving financial market sources
