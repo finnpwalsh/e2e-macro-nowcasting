@@ -2,13 +2,13 @@
 
 # Common
 
-Shared domain utilities used across the nowcasting lifecycle.
+Shared domain utilities used across the price nowcasting system.
 
 ---
 
-## Contract
+## Responsibilities
 
-- Provides stage-independent logic reused by `etl/`, `train/`, `track/`, and `serve/`
+- Contains logic that is generic within the nowcasting domain
 - Must not assume or depend on a specific lifecycle stage
 
 ---
@@ -18,8 +18,6 @@ Shared domain utilities used across the nowcasting lifecycle.
 ```
 common/
   evaluation/
-  storage/
 ```
 
-- **[Evaluation](./evaluation/README.md)** – shared model evaluation metrics and diagnostics
-- **[Storage](./storage/README.md)** – shared storage abstractions and path helpers
+- `evaluation/` – shared model evaluation helpers
