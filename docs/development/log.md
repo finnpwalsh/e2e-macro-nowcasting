@@ -30,6 +30,26 @@ Production-flavored infra hardening.
 
 ---
 
+### February 5, 2026
+
+**CONTEXT**
+
+- v1.4.1 – lifecycle refactor: `src/` audit
+
+**DONE**
+
+- created `ml_platform/` package
+- moved `storage/` from `price_nowcast/common/` to `ml_platform/`
+- `src/` docs audit
+- rename `price_nowcast/etl/` -> `price_nowcast/prepare/`
+- update `tests/test_smoke.py` imports with new package names
+
+**NEXT**
+
+- `jobs/` audit
+
+---
+
 ### February 2, 2026
 
 **CONTEXT**
