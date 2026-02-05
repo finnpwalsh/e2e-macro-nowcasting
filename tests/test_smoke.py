@@ -11,7 +11,7 @@ def test_smoke_imports() -> None:
 
 def test_smoke_local_storage(tmp_path: Path) -> None:
 
-    from src.common.storage.backends.local import LocalStorage
+    from price_nowcast.common.storage.backends.local import LocalStorage
 
     # save current working directory as-is, use a temporary
     # directory to test local storage I/O
