@@ -1,23 +1,16 @@
-← [Back to Source](../README.md)
+← [Back to Price Nowcast](../README.md)
 
 # Train
 
-Model training logic.
-
----
-
-## Contract
-
-- Consumes model-ready datasets produced by `etl/`
-- Does not perform experiment tracking or serving
+Domain-specific model training logic for price nowcasting.
 
 ---
 
 ## Responsibilities
 
-- Train task-specific models
-- Compute training/evaluation metrics and summaries
-- Write versioned model artifacts and metadata for downstream `track/` and `serve/`
+- Train models on prepared datasets
+- Compute training-time metrics and summaries
+- Produce reusable training outputs
 
 ---
 
@@ -26,6 +19,4 @@ Model training logic.
 ```
 train/
   baseline/
-  residual/ # V2
-  evaluate/ # V2
 ```
