@@ -34,7 +34,7 @@ This document tracks short-term execution for the remaining V1 releases. It is i
 ## Current focus – V1.4.1
 
 ### Documentation
-- Add contracts, reproducibility, deployment, and operations documentation
+- Add reproducibility, deployment, and operations documentation
 
 ### Containerized orchestration
 - Update Docker requirements to install from `requirements/runtimes/*.txt`
