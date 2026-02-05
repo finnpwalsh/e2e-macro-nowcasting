@@ -5,13 +5,14 @@ from pathlib import Path
 
 
 def test_smoke_imports() -> None:
-    import src
+    import src.ml_platform
+    import src.price_nowcast
     import jobs
     import orchestration.airflow.dags.price_nowcasting
 
 def test_smoke_local_storage(tmp_path: Path) -> None:
 
-    from price_nowcast.common.storage.backends.local import LocalStorage
+    from ml_platform.storage.backends.local import LocalStorage
 
     # save current working directory as-is, use a temporary
     # directory to test local storage I/O
