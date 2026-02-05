@@ -6,7 +6,7 @@ Shared storage abstractions for ML datasets and artifacts.
 
 ---
 
-## Contract
+## Responsibilities
 
 - `base.py` defines the storage interface
 - `backends/` contains concrete storage implementations
