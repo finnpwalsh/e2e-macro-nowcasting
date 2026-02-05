@@ -1,8 +1,8 @@
-← [Back to Common](../README.md)
+← [Back to ML Platform](../README.md)
 
 # Storage
 
-Shared storage abstractions for nowcasting artifacts and datasets.
+Shared storage abstractions for ML datasets and artifacts.
 
 ---
 
@@ -11,7 +11,7 @@ Shared storage abstractions for nowcasting artifacts and datasets.
 - `base.py` defines the storage interface
 - `backends/` contains concrete storage implementations
 - `factory.py` selects the active backend at runtime
-- `io.py` and `paths.py` provide shared helpers used by all stages
+- `io.py` and `paths.py` provide shared helpers
 
 ---
 
