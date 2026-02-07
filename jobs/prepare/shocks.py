@@ -1,3 +1,32 @@
+"""
+Prepare job: shock dataset ingestion and feature construction.
+
+Lifecycle stage:
+    Prepare
+
+Responsibilities:
+    - Ingest high-frequency financial market series via yfinance
+    - Clean and normalize raw series into a canonical long format
+    - Build and resample shock features into a model-ready dataset
+
+Inputs:
+    - External market data via yfinance
+    - Ticker universe defined in schema (YF_TICKERS)
+
+Outputs:
+    - Raw combined yfinance dataset (long format)
+    - Processed shock feature dataset (resampled / aggregated)
+
+Out of scope:
+    - Model training, evaluation, or experiment tracking
+    - Feature selection based on model performance
+    - Generation or consumption of model artifacts
+
+Notes:
+    This job is deterministic given external source data and configuration.
+    All artifacts are written to persistent storage and consumed by downstream 
+    training jobs via storage contracts.
+"""
 from __future__ import annotations
 
 import pandas as pd
@@ -16,6 +45,7 @@ from price_nowcast.prepare.shocks.yfinance.schema import YF_TICKERS
 
 
 def ingest(storage: Storage) -> None:
+    """Ingest raw yfinance shock series and persist a combined long-fomat dataset."""
     out_key = paths.raw_yfinance_all()
 
     dfs = []
@@ -32,6 +62,7 @@ def ingest(storage: Storage) -> None:
 
 
 def prepare(storage: Storage) -> None:
+    """Clean, transform, and resample yfinance shocks into a model-ready feature dataset."""
     in_key = paths.raw_yfinance_all()
     out_key = paths.processed_yfinance_features()
 
@@ -47,9 +78,9 @@ def prepare(storage: Storage) -> None:
 
 
 def main() -> None:
+    """Execute shock ingestion and preparation using configured storage."""
     load_dotenv()
     storage = get_storage()
-
     ingest(storage)
     prepare(storage)
 
