@@ -1,3 +1,35 @@
+"""
+Track job: publish trained model artifacts to MLFlow.
+
+Lifecycle stage:
+    Track
+
+Responsibilities:
+    - Read the latest trained model manifest from storage
+    - Load model artifacts, metrics, predictions, and run metadata
+    - Log artifacts and metrics to the tracking backend (MLflow)
+    - Register the model version and optionally promote it via aliasing
+
+Inputs:
+    - Latest model pointer metadata (model_latest)
+    - Versioned model artifacts produced by Train
+
+Outputs:
+    - MLflow run with logged metrics and artifacts
+    - Registered model version in the model registry
+    - Optional registry alias update (e.g. promotion)
+
+Out of scope:
+    - Model training or retraining
+    - Mutation of training artifacts or metrics
+    - Definition of artifact or storage layout
+    - Online serving or inference
+
+Notes:
+    Tracking is best-effort and control-plane only. Training artifacts remain
+    valid and usable even if tracking or registration fails. This job does not
+    perform model selection beyond publishing the referenced run.
+"""
 from __future__ import annotations
 
 from dotenv import load_dotenv
@@ -11,6 +43,7 @@ from ml_platform.tracking.mlflow import log_and_register_model
 
 
 def publish(storage: Storage) -> None:
+    """Publish the latest trained model artifacts to MLflow and register the model."""
     model_name = "baseline"
 
     k_latest = paths.model_latest(model_name)
@@ -54,6 +87,7 @@ def publish(storage: Storage) -> None:
 
 
 def main() -> None:
+    """Execute model tracking and registration using configured storage."""
     load_dotenv()
     storage = get_storage()
     publish(storage)

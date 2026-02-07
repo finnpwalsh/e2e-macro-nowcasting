@@ -1,3 +1,34 @@
+"""
+Train job: baseline monthly model candidate generation.
+
+Lifecycle stage:
+    Train
+
+Responsibilities:
+    - Load the prepared training dataset
+    - Fit the baseline model (ridge)
+    - Produce versioned candidate artifacts required downstream
+
+Inputs:
+    - Model-ready training table from Prepare (storage key: processed_merged)
+
+Outputs (versioned by run_id):
+    - Model artifact (joblib)
+    - Metrics (json)
+    - Evaluation predictions (parquet)
+    - Run summary metadata
+    - Latest pointer metadata (json) for downstream Track/Select/Serve
+
+Out of scope:
+    - Publishing to external tracking/registry systems
+    - Model selection, promotion, or rollback
+    - Online serving or inference APIs
+
+Notes:
+    This job writes all artifacts to persistent storage. Downstream stages read
+    `model_latest(model_name)` / `run.json`-style metadata to locate the exact
+    artifacts for a given run.
+"""
 from __future__ import annotations
 
 from dotenv import load_dotenv
@@ -9,6 +40,7 @@ from ml_platform.storage import paths
 from price_nowcast.train.baseline.train import train_ridge
 
 def train(storage: Storage) -> None:
+    """Train the baseline model and persist versioned candidate artifacts for downstream storage."""
     run_id = paths.utc_run_id()
     model_name="baseline"
 
@@ -73,6 +105,7 @@ def train(storage: Storage) -> None:
 
 
 def main() -> None:
+    """Execute baseline training using configured storage."""
     load_dotenv()
     storage = get_storage()
     train(storage)
