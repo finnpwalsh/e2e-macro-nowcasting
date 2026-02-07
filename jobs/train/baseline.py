@@ -1,34 +1,14 @@
-"""
-Train baseline ridge model and write outputs to storage.
-
-RESPONSIBILITIES:
-- generate a unique run id (UTC)
-- read model-ready dataset from storage
-- train baseline model
-- write versioned artifacts to data store (local/S3):
-  - model.joblib
-  - metrics.json
-  - predictions.parquet
-  - summary.json
-- print a clear success message
-
-NOTE:
-- No MLflow logging here. Tracking happens in scripts/track/.
-"""
 from __future__ import annotations
 
 from dotenv import load_dotenv
 
-from src.train.baseline.train import train_ridge
-from src.common.storage.factory import get_storage
-from src.common.storage import paths
+from ml_platform.storage.base import Storage
+from ml_platform.storage.factory import get_storage
+from ml_platform.storage import paths
 
-def main() -> None:
-    # 1) load environment/config
-    load_dotenv()
-    storage = get_storage()
+from price_nowcast.train.baseline.train import train_ridge
 
-    # 2) resolve I/O paths
+def train(storage: Storage) -> None:
     run_id = paths.utc_run_id()
     model_name="baseline"
 
@@ -40,13 +20,10 @@ def main() -> None:
     k_summary = paths.eval_summary(model_name, run_id)
     k_latest = paths.model_latest(model_name)
 
-    # 3) read inputs from storage
     merged = storage.read_parquet(k_merged)
 
-    # 4) call reusable logic from src/
     model, metrics, preds, features = train_ridge(merged)
 
-    # 5) write versioned artifacts back to storage
     storage.write_joblib(model, k_model)
     storage.write_json(metrics, k_metrics)
     storage.write_parquet(preds, k_preds)
@@ -78,8 +55,6 @@ def main() -> None:
         k_latest,
     ) # latest pointer
     
-
-    # 6) print a clear success message
     INDENT = "    "
     print()
     print("Train complete")
@@ -95,6 +70,12 @@ def main() -> None:
     print(f"{INDENT}summary:     {k_summary}")
     print(f"{INDENT}latest:      {paths.model_latest(model_name)}")
     print()
+
+
+def main() -> None:
+    load_dotenv()
+    storage = get_storage()
+    train(storage)
 
 
 if __name__ == "__main__":
