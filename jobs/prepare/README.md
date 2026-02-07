@@ -1,27 +1,32 @@
 ← [Back to Jobs](../README.md)
 
+# Prepare
 
-# ETL
-
-ETL pipeline entrypoints responsible for producing raw, processed, and model-ready datasets used by downstream training jobs.
+Pipeline entrypoints responsible for producing raw, processed, and model-ready datasets used by downstream training jobs.
 
 ---
 
 ## Contract
 
-- Produce raw source datasets and processed feature datasets
-- Assemble model-ready training tables consumed by downstream jobs
-- Organize ETL by domain (`anchors`, `shocks`) and cross-source assembly (`assemble`)
+Prepare jobs are executable entrypoints that:
+- produce raw source datasets and processed feature datasets
+- assemble model-ready training tables consumed by downstream jobs
+- organize ETL by domain (`anchors`, `shocks`) and cross-source assembly (`assemble`)
+
+Prepare jobs are not responsible for:
+- model fitting, evaluation, or experiment tracking
+- selecting features based on model performance
+- generating or consuming model artifacts
 
 ---
 
 ## Layout
 
 ```
-jobs/etl/
-  anchors/
-  shocks/
-  assemble/
+prepare/
+  anchors.py
+  shocks.py
+  assemble.py
 ```
 
 - **Anchors** – source-specific ingestion and feature construction for low-frequency macroeconomic data

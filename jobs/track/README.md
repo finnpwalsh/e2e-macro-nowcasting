@@ -8,9 +8,16 @@ Tracking entrypoints log and register already-produced artifacts into metadata s
 
 ## Contract
 
+Tracking jobs are executable entrypoints that:
 - Read `run.json` and referenced artifacts from storage
 - Delegate backend-specific tracking to `src`
 - Treat tracking as best-effort: training artifacts remain valid even if tracking fails
+
+Tracking jobs are not responsible for:
+- training or retraining models
+- mutating model artifacts or metrics
+- selecting, promoting, or retiring models
+- defining artifact schemas or storage layout
 
 ---
 
@@ -18,4 +25,5 @@ Tracking entrypoints log and register already-produced artifacts into metadata s
 
 ```
 jobs/track/
+  publish.py
 ```
