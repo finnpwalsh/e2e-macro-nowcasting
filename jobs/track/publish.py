@@ -2,20 +2,19 @@ from __future__ import annotations
 
 from dotenv import load_dotenv
 
-from src.track.mlflow.artifacts import log_and_register_model
+from ml_platform.storage.base import Storage
+from ml_platform.storage.factory import get_storage
+from ml_platform.storage import paths
+from ml_platform.storage.io import read_joblib, read_json
 
-from src.common.storage.base import Storage
-from src.common.storage.paths import model_latest
-from src.common.storage.factory import get_storage
-from src.common.storage.io import read_joblib, read_json
+from ml_platform.tracking.mlflow import log_and_register_model
 
-def track_mlflow(storage: Storage) -> None:
+
+def publish(storage: Storage) -> None:
     model_name = "baseline"
 
-    # resolve I/O paths
-    k_latest = model_latest(model_name)
+    k_latest = paths.model_latest(model_name)
     
-    # read from storage
     latest = read_json(storage, k_latest)
     
     model = read_joblib(storage, latest["model_key"])
@@ -23,7 +22,6 @@ def track_mlflow(storage: Storage) -> None:
     preds = storage.read_parquet(latest["predictions_key"])
     summary = read_json(storage, latest["summary_key"])
     
-    # log via MLflow
     run_id = latest["run_id"]
     features = summary["features"]
     input_key = summary["input_key"]
@@ -41,7 +39,6 @@ def track_mlflow(storage: Storage) -> None:
         promote=True,
     )
 
-    # confirm task ran successfully
     INDENT = "    "
     print()
     print("MLflow tracking complete")
@@ -59,8 +56,7 @@ def track_mlflow(storage: Storage) -> None:
 def main() -> None:
     load_dotenv()
     storage = get_storage()
-
-    track_mlflow(storage)
+    publish(storage)
 
 
 if __name__ == "__main__":
