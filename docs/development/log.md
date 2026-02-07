@@ -30,6 +30,24 @@ Production-flavored infra hardening.
 
 ---
 
+### February 7, 2026
+
+**CONTEXT**
+
+- v1.4.1 – lifecycle refactor: `jobs/` audit
+
+**DONE**
+
+- flatten `jobs/`
+- conglomerate all `shocks/` and `anchors/` jobs into `prepare/shocks.py` and `prepare/anchors.py`
+- update all jobs with new `src/` naming conventions
+
+**NEXT**
+
+- `jobs/` docs + docstrings audit
+
+---
+
 ### February 5, 2026
 
 **CONTEXT**
