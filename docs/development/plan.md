@@ -35,7 +35,12 @@ This document tracks short-term execution for the remaining V1 releases. It is i
 
 ### Documentation
 - Add reproducibility, deployment, and operations documentation
-- `jobs/` documentation audit
+
+### Selection logic
+- Decouple tracking and selection
+    - Track -> log and register only
+    - `jobs/select/promote.py`
+    - Harden 
 
 ### Containerized orchestration
 - Update Docker requirements to install from `requirements/runtimes/*.txt`

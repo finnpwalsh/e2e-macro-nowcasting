@@ -41,10 +41,11 @@ Production-flavored infra hardening.
 - flatten `jobs/`
 - conglomerate all `shocks/` and `anchors/` jobs into `prepare/shocks.py` and `prepare/anchors.py`
 - update all jobs with new `src/` naming conventions
+- `jobs/` docs + docstrings audit
 
 **NEXT**
 
-- `jobs/` docs + docstrings audit
+- add selection logic + job
 
 ---
 
