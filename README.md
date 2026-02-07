@@ -14,7 +14,7 @@ This repository demonstrates how to design, version, evaluate and operate a macr
 
 ## Status
 
-**Feb 1, 2026**: Under active development
+**Feb 7, 2026**: Under active development
 
 - **Current release**: v1.4.0 – S3-backed storage
 - **In progress**: v1.4.1 – lifecycle refactor
@@ -30,6 +30,8 @@ This repository demonstrates how to design, version, evaluate and operate a macr
 ├── orchestration/
 ├── requirements/
 ├── src/
+│   ├── ml_platform/
+│   └── price_nowcast/
 └── tests/
 ```
 
@@ -42,3 +44,5 @@ This repository demonstrates how to design, version, evaluate and operate a macr
 - **[Requirements](requirements/README.md)** – dependency specs
 - **[Source](src/README.md)** – Reusable library code
 - **Tests** – Automated checks
+
+> `ml_platform` contains reusable ML lifecycle and infrastructure, while `price_nowcast` contains domain-specific inflation modeling code.
