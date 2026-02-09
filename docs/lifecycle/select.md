@@ -1,6 +1,6 @@
 ← [Back to Lifecycle](../README.md)
 
-# Select (future)
+# Select
 
 This document defines the Select stage in the price nowcasting execution lifecycle.
 
@@ -14,7 +14,7 @@ This document defines the Select stage in the price nowcasting execution lifecyc
 
 **Execution**
 - Implemented as selection jobs under `jobs/select/`
-- Core logic lives in `src/price_nowcasting/select/`
+- Core logic lives in `src/ml_platform/mlflow/`
 - May integrate with external tracking or metadata systems (e.g., MLflow)
 
 **Outputs**

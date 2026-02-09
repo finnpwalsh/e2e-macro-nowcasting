@@ -35,8 +35,10 @@ jobs/
   prepare/
   train/
   track/
+  select/
 ```
 
-- **[Prepare](./prepare/README.md)** – batch ingestion, cleaning, and feature construction entrypoints
+- **[Prepare](./prepare/README.md)** – batch ingestion, cleaning, and feature construction
 - **[Train](./train/README.md)** – model fitting and candidate artifact generation
-- **[Track](./track/README.md)** – experiment tracking and model registration entrypoints
+- **[Track](./track/README.md)** – experiment tracking and model registration
+- **[Select](./select/README.md)** – controlled promotion of registered model versions via deployment pointers
