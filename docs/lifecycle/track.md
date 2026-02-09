@@ -14,8 +14,7 @@ This document defines the Track stage in the price nowcasting execution lifecycl
 
 **Execution**
 - Implemented as tracking jobs under `jobs/track/`
-- Core logic lives in `src/price_nowcasting/track/`
-- Integrates with external tracking or metadata systems (e.g., MLflow)
+- Core logic lives in `src/ml_platform/mlflow/`
 
 **Outputs**
 - Persisted run records, metrics, and artifact references suitable for downstream selection

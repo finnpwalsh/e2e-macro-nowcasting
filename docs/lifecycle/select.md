@@ -15,7 +15,6 @@ This document defines the Select stage in the price nowcasting execution lifecyc
 **Execution**
 - Implemented as selection jobs under `jobs/select/`
 - Core logic lives in `src/ml_platform/mlflow/`
-- May integrate with external tracking or metadata systems (e.g., MLflow)
 
 **Outputs**
 - Recorded selection state identifying the currently chosen models
