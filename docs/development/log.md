@@ -30,6 +30,32 @@ Production-flavored infra hardening.
 
 ---
 
+## Template
+
+For easy copy/paste logging:
+
+### February 9, 2026
+
+**CONTEXT**
+
+- v1.4.1 – lifecycle refactor: Select
+
+**DONE**
+
+- decoupled Track and Select
+- renamed `ml_platform/track` -> `ml_platform/mlflow`
+- renamed `mlflow/mlflow.py` -> `mlflow/publish.py`
+- created:
+    - `mlflow/promote.py`
+    - `jobs/select/promote.py`
+    - `jobs/select/README.md`
+
+**NEXT**
+
+- `Track` audit
+
+---
+
 ### February 7, 2026
 
 **CONTEXT**
