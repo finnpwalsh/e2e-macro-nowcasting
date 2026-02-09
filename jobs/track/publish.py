@@ -39,7 +39,7 @@ from ml_platform.storage.factory import get_storage
 from ml_platform.storage import paths
 from ml_platform.storage.io import read_joblib, read_json
 
-from ml_platform.tracking.mlflow import log_and_register_model
+from ml_platform.mlflow.publish import log_and_register_model
 
 
 def publish(storage: Storage) -> None:
