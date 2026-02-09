@@ -8,7 +8,7 @@ Responsibilities:
     - Read the latest trained model manifest from storage
     - Load model artifacts, metrics, predictions, and run metadata
     - Log artifacts and metrics to the tracking backend (MLflow)
-    - Register the model version and optionally promote it via aliasing
+    - Register an immutable model version in the model registry
 
 Inputs:
     - Latest model pointer metadata (model_latest)
@@ -17,9 +17,9 @@ Inputs:
 Outputs:
     - MLflow run with logged metrics and artifacts
     - Registered model version in the model registry
-    - Optional registry alias update (e.g. promotion)
 
 Out of scope:
+    - Alias management or promotion
     - Model training or retraining
     - Mutation of training artifacts or metrics
     - Definition of artifact or storage layout
@@ -43,12 +43,12 @@ from ml_platform.tracking.mlflow import log_and_register_model
 
 
 def publish(storage: Storage) -> None:
-    """Publish the latest trained model artifacts to MLflow and register the model."""
+    """Publish the latest trained model artifacts to MLflow and register a versioned model."""
     model_name = "baseline"
 
-    k_latest = paths.model_latest(model_name)
+    latest_key = paths.model_latest(model_name)
     
-    latest = read_json(storage, k_latest)
+    latest = read_json(storage, latest_key)
     
     model = read_joblib(storage, latest["model_key"])
     metrics = read_json(storage, latest["metrics_key"])
@@ -69,7 +69,6 @@ def publish(storage: Storage) -> None:
         features=features,
         input_key=input_key,
         predictions_key=predictions_key,
-        promote=True,
     )
 
     INDENT = "    "
@@ -82,7 +81,6 @@ def publish(storage: Storage) -> None:
     print(f"{INDENT}Version:         {written['registry_model_version']}")
     print(f"{INDENT}Alias:           {written['alias']}")
     print(f"{INDENT}Model URI:       {written['model_uri']}")
-    print(f"{INDENT}Promoted:        {written['promoted']}")
     print(f"{INDENT}Predictions Key: {written['predictions_key']}")
 
 

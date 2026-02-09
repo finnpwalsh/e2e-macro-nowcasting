@@ -1,3 +1,19 @@
+"""
+MLflow tracking utilities.
+
+This module is responsible for publishing training outputs to MLflow as 
+immutable evidence.
+
+Responsibilities:
+    - Create an MLflow run
+    - Log metrics and structured evaluation artifacts
+    - Register an immutable model version in the model registry
+
+Out of scope:
+    - Alias management or promotion
+    - Model comparison or selection logic
+    - Serving or deployment concerns
+"""
 from __future__ import annotations
 
 from typing import Any
@@ -7,7 +23,6 @@ import pandas as pd
 
 import mlflow
 import mlflow.sklearn
-from mlflow.tracking import MlflowClient
 
 
 # --- helpers ---
@@ -39,15 +54,17 @@ def log_and_register_model(
     features: list[str],
     input_key: str,          # pointer to data
     predictions_key: str,    # pointer to preds already written to data store
-    promote: bool | None = None,
 ) -> dict:
     """
-    MLflow source-of-truth:
+    MLflow source-of-truth fir Track stage:
       - experiment tracking
-      - model registry
-      - alias promotion / rollback primitive
+      - model registry (version creation)
 
     This function performs ZERO data-store writes. It only logs pointers.
+
+    NOTE:
+        - This does NOT perform model selection.
+        - This does NOT promote/alias any model version (SELECT)
     """
     tracking_uri = _require_env("MLFLOW_TRACKING_URI")
     mlflow.set_tracking_uri(tracking_uri)
@@ -56,21 +73,15 @@ def log_and_register_model(
     mlflow.set_experiment(exp_name)
 
     registry_name = os.getenv("MLFLOW_REGISTRY_MODEL_NAME", model_name)
-    alias_name = os.getenv("MLFLOW_MODEL_ALIAS", "champion")
-    promote = True if promote is None else bool(promote)
-
-    # canonical model uri for serving (alias-based)
-    model_uri = f"models:/{registry_name}@{alias_name}"
 
     with mlflow.start_run(run_name=f"{model_name}:{run_id}") as run:
         mlflow.set_tags(
             {
                 "model_name": model_name,
                 "run_id": run_id,
+                "created_utc": run_id,
                 "input_key": input_key,
                 "eval.predictions_key": predictions_key,
-                "deploy.model_uri": model_uri,
-                "deploy.promote": str(promote).lower(),
             }
         )
 
@@ -116,33 +127,25 @@ def log_and_register_model(
             registered_model_name=registry_name,
         )
 
-        client = MlflowClient()
 
         version = getattr(model_info, "registered_model_version", None)
         if version is None:
-            hits = client.search_model_versions(
-                f"name='{registry_name}' and run_id='{run.info.run_id}'"
-            )
-            if not hits:
-                raise RuntimeError(
-                    "Model registered but could not resolve version for alias assignment."
-                )
-            version = hits[0].version
-
-        if promote:
-            client.set_registered_model_alias(
-                name=registry_name,
-                alias=alias_name,
-                version=str(version),
+            uri = getattr(model_info, "model_uri", "") or ""
+            parts = uri.split("/")
+            version = parts[-1] if parts else None
+            
+        if not version or str(version).strip() == "":
+            raise RuntimeError(
+                "Model registered but could not resolve registry version."
             )
 
+        version = str(version)
+        model_uri = f"models:/{registry_name}/{version}"
         return {
             "mlflow_run_id": run.info.run_id,
             "experiment_id": run.info.experiment_id,
             "registry_model_name": registry_name,
             "registry_model_version": str(version),
-            "alias": alias_name,
             "model_uri": model_uri,
-            "promoted": promote,
             "predictions_key": predictions_key,
         }
