@@ -30,10 +30,6 @@ Production-flavored infra hardening.
 
 ---
 
-## Template
-
-For easy copy/paste logging:
-
 ### February 9, 2026
 
 **CONTEXT**
