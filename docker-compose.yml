@@ -157,7 +157,7 @@ services:
     volumes:
       - ~/.aws:/home/mlflow/.aws:ro
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:5000/ || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:5000/ >/dev/null/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10
