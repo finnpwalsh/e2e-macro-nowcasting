@@ -1,10 +1,9 @@
 FROM ghcr.io/mlflow/mlflow:v2.14.3
 
-# Add Postgres driver + AWS SDK so:
-# - backend-store-uri can be postgres
-# - artifacts can be S3
 USER root
-RUN pip install --no-cache-dir psycopg2-binary boto3
+
+COPY requirements/ /opt/project/requirements/
+RUN pip install --no-cache-dir -r /opt/project/requirements/services/mlflow.txt
 
 USER 10001
 
