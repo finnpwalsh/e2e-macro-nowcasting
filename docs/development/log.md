@@ -30,6 +30,28 @@ Production-flavored infra hardening.
 
 ---
 
+### February 10, 2026
+
+**CONTEXT**
+
+- v1.4.1 – lifecycle refactor: Docker, requirements audit
+
+**DONE**
+
+- Docker refactor
+    - added select.Docker
+- `.env` audit
+- `docker-compose.yml` audit
+- NOTE: all services healthy
+
+**NEXT**
+
+- `DockerExecutor` -> run dag
+- move `storage/paths.py` -> `price_nowcast`
+- `Makefile` audit
+
+---
+
 ### February 9, 2026
 
 **CONTEXT**
