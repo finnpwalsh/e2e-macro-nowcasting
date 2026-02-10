@@ -5,7 +5,6 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /opt/project
-ENV PYTHONPATH=/opt/project
 
 # dependencies
 COPY requirements/ /opt/project/requirements/
