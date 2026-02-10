@@ -1,43 +1,63 @@
+version: "3.9"
+
+# ----------------------------------------------------------
+# Shared Airflow Environment
+# ----------------------------------------------------------
 x-airflow-env: &airflow_env
+  # Core
   AIRFLOW__CORE__EXECUTOR: LocalExecutor
   AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW_DB_URI}
+  AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
   AIRFLOW__CORE__LOAD_EXAMPLES: "False"
   AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
   AIRFLOW__CORE__STORE_SERIALIZED_DAGS: "True"
   AIRFLOW__CORE__MIN_SERIALIZED_DAG_UPDATE_INTERVAL: "30"
-
   AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
+  AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
 
-  # project
-  PYTHONPATH: /opt/project
-  FRED_API_KEY: ${FRED_API_KEY}
+  # Logging (S3)
+  AIRFLOW__LOGGING__REMOTE_LOGGING: "True"
+  AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER: "s3://${AWS_S3_BUCKET_AIRFLOW_LOGS}/airflow/logs"
+  AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID: "aws_default"
+  
+  # Project
+  PYTHONPATH: /opt/project/src
+  STORAGE_BACKEND: ${STORAGE_BACKEND}
 
-  # MLflow (client)
+  # MLflow client
   MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
   MLFLOW_EXPERIMENT_NAME: ${MLFLOW_EXPERIMENT_NAME}
   MLFLOW_REGISTRY_MODEL_NAME: ${MLFLOW_REGISTRY_MODEL_NAME}
   MLFLOW_MODEL_ALIAS: ${MLFLOW_MODEL_ALIAS}
 
-  # AWS (keep one region var)
-  AWS_SHARED_CREDENTIALS_FILE: /home/airflow/.aws/credentials
+  # AWS
   AWS_REGION: ${AWS_REGION}
+  AWS_DEFAULT_REGION: ${AWS_REGION}
+  AWS_PROFILE: ${AWS_PROFILE}
+  AWS_SHARED_CREDENTIALS_FILE: /home/airflow/.aws/credentials
 
-  # remote logging
-  AIRFLOW__LOGGING__REMOTE_LOGGING: "True"
-  AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER: "s3://${AWS_S3_BUCKET_AIRFLOW_LOGS}/airflow/logs"
-  AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID: "aws_default"
 
+# ----------------------------------------------------------
+# Shared Volumes
+# ----------------------------------------------------------
 x-airflow-volumes: &airflow_vols
   - ./:/opt/project
   - ./airflow/dags:/opt/airflow/dags
   - ~/.aws:/home/airflow/.aws:ro
+  - /var/run/docker.sock:/var/run/docker.sock
 
+# ----------------------------------------------------------
+# Shared Airflow Image
+# ----------------------------------------------------------
 x-airflow-image: &airflow_image
   image: e2e-macro-nowcasting-airflow:dev
   build:
     context: .
-    dockerfile: infra/docker/Dockerfile.airflow
+    dockerfile: infra/docker/services/Dockerfile
 
+# ----------------------------------------------------------
+# Services
+# ----------------------------------------------------------
 services:
   postgres:
     image: postgres:16
@@ -70,12 +90,12 @@ services:
       - |
         airflow db migrate && \
         airflow users create \
-          --username admin \
-          --password admin \
+          --username "${AIRFLOW_ADMIN_USERNAME}" \
+          --password "${AIRFLOW_ADMIN_PASSWORD}" \
           --firstname Admin \
           --lastname User \
           --role Admin \
-          --email admin@example.com || true && \
+          --email "${AIRFLOW_ADMIN_EMAIL}" || true && \
         airflow connections add aws_default \
           --conn-type aws \
           --conn-extra "{\"region_name\":\"${AWS_REGION}\"}" || true
@@ -84,8 +104,6 @@ services:
   airflow-webserver:
     <<: *airflow_image
     depends_on:
-      postgres:
-        condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
     environment: *airflow_env
@@ -94,20 +112,32 @@ services:
     ports:
       - "8080:8080"
     command: bash -lc "airflow webserver"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     restart: unless-stopped
     networks: [appnet]
 
   airflow-scheduler:
     <<: *airflow_image
     depends_on:
-      postgres:
-        condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
     environment: *airflow_env
     volumes: *airflow_vols
     working_dir: /opt/project
     command: bash -lc "airflow scheduler"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "airflow jobs check --job-type SchedulerJob --hostname \"$(hostname)\" || exit 1"
+        ]
+      interval: 20s
+      timeout: 10s
+      retries: 10
     restart: unless-stopped
     networks: [appnet]
 
@@ -115,15 +145,17 @@ services:
     image: e2e-macro-nowcasting-mlflow:dev
     build:
       context: .
-      dockerfile: infra/mlflow/Dockerfile
+      dockerfile: infra/docker/services/mlflow/Dockerfile
     depends_on:
       postgres:
         condition: service_healthy
     environment:
       AWS_REGION: ${AWS_REGION}
-      AWS_S3_BUCKET_ARTIFACTS: ${AWS_S3_BUCKET_ARTIFACTS}
-      MLFLOW_BACKEND_STORE_URI: ${MLFLOW_BACKEND_STORE_URI}
+      AWS_DEFAULT_REGION: ${AWS_REGION}
+      AWS_PROFILE: ${AWS_PROFILE}
       AWS_SHARED_CREDENTIALS_FILE: /home/mlflow/.aws/credentials
+      MLFLOW_BACKEND_STORE_URI: ${MLFLOW_BACKEND_STORE_URI}
+      AWS_S3_BUCKET_ARTIFACTS: ${AWS_S3_BUCKET_ARTIFACTS}
     volumes:
       - ~/.aws:/home/mlflow/.aws:ro
     healthcheck:
@@ -138,10 +170,10 @@ services:
       - -lc
       - |
         mlflow server \
-        --host 0.0.0.0 \
-        --port 5000 \
-        --backend-store-uri ${MLFLOW_BACKEND_STORE_URI} \
-        --default-artifact-root s3://${AWS_S3_BUCKET_ARTIFACTS}/mlflow
+          --host 0.0.0.0 \
+          --port 5000 \
+          --backend-store-uri "${MLFLOW_BACKEND_STORE_URI}" \
+          --default-artifact-root "s3://${AWS_S3_BUCKET_ARTIFACTS}/mlflow"
     restart: unless-stopped
     networks: [appnet]
 
