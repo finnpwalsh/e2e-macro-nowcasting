@@ -22,11 +22,11 @@ Runtime images do not define services or long-running processes.
 
 ```
 infra/docker/runtimes/
-  base/
-  etl/
-  train/
-  track/
-  serve/
+  prepare.Dockerfile
+  train.Dockerfile
+  track.Dockerfile
+  select.Dockerfile
+  serve.Dockerfile
 ```
 
 Each folder defines a single runtime image.
