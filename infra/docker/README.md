@@ -4,8 +4,8 @@
 
 Container images for each stage of the ML lifecycle and supporting infrastructure.
 
+- **Base** – shared runtime foundation
 - **Runtimes** – execution images for pipeline jobs
-  - `base` – shared runtime foundation
   - stage-specific runtimes layered on top
 - **Services** – always-on infrastructure images
 
@@ -23,6 +23,7 @@ Container images for each stage of the ML lifecycle and supporting infrastructur
 
 ```
 infra/docker/
+  base/
   runtimes/
   services/
 ```
