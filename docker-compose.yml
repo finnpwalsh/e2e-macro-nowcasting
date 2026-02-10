@@ -53,7 +53,7 @@ x-airflow-image: &airflow_image
   image: e2e-macro-nowcasting-airflow:dev
   build:
     context: .
-    dockerfile: infra/docker/services/Dockerfile
+    dockerfile: infra/docker/services/airflow/Dockerfile
 
 # ----------------------------------------------------------
 # Services
