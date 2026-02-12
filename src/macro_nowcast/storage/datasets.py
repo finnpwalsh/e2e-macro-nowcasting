@@ -59,3 +59,13 @@ class ModelReadyDatasets:
     @property
     def assembled(self) -> str:
         return f"{self.root}/assembled.parquet"
+
+
+@dataclass(frozen=True)
+class Datasets:
+    raw: RawDatasets = RawDatasets()
+    canonical: CanonicalDatasets = CanonicalDatasets()
+    model_ready: ModelReadyDatasets = ModelReadyDatasets()
+
+
+DATASETS = Datasets()
