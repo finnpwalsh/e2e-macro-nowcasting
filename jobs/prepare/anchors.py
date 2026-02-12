@@ -5,22 +5,22 @@ Lifecycle stage:
     Prepare
 
 Responsibilities:
-    - Ingest low-frequency macroeconomic anchor series from FRED
+    - Ingest low-frequency macroeconomic anchor series from external sources
     - Clean and normalize raw series into a canonical long format
-    - Assemble a wide, model-ready anchor feature table
 
 Inputs:
     - External FRED API (via FRED_API_KEY)
     - Raw FRED series identifiers defined in schema
 
 Outputs:
-    - Raw combined FRED dataset (long format)
-    - Processed, wide anchor feature dataset
+    - Raw combined source-specific dataset (long format)
+    - Canonical anchor dataset(clean long format)
 
 Out of scope:
     - Model training, evaluation, or experiment tracking
     - Feature selection based on model performance
     - Generation or consumption of model artifacts
+    - Producing model-ready feature tables
 
 Notes:
     This job is deterministic given external source data and configuration. 
@@ -37,11 +37,10 @@ from fredapi import Fred
 
 from ml_platform.storage.base import Storage
 from ml_platform.storage.factory import get_storage
-from ml_platform.storage import paths
+from macro_nowcast.storage.datasets import DATASETS
 
 from macro_nowcast.prepare.anchors.fred.ingest import ingest_fred_series
 from macro_nowcast.prepare.anchors.fred.clean import clean_fred_long
-from macro_nowcast.prepare.anchors.fred.build_wide import build_fred_wide
 
 from macro_nowcast.prepare.anchors.fred.schema import FRED_SERIES_IDS
 
@@ -54,34 +53,32 @@ def ingest(storage: Storage) -> None:
     
     fred = Fred(api_key = fred_api_key)
 
-    fred_out_key = paths.raw_fred_all()
+    out_key = DATASETS.raw.fred_snapshot
 
-    fred_dfs = []
+    dfs = []
     for series_id in FRED_SERIES_IDS:
         df = ingest_fred_series(fred, series_id)
-        fred_dfs.append(df)
+        dfs.append(df)
     
-    fred_combined = pd.concat(fred_dfs, ignore_index=True)
+    combined = pd.concat(dfs, ignore_index=True)
     
-    storage.write_parquet(df=fred_combined, key=fred_out_key, index=False)
+    storage.write_parquet(df=combined, key=out_key, index=False)
 
-    print(f"[OK] wrote {fred_combined.shape} -> {fred_out_key}")
+    print(f"[OK] wrote {combined.shape} -> {out_key}")
     print(f"[OK] anchor ingestion complete.")
 
 
 def prepare(storage: Storage) -> None:
     """Clean and transform raw FRED anchor data into a wide, model-ready feature table."""
-    fred_in_key = paths.raw_fred_all()
-    fred_out_key = paths.processed_fred_wide()
+    in_key = DATASETS.raw.fred_snapshot
+    out_key = DATASETS.canonical.anchors
 
-    df_raw = storage.read_parquet(key=fred_in_key)
-    
+    df_raw = storage.read_parquet(key=in_key)
     df_clean = clean_fred_long(df_raw)
-    df_wide = build_fred_wide(df_clean)
 
-    storage.write_parquet(df=df_wide, key=fred_out_key, index=False)
+    storage.write_parquet(df=df_clean, key=out_key, index=False)
 
-    print(f"[OK] wrote shape={df_wide.shape} -> {fred_out_key}")
+    print(f"[OK] wrote shape={df_clean.shape} -> {out_key}")
     print(f"[OK] wide anchor build task completed successfully.")
 
 
