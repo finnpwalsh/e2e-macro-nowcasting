@@ -30,6 +30,40 @@ Production-flavored infra hardening.
 
 ---
 
+### February 12, 2026
+
+**CONTEXT**
+
+- v1.4.1 – lifecycle refactor: storage refactor
+
+**DONE**
+
+- rename `price_nowcast` -> `macro_nowcast/`
+- begin moving storage paths out of `ml_platform/` into `macro_nowcast/storage`
+- divide `jobs/prepare/` jobs into `anchors/`, `shocks/`, and `assemble/` subdirectories
+- Create `datasets.py` in macro_nowcast storage
+    - `Datasets` (wrapper), `RawDatasets`, `CanonicalDatasets`, `ModelReadyDatasets`
+- refactor `data` lakehouse into
+    - `raw`, `canonical`, `model_ready`
+
+**NEXT**
+
+- split features + targets at canonicalization phase of prepare
+    - add target canonicalize job + src code
+- update assemble to pivot+merge+attach features + join target
+- continue to refactor `ml_platform/storage/paths.py` into:
+
+```
+src/ml_platform/storage/
+  ids.py              # run_id helpers
+  layout.py           # ArtifactKey builders (models/eval/datasets)
+  pointers.py         # latest.json, champion pointer semantics
+```
+
+- add/update relevant READMEs
+
+---
+
 ### February 10, 2026
 
 **CONTEXT**
