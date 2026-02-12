@@ -37,11 +37,11 @@ from ml_platform.storage.base import Storage
 from ml_platform.storage import paths
 from ml_platform.storage.factory import get_storage
 
-from price_nowcast.prepare.shocks.yfinance.ingest import ingest_yf_series
-from price_nowcast.prepare.shocks.yfinance.clean import clean_yf_long
-from price_nowcast.prepare.shocks.yfinance.build_monthly import build_and_resample_yf
+from macro_nowcast.prepare.shocks.yfinance.ingest import ingest_yf_series
+from macro_nowcast.prepare.shocks.yfinance.clean import clean_yf_long
+from macro_nowcast.prepare.shocks.yfinance.build_monthly import build_and_resample_yf
 
-from price_nowcast.prepare.shocks.yfinance.schema import YF_TICKERS
+from macro_nowcast.prepare.shocks.yfinance.schema import YF_TICKERS
 
 
 def ingest(storage: Storage) -> None:

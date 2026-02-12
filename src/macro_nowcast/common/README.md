@@ -1,8 +1,8 @@
-← [Back to Price Nowcast](../README.md)
+← [Back to Macro Nowcast](../README.md)
 
 # Common
 
-Shared domain utilities used across the price nowcasting system.
+Shared domain utilities used across the macro nowcasting system.
 
 ---
 

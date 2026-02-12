@@ -34,7 +34,7 @@ import pandas as pd
 from sklearn.pipeline import Pipeline
 
 from .models.ridge import make_ridge_pipeline
-from src.common.evaluation.metrics import regression_metrics
+from macro_nowcast.common.evaluation.metrics import regression_metrics
 
 def train_ridge(
        df: pd.DataFrame,

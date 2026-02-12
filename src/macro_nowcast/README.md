@@ -1,8 +1,8 @@
 ← [Back to Source](../README.md)
 
-# Price Nowcast
+# Macro Nowcast
 
-Domain-specific logic for the price nowcasting system.
+Domain-specific logic for the macro nowcasting system.
 
 ---
 

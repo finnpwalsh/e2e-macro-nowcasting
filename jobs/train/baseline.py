@@ -37,7 +37,7 @@ from ml_platform.storage.base import Storage
 from ml_platform.storage.factory import get_storage
 from ml_platform.storage import paths
 
-from price_nowcast.train.baseline.train import train_ridge
+from macro_nowcast.train.baseline.train import train_ridge
 
 def train(storage: Storage) -> None:
     """Train the baseline model and persist versioned candidate artifacts for downstream storage."""

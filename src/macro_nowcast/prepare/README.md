@@ -1,8 +1,8 @@
-← [Back to Price Nowcast](../README.md)
+← [Back to Macro Nowcast](../README.md)
 
 # Prepare
 
-Domain-specific data ingestion, transformation, and feature construction logic for price nowcasting.
+Domain-specific data ingestion, transformation, and feature construction logic for macro nowcasting.
 
 ---
 

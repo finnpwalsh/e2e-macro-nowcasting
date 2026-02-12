@@ -35,7 +35,7 @@ from ml_platform.storage.base import Storage
 from ml_platform.storage.factory import get_storage
 from ml_platform.storage import paths
 
-from price_nowcast.prepare.assemble.merge_monthly import build_merged
+from macro_nowcast.prepare.assemble.merge_monthly import build_merged
 
 
 def assemble(storage: Storage) -> None:

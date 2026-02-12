@@ -5,8 +5,8 @@ from pathlib import Path
 
 
 def test_smoke_imports() -> None:
-    import src.ml_platform
-    import src.price_nowcast
+    import ml_platform
+    import macro_nowcast
     import jobs
     import orchestration.airflow.dags.price_nowcasting
 

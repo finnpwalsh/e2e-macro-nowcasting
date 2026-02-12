@@ -1,8 +1,8 @@
-← [Back to Price Nowcast](../README.md)
+← [Back to Macro Nowcast](../README.md)
 
 # Train
 
-Domain-specific model training logic for price nowcasting.
+Domain-specific model training logic for macro nowcasting.
 
 ---
 

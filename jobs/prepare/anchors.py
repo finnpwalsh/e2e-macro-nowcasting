@@ -39,11 +39,11 @@ from ml_platform.storage.base import Storage
 from ml_platform.storage.factory import get_storage
 from ml_platform.storage import paths
 
-from price_nowcast.prepare.anchors.fred.ingest import ingest_fred_series
-from price_nowcast.prepare.anchors.fred.clean import clean_fred_long
-from price_nowcast.prepare.anchors.fred.build_wide import build_fred_wide
+from macro_nowcast.prepare.anchors.fred.ingest import ingest_fred_series
+from macro_nowcast.prepare.anchors.fred.clean import clean_fred_long
+from macro_nowcast.prepare.anchors.fred.build_wide import build_fred_wide
 
-from price_nowcast.prepare.anchors.fred.schema import FRED_SERIES_IDS
+from macro_nowcast.prepare.anchors.fred.schema import FRED_SERIES_IDS
 
 
 def ingest(storage: Storage) -> None:
