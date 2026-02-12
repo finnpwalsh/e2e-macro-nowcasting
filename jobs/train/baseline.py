@@ -36,6 +36,7 @@ from dotenv import load_dotenv
 from ml_platform.storage.base import Storage
 from ml_platform.storage.factory import get_storage
 from ml_platform.storage import paths
+from macro_nowcast.storage.datasets import DATASETS
 
 from macro_nowcast.train.baseline.train import train_ridge
 
@@ -44,7 +45,7 @@ def train(storage: Storage) -> None:
     run_id = paths.utc_run_id()
     model_name="baseline"
 
-    k_merged = paths.processed_merged()
+    k_merged = DATASETS.model_ready.assembled
 
     k_model = paths.model_file(model_name, run_id)
     k_metrics = paths.model_metrics(model_name, run_id)
