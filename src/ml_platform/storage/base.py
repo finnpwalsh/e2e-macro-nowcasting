@@ -6,7 +6,6 @@ filesystem, S3, etc.) must implement.
 
 This file contains no implementation logic.
 """
-
 from __future__ import annotations
 
 from typing import Protocol

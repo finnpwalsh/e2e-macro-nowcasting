@@ -3,14 +3,13 @@ Storage factory.
 
 Returns the appropriate Storage backend based on configuration.
 """
-
 from __future__ import annotations
 
 import os
 
-from src.storage.base import Storage
-from src.storage.local import LocalStorage
-from src.storage.s3 import S3Storage
+from .base import Storage
+from .backends.local import LocalStorage
+from .backends.s3 import S3Storage
 
 
 def get_storage() -> Storage:
