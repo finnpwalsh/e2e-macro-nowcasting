@@ -1,0 +1,47 @@
+"""
+Prepare: canonicalize shocks (clean long format).
+
+Lifecycle stage: 
+    Prepare
+
+Reads:
+    - DATASETS.raw.yfinance_snapshot
+
+Writes:
+    - DATASETS.canonical.shocks
+"""
+from __future__ import annotations
+
+from dotenv import load_dotenv
+
+from ml_platform.storage.base import Storage
+from ml_platform.storage.factory import get_storage
+from macro_nowcast.storage.datasets import DATASETS
+
+from macro_nowcast.prepare.shocks.yfinance.clean import clean_yf_long
+
+
+def run(storage: Storage) -> None:
+    """Clean and normalize shocks into a the canonical long-format shocks dataset."""
+    in_key = DATASETS.raw.yfinance_snapshot
+    out_key = DATASETS.canonical.shocks
+
+    df_raw = storage.read_parquet(key=in_key)
+    
+    df_clean = clean_yf_long(df_raw)
+
+    storage.write_parquet(df=df_clean, key=out_key)
+
+    print(f"[OK] wrote shape={df_clean.shape} -> {out_key}")
+    print(f"[OK] canonical shocks dataset build completed successfully.")
+
+
+def main() -> None:
+    """Execute shock ingestion and preparation using configured storage."""
+    load_dotenv()
+    storage = get_storage()
+    run(storage)
+
+
+if __name__ == "__main__":
+    main()
