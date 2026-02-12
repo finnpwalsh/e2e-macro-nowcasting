@@ -49,6 +49,10 @@ class CanonicalDatasets:
     @property
     def shocks(self) -> str:
         return f"{self.root}/shocks/dataset.parquet"
+    
+    @property
+    def targets(self) -> str:
+        return f"{self.root}/shocks/dataset.parquet"
 
 
 @dataclass(frozen=True)
