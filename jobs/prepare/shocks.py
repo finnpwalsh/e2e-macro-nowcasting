@@ -5,13 +5,12 @@ Lifecycle stage:
     Prepare
 
 Responsibilities:
-    - Ingest high-frequency financial market series via yfinance
+    - Ingest high-frequency financial market series via external sources
     - Clean and normalize raw series into a canonical long format
-    - Build and resample shock features into a model-ready dataset
 
 Inputs:
-    - External market data via yfinance
-    - Ticker universe defined in schema (YF_TICKERS)
+    - External market data
+    - Ticker universe defined in schema
 
 Outputs:
     - Raw combined yfinance dataset (long format)
@@ -34,19 +33,18 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from ml_platform.storage.base import Storage
-from ml_platform.storage import paths
 from ml_platform.storage.factory import get_storage
+from macro_nowcast.storage.datasets import DATASETS
 
 from macro_nowcast.prepare.shocks.yfinance.ingest import ingest_yf_series
 from macro_nowcast.prepare.shocks.yfinance.clean import clean_yf_long
-from macro_nowcast.prepare.shocks.yfinance.build_monthly import build_and_resample_yf
 
 from macro_nowcast.prepare.shocks.yfinance.schema import YF_TICKERS
 
 
 def ingest(storage: Storage) -> None:
     """Ingest raw yfinance shock series and persist a combined long-fomat dataset."""
-    out_key = paths.raw_yfinance_all()
+    out_key = DATASETS.raw.yfinance_snapshot
 
     dfs = []
     for ticker in YF_TICKERS:
@@ -62,19 +60,18 @@ def ingest(storage: Storage) -> None:
 
 
 def prepare(storage: Storage) -> None:
-    """Clean, transform, and resample yfinance shocks into a model-ready feature dataset."""
-    in_key = paths.raw_yfinance_all()
-    out_key = paths.processed_yfinance_features()
+    """Clean and normalize shocks into a the canonical long-format shocks dataset."""
+    in_key = DATASETS.raw.yfinance_snapshot
+    out_key = DATASETS.canonical.shocks
 
     df_raw = storage.read_parquet(key=in_key)
     
     df_clean = clean_yf_long(df_raw)
-    df_feat = build_and_resample_yf(df_clean)
 
-    storage.write_parquet(df=df_feat, key=out_key)
+    storage.write_parquet(df=df_clean, key=out_key)
 
-    print(f"[OK] wrote shape={df_feat.shape} -> {out_key}")
-    print(f"[OK] shock preparation complete.")
+    print(f"[OK] wrote shape={df_clean.shape} -> {out_key}")
+    print(f"[OK] canonical shocks dataset build completed successfully.")
 
 
 def main() -> None:
