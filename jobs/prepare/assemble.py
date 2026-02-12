@@ -7,14 +7,14 @@ Lifecycle stage:
 Responsibilities:
     - Read processed anchor and shock feature datasets
     - Align datasets on a common time index and schema
-    - Assemble a single, model-ready training table
+    - Assemble a single, model-ready supervised table (features + target)
 
 Inputs:
-    - Processed anchor feature dataset (monthly macro features)
-    - Processed shock feature dataset (resampled financial features)
+    - Canonical anchors dataset (clean long format)
+    - Canonical shocks dataset (clean long format)
 
 Outputs:
-    - Merged, model-ready dataset consumed by downstream training jobs
+    - Model-ready assembled dataset consumed by downstream training jobs
 
 Out of scope:
     - Feature engineering specific to individual sources
@@ -33,19 +33,19 @@ from dotenv import load_dotenv
 
 from ml_platform.storage.base import Storage
 from ml_platform.storage.factory import get_storage
-from ml_platform.storage import paths
+from macro_nowcast.storage.datasets import DATASETS
 
 from macro_nowcast.prepare.assemble.merge_monthly import build_merged
 
 
 def assemble(storage: Storage) -> None:
     """Assemble processed anchor and shock features into a unified training dataset."""
-    anchors_in_key = paths.processed_fred_wide()
-    anchors_in_key = paths.processed_yfinance_features()
-    out_key = paths.processed_merged()
+    anchors_in_key = DATASETS.canonical.anchors
+    shocks_in_key = DATASETS.canonical.shocks
+    out_key = DATASETS.model_ready.assembled
 
-    anchors = storage.read_parquet(anchors_in_key)
-    shocks = storage.read_parquet(anchors_in_key)
+    anchors = storage.read_parquet(key=anchors_in_key)
+    shocks = storage.read_parquet(key=shocks_in_key)
 
     df = build_merged(fred=anchors, yf=shocks)
 
