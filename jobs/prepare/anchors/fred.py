@@ -43,9 +43,14 @@ def run(storage: Storage) -> None:
 
 
     INDENT = "    "
+    SUB = INDENT * 2
     print(f"\n[PREPARE][ANCHORS][FRED] Complete")
-    print(f"{INDENT}Raw key:      {DATASETS.raw.fred_snapshot}")
-    print(f"{INDENT}shape:        {raw.shape}")
+    print(f"{INDENT}Raw")
+    print(f"{SUB}Key:       {DATASETS.raw.fred_snapshot}")
+    print(f"{SUB}Shape:     {raw.shape}")
+    print(f"{INDENT}Canonical")
+    print(f"{SUB}Key:       {DATASETS.canonical.anchors}")
+    print(f"{SUB}Shape:     {raw.shape}")
 
 
 def main() -> None:
