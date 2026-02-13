@@ -29,27 +29,35 @@ class FREDSource(Source):
     def fetch(
             self,
             *,
-            series_id: str,
+            series: dict[str, str],
             start_date: str,
             **_
     ) -> pd.DataFrame:
         """
-        Fetch raw data from FRED via client.
-        
-        Return minimal DataFrame:
-            date, value
+        Fetch all requested series from FRED and return one raw dataframe.
+
+        Raw columns:
+            date, value, series, series_id, 
         """
-        return self._client.fetch_series(
-            series_id=series_id,
-            start_date=start_date,
-        )
+        dfs: list[pd.DataFrame] = []
+
+        for series_name, series_id in series.items():
+            df = self._client.fetch_series(
+                series_id=series_id,
+                start_date=start_date,
+            )
+            df = df.copy()
+            df["series"] = series_name
+            df["series_id"] = series_id
+            dfs.append(df)
+        
+        return pd.concat(dfs, ignore_index=True)
     
     def canonicalize(
             self,
             df: pd.DataFrame,
             *,
-            series: str,
-            series_id: str,
+            series: dict[str, str],
             **_
     ) -> pd.DataFrame:
         """
@@ -59,9 +67,6 @@ class FREDSource(Source):
         out = df.copy()
 
         out = out.rename(columns = {"date":"ds"})
-
-        out["series"] = series
-        out["series_id"] = series_id
         out["source"] = self.name
 
         return out[["ds", "value", "series", "series_id", "source"]]
