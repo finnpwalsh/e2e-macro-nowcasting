@@ -1,7 +1,7 @@
-from .contract import DomainContract
+from .contract import Contract
 from .source import Source
 
 __all__ = [
-    "DomainContract",
+    "Contract",
     "Source",
 ]

@@ -6,7 +6,7 @@ from typing import Tuple
 import pandas as pd
 
 
-class DomainContract(ABC):
+class Contract(ABC):
     """
     Domain contract interface.
 
