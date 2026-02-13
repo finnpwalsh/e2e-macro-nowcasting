@@ -27,7 +27,11 @@ def run(storage: Storage) -> None:
     df_clean = clean_fred_long(df_raw)
 
     storage.write_parquet(df=df_clean, key=out_key, index=False)
-    print(f"[OK] wrote shape={df_clean.shape} -> {out_key}")
+
+    INDENT = "    "
+    print(f"\n[PREPARE][ANCHORS][CANONICALIZE] Complete")
+    print(f"{INDENT}output_key:   {out_key}")
+    print(f"{INDENT}shape:        {df_clean.shape}")
 
 
 def main() -> None:

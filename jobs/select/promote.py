@@ -53,8 +53,7 @@ def promote() -> None:
     )
 
     INDENT = "    "
-    print()
-    print("MLflow promotion complete")
+    print("\n[SELECT][PROMOTE] Complete")
     print(f"{INDENT}Registry Name:  {written['registry_model_name']}")
     print(f"{INDENT}Alias:          {written['alias']}")
     print(f"{INDENT}Version:        {written['version']}")

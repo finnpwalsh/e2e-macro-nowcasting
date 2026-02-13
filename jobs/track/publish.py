@@ -68,8 +68,7 @@ def run(storage: Storage) -> None:
     )
 
     INDENT = "    "
-    print()
-    print("MLflow tracking complete")
+    print("\n[TRACK][PUBLISH] Complete")
     print(f"{INDENT}Model:           {model_name}")
     print(f"{INDENT}MLflow Run ID:   {written['mlflow_run_id']}")
     print(f"{INDENT}Experiment ID:   {written['experiment_id']}")

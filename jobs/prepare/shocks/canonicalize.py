@@ -31,8 +31,10 @@ def run(storage: Storage) -> None:
 
     storage.write_parquet(df=df_clean, key=out_key)
 
-    print(f"[OK] wrote shape={df_clean.shape} -> {out_key}")
-    print(f"[OK] canonical shocks dataset build completed successfully.")
+    INDENT = "    "
+    print(f"\n[PREPARE][SHOCKS][CANONICALIZE] Complete")
+    print(f"{INDENT}output_key:   {out_key}")
+    print(f"{INDENT}shape:        {df_clean.shape}")
 
 
 def main() -> None:

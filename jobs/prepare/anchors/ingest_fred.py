@@ -42,8 +42,10 @@ def run(storage: Storage) -> None:
     
     storage.write_parquet(df=combined, key=out_key, index=False)
 
-    print(f"[OK] wrote {combined.shape} -> {out_key}")
-    print(f"[OK] anchor ingestion complete.")
+    INDENT = "    "
+    print(f"\n[PREPARE][ANCHORS][FRED] Complete")
+    print(f"{INDENT}output_key:   {out_key}")
+    print(f"{INDENT}shape:        {combined.shape}")
 
 
 def main() -> None:

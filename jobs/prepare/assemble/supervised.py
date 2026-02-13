@@ -33,7 +33,10 @@ def run(storage: Storage) -> None:
 
     storage.write_parquet(df, out_key)
 
-    print(f"[OK] wrote {len(df)} rows -> {out_key}")
+    INDENT = "    "
+    print(f"\n[PREPARE][ASSEMBLE][SUPERVISED] Complete")
+    print(f"{INDENT}output_key:   {out_key}")
+    print(f"{INDENT}shape:        {df.shape}")
 
 
 def main() -> None:
