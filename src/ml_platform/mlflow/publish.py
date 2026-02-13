@@ -56,7 +56,7 @@ def log_and_register_model(
     predictions_key: str,    # pointer to preds already written to data store
 ) -> dict:
     """
-    MLflow source-of-truth fir Track stage:
+    MLflow source-of-truth for Track stage:
       - experiment tracking
       - model registry (version creation)
 
