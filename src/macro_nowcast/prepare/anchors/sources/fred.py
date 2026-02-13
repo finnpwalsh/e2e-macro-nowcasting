@@ -12,7 +12,7 @@ import pandas as pd
 
 from macro_nowcast.connectors import FREDClient
 from macro_nowcast.prepare import Source
-from macro_nowcast.prepare.anchors import validate_anchor_long
+from macro_nowcast.prepare.anchors import CONTRACT
 
 
 class FREDSource(Source):
@@ -62,11 +62,6 @@ class FREDSource(Source):
         out["series_id"] = series_id
         out["source"] = self.name
 
-        out["ds"] = pd.to_datetime(out["ds"], errors="coerce").dt.normalize()
-        out["value"] = pd.to_numeric(out["value"], errors="coerce")
-        out["series_id"] = out["series_id"].astype("string")
-        out["source"] = out["source"].astype("string")
-
         return out[["ds", "value", "series_id", "source"]]
     
     def validate(
@@ -77,3 +72,4 @@ class FREDSource(Source):
         """
         Enforce anchors dataset contract.
         """
+        return CONTRACT.validate(df)
