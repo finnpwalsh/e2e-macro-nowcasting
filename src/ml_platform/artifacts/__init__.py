@@ -7,11 +7,11 @@ Defines:
 """
 from .keys import TrainArtifacts, EvalArtifacts
 from .pointers import ModelPointers
-from .ids import run_id
+from .ids import new_run_id
 
 __all__ = [
     "TrainArtifacts",
     "EvalArtifacts",
     "ModelPointers",
-    "run_id",
+    "new_run_id",
 ]
