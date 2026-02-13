@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 
-def run_id() -> str:
+def new_run_id() -> str:
     """
     Generate a lexicographically sortable and globally unique run ID.
 
