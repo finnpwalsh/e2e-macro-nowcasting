@@ -22,7 +22,6 @@ Notes:
 from __future__ import annotations
 
 import os
-import typing as Any
 
 import mlflow
 from mlflow.tracking import MlflowClient
