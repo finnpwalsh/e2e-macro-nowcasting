@@ -30,6 +30,23 @@ Production-flavored infra hardening.
 
 ---
 
+### February 13, 2026
+
+**CONTEXT**
+
+- v1.4.1 – lifecycle refactor: `Prepare` hardening
+
+**DONE**
+
+- add Source, Contract interfaces
+- refactor `anchors`
+
+**NEXT**
+
+- refactor `shocks`
+
+---
+
 ### February 12, 2026
 
 **CONTEXT**
