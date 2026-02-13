@@ -1,4 +1,4 @@
-from .fred import FREDSource
+from .source import FREDSource
 
 __all__ = [
     "FREDSource",
