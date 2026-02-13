@@ -37,7 +37,9 @@ from ml_platform.storage import Storage, get_storage, write_joblib, write_json
 from ml_platform.artifacts import TrainArtifacts, EvalArtifacts, ModelPointers, new_run_id
 from macro_nowcast.storage.datasets import DATASETS
 
-from macro_nowcast.train.baseline.train import train_ridge
+from macro_nowcast.train import RegressionTrainer
+from macro_nowcast.evaluate.metrics import regression_metrics
+from macro_nowcast.train.baseline.models.ridge import make_ridge_pipeline
 
 
 def run(storage: Storage) -> None:
@@ -52,7 +54,27 @@ def run(storage: Storage) -> None:
     in_key = DATASETS.model_ready.assembled
     df = storage.read_parquet(key=in_key)
 
-    model, metrics, preds, features = train_ridge(df)
+    # run config
+    target = "CPIAUCSL"
+    split_date = "2020-01-01"
+    alpha = 1.0
+
+    model = make_ridge_pipeline(alpha=alpha)
+    scorer = regression_metrics
+    trainer = RegressionTrainer(target=target, split_date=split_date)
+
+    model, metrics, preds, features = trainer.fit(
+        df,
+        model=model,
+        scorer=scorer,
+    )
+
+    metrics.update(
+        {
+            "model_type": "ridge",
+            "alpha": "alpha",
+        }
+    )
 
     # train artifacts
     write_joblib(storage, key=tr.model, obj=model)
