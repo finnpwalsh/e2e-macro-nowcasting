@@ -22,6 +22,7 @@ class FREDSource(Source):
 
     name = "fred"
     domain = "anchors"
+    contract = CONTRACT
 
     def __init__(self, client: FREDClient):
         self._client = client
@@ -31,7 +32,6 @@ class FREDSource(Source):
             *,
             series: dict[str, str],
             start_date: str,
-            **_
     ) -> pd.DataFrame:
         """
         Fetch all requested series from FRED and return one raw dataframe.
@@ -56,9 +56,6 @@ class FREDSource(Source):
     def canonicalize(
             self,
             df: pd.DataFrame,
-            *,
-            series: dict[str, str],
-            **_
     ) -> pd.DataFrame:
         """
         Convert raw FRED output into AnchorLong format:
@@ -74,9 +71,8 @@ class FREDSource(Source):
     def validate(
             self,
             df: pd.DataFrame,
-            **_
     ) -> pd.DataFrame:
         """
         Enforce anchors dataset contract.
         """
-        return CONTRACT.validate(df)
+        return self.contract.validate(df)

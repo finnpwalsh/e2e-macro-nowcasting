@@ -11,7 +11,6 @@ Writes:
 from __future__ import annotations
 
 import os
-import pandas as pd
 
 from dotenv import load_dotenv
 
@@ -35,11 +34,11 @@ def run(storage: Storage) -> None:
     client = FREDClient(api_key=api_key)
     source = FREDSource(client)
 
-    raw = source.fetch(SERIES)
+    raw = source.fetch(series=SERIES, start_date=START_DATE)
     storage.write_parquet(df=raw, key=DATASETS.raw.fred_snapshot, index=False)
 
-    canon = source.canonicalize(raw)
-    valid = source.validate(canon)
+    canon = source.canonicalize(df=raw)
+    valid = source.validate(df=canon)
     storage.write_parquet(df=valid, key=DATASETS.canonical.anchors)
 
 
