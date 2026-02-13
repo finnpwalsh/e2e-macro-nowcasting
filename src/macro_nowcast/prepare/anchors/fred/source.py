@@ -10,9 +10,9 @@ from __future__ import annotations
 
 import pandas as pd
 
-from macro_nowcast.connectors import FREDClient
 from macro_nowcast.prepare import Source
 from macro_nowcast.prepare.anchors import CONTRACT
+from .client import FREDClient
 
 
 class FREDSource(Source):
@@ -48,6 +48,7 @@ class FREDSource(Source):
             self,
             df: pd.DataFrame,
             *,
+            series: str,
             series_id: str,
             **_
     ) -> pd.DataFrame:
@@ -59,10 +60,11 @@ class FREDSource(Source):
 
         out = out.rename(columns = {"date":"ds"})
 
+        out["series"] = series
         out["series_id"] = series_id
         out["source"] = self.name
 
-        return out[["ds", "value", "series_id", "source"]]
+        return out[["ds", "value", "series", "series_id", "source"]]
     
     def validate(
             self,
