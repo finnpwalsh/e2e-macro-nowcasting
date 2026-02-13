@@ -36,7 +36,7 @@ from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage, read_joblib, read_json
 from ml_platform.artifacts import ModelPointers
-from ml_platform.mlflow.publish import log_and_register_model
+from ml_platform.mlflow import log_and_register_model
 
 
 def run(storage: Storage) -> None:

@@ -32,7 +32,7 @@ import os
 
 from dotenv import load_dotenv
 
-from ml_platform.mlflow.promote import promote_latest
+from ml_platform.mlflow import promote_latest
 
 
 def promote() -> None:
