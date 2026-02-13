@@ -34,25 +34,21 @@ from __future__ import annotations
 
 from dotenv import load_dotenv
 
-from ml_platform.storage.base import Storage
-from ml_platform.storage.factory import get_storage
-from ml_platform.storage import paths
-from ml_platform.storage.io import read_joblib, read_json
-
+from ml_platform.storage import Storage, get_storage, read_joblib, read_json
+from ml_platform.artifacts import ModelPointers
 from ml_platform.mlflow.publish import log_and_register_model
 
 
-def publish(storage: Storage) -> None:
+def run(storage: Storage) -> None:
     """Publish the latest trained model artifacts to MLflow and register a versioned model."""
     model_name = "baseline"
-
-    latest_key = paths.model_latest(model_name)
+    ptr = ModelPointers(model_name=model_name)
     
-    latest = read_json(storage, latest_key)
+    latest = read_json(storage, ptr.latest)
     
     model = read_joblib(storage, latest["model_key"])
     metrics = read_json(storage, latest["metrics_key"])
-    preds = storage.read_parquet(latest["predictions_key"])
+    preds = storage.read_parquet(key=latest["predictions_key"])
     summary = read_json(storage, latest["summary_key"])
     
     run_id = latest["run_id"]
@@ -79,16 +75,13 @@ def publish(storage: Storage) -> None:
     print(f"{INDENT}Experiment ID:   {written['experiment_id']}")
     print(f"{INDENT}Registry Name:   {written['registry_model_name']}")
     print(f"{INDENT}Version:         {written['registry_model_version']}")
-    print(f"{INDENT}Alias:           {written['alias']}")
     print(f"{INDENT}Model URI:       {written['model_uri']}")
     print(f"{INDENT}Predictions Key: {written['predictions_key']}")
 
 
 def main() -> None:
-    """Execute model tracking and registration using configured storage."""
     load_dotenv()
-    storage = get_storage()
-    publish(storage)
+    run(get_storage())
 
 
 if __name__ == "__main__":

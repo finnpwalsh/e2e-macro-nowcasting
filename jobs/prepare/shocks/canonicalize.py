@@ -14,8 +14,7 @@ from __future__ import annotations
 
 from dotenv import load_dotenv
 
-from ml_platform.storage.base import Storage
-from ml_platform.storage.factory import get_storage
+from ml_platform.storage import Storage, get_storage
 from macro_nowcast.storage.datasets import DATASETS
 
 from macro_nowcast.prepare.shocks.yfinance.clean import clean_yf_long

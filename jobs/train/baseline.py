@@ -10,7 +10,7 @@ Responsibilities:
     - Produce versioned candidate artifacts required downstream
 
 Inputs:
-    - Model-ready training table from Prepare (storage key: processed_merged)
+    - Model-ready training table from Prepare (storage key: DATASETS.model_ready_assemble)
 
 Outputs (versioned by run_id):
     - Model artifact (joblib)
@@ -33,83 +33,82 @@ from __future__ import annotations
 
 from dotenv import load_dotenv
 
-from ml_platform.storage.base import Storage
-from ml_platform.storage.factory import get_storage
-from ml_platform.storage import paths
+from ml_platform.storage import Storage, get_storage, write_joblib, write_json
+from ml_platform.artifacts import TrainArtifacts, EvalArtifacts, ModelPointers, new_run_id
 from macro_nowcast.storage.datasets import DATASETS
 
 from macro_nowcast.train.baseline.train import train_ridge
 
-def train(storage: Storage) -> None:
+
+def run(storage: Storage) -> None:
     """Train the baseline model and persist versioned candidate artifacts for downstream storage."""
-    run_id = paths.utc_run_id()
+    run_id = new_run_id()
     model_name="baseline"
 
-    k_merged = DATASETS.model_ready.assembled
+    tr = TrainArtifacts(model_name=model_name, run_id=run_id)
+    ev = EvalArtifacts(model_name=model_name, run_id=run_id)
+    ptr = ModelPointers(model_name=model_name)
 
-    k_model = paths.model_file(model_name, run_id)
-    k_metrics = paths.model_metrics(model_name, run_id)
-    k_preds = paths.eval_predictions(model_name, run_id)
-    k_summary = paths.eval_summary(model_name, run_id)
-    k_latest = paths.model_latest(model_name)
+    in_key = DATASETS.model_ready.assembled
+    df = storage.read_parquet(key=in_key)
 
-    merged = storage.read_parquet(k_merged)
+    model, metrics, preds, features = train_ridge(df)
 
-    model, metrics, preds, features = train_ridge(merged)
-
-    storage.write_joblib(model, k_model)
-    storage.write_json(metrics, k_metrics)
-    storage.write_parquet(preds, k_preds)
-    storage.write_json(
-        {
+    # train artifacts
+    write_joblib(storage, key=tr.model, obj=model)
+    write_json(storage, key=tr.metrics, obj=metrics)
+    
+    # eval artifacts
+    storage.write_parquet(key=ev.predictions, df=preds)
+    write_json(
+        storage,
+        key=ev.summary,
+        payload={
             "model_name": model_name,
             "run_id": run_id,
-            "input_key": k_merged,
-            "predictions_key": k_preds,
+            "input_key": in_key,
+            "predictions_key": ev.predictions,
             "n_rows": len(preds),
             "n_cols": preds.shape[1],
             "columns": list(preds.columns),
             "n_features": len(features),
             "features": list(features),
         },
-        k_summary,
-    ) # eval summary
+    )
 
-    storage.write_json(
-        {
+    # latest pointer
+    write_json(
+        storage,
+        key=ptr.latest,
+        payload={
             "model_name": model_name,
             "run_id": run_id,
-            "model_key": k_model,
-            "metrics_key": k_metrics,
-            "predictions_key": k_preds,
-            "summary_key": k_summary,
-            "input_key": k_merged,
+            "model_key": tr.model,
+            "metrics_key": tr.metrics,
+            "predictions_key": ev.predictions,
+            "summary_key": ev.summary,
+            "input_key": in_key,
         },
-        k_latest,
-    ) # latest pointer
+    )
     
+
     INDENT = "    "
-    print()
-    print("Train complete")
+    SUB = INDENT * 2
+    print("\n[Train] Complete")
     print(f"{INDENT}Model:       {model_name}")
-    print(f"{INDENT}Run ID:       {run_id}")
-    print(f"{INDENT}Input:       {k_merged}")
-    print(f"{INDENT}RMSE:        {metrics['rmse']:.4f}")
-    print()
-    print("Outputs (data store)")
-    print(f"{INDENT}model:       {k_model}")
-    print(f"{INDENT}metrics:     {k_metrics}")
-    print(f"{INDENT}preds:       {k_preds}")
-    print(f"{INDENT}summary:     {k_summary}")
-    print(f"{INDENT}latest:      {paths.model_latest(model_name)}")
-    print()
+    print(f"{INDENT}Run ID:      {run_id}")
+    print(f"{INDENT}Input:       {in_key}")
+    print(f"{INDENT}Artifact store:")
+    print(f"{SUB}model:       {tr.model}")
+    print(f"{SUB}metrics:     {tr.metrics}")
+    print(f"{SUB}preds:       {ev.predictions}")
+    print(f"{SUB}summary:     {ev.summary}")
+    print(f"{SUB}latest:      {ptr.latest}")
 
 
 def main() -> None:
-    """Execute baseline training using configured storage."""
     load_dotenv()
-    storage = get_storage()
-    train(storage)
+    run(get_storage())
 
 
 if __name__ == "__main__":
