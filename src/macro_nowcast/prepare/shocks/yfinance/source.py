@@ -30,7 +30,8 @@ class YFSource(Source):
             t = t.copy()
 
             if t is None or t.empty:
-                raise ValueError(f"{ticker_id}: yfinance returned no data (start={start_date}).")
+                print(f"[PREPARE][SHOCKS][YF] {ticker_id} no data. Skipping.")
+                continue
             
             col = "Adj Close" if "Adj Close" in t.columns else "Close"
 
@@ -40,6 +41,9 @@ class YFSource(Source):
             df["ticker"] = ticker_name
             df["ticker_id"] = ticker_id
             dfs.append(df)
+        
+        if not dfs:
+            raise ValueError("[PREPARE][SHOCKS][YF] All tickers failed.")
         
         return pd.concat(dfs, ignore_index=True)
 
