@@ -1,62 +1,109 @@
-# config
-APP_NAME    := e2e-macro-nowcasting
+# --------------------------------------------------------
+# Compose Layering
+# --------------------------------------------------------
+DC := docker compose -f docker-compose.yml -f docker-compose.dev.yml
+
 PROJECT_DIR := /opt/project
-
-# local python dev
-PYTHON := .venv/bin/python
-
-# Airflow service to run CLI commands
 AIRFLOW_SERVICE := airflow-scheduler
 DAG_ID := price_nowcasting
 
-.PHONY: build up init down logs ps shell \
-		ingest clean merge train test \
-		trigger run
+# --------------------------------------------------------
+# Helpers
+# --------------------------------------------------------
+define RUN_STAGE
+	$(DC) run --rm --entrypoint bash $(1) -lc "$(2)"
+endef
 
-# build
-build:
-	docker compose build
+define EXEC_AIRFLOW
+	$(DC) exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && $(1)"
+endef
 
-# infra
-up:
-	docker compose up -d
+# --------------------------------------------------------
+# Build
+# --------------------------------------------------------
+.PHONY: build build-base build-runtimes
 
-init:
-	docker compose run --rm airflow-init
+build-base:
+	$(DC) build nowcasting-base
+
+build-runtimes:
+	$(DC) build runtime-prepare runtime-train runtime-track runtime-select
+
+build: build-base build-runtimes
+
+# --------------------------------------------------------
+# Infra
+# --------------------------------------------------------
+.PHONY: up down init logs ps shell
+
+up: 
+	$(DC) up -d
 
 down:
-	docker compose down
+	$(DC) down
+
+init:
+	$(DC) run --rm airflow-init
 
 logs:
-	docker compose logs -f
+	$(DC) logs -f
 
 ps:
-	docker compose ps
+	$(DC) ps
 
 shell:
-	docker compose exec $(AIRFLOW_SERVICE) bash
+	$(DC) exec $(AIRFLOW_SERVICE) bash
 
-# dev utilities (manual)
-ingest:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/ingest_fred.py"
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/ingest_yfinance.py"
+# --------------------------------------------------------
+# Data Plane
+# --------------------------------------------------------
+.PHONY: prepare prepare-anchors prepare-shocks prepare-assemble train
 
-clean:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/clean_fred.py"
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/clean_yfinance.py"
+prepare: prepare-achors prepare-shocks prepare-assemble
 
-merge:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/merge.py"
+prepare-anchors:
+	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/anchors/fred.py)
 
-train:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/train_ridge.py"
+prepare-shocks:
+	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/shocks/yf.py)
+
+prepare-assemble:
+	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/assemble/merge.py)
+
+train: train-baseline
+
+train-baseline:
+	$(call RUN_STAGE,runtime-train,python jobs/train/baseline.py)
+
+# --------------------------------------------------------
+# Control Plane
+# --------------------------------------------------------
+.PHONY: track select
+
+track:
+	$(call RUN_STAGE,runtime-track,python jobs/track/publish.py)
+
+select:
+	$(call RUN_STAGE,runtime-select,python jobs/select/promote.py)
+
+# --------------------------------------------------------
+# Testing
+# --------------------------------------------------------
+.PHONY: test test-airflow
 
 test:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && pytest -q"
+	pytest -q
 
-# orchestrated run 
+test-airflow:
+	$(call RUN_STAGE,runtime-train,pytest -q)
+
+# --------------------------------------------------------
+# Orchestrated Run
+# --------------------------------------------------------
+.PHONY: trigger run
+
 trigger:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && airflow dags trigger $(DAG_ID)"
+	$(call EXEC_AIRFLOW,airflow dags trigger $(DAG_ID))
 
 run: trigger
 	@echo "Triggered DAG: $(DAG_ID)"

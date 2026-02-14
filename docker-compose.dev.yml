@@ -1,0 +1,60 @@
+services:
+  runtime-prepare:
+    build:
+      context: .
+      dockerfile: infra/docker/runtimes/prepare.Dockerfile
+    image: nowcasting-prepare:latest
+    env_file: .env
+    working_dir: /opt/project
+    volumes:
+      - .:/opt/project
+      - ~/.aws:/root/.aws:ro
+    environment:
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+    networks: [appnet]
+
+  runtime-train:
+    build:
+      context: .
+      dockerfile: infra/docker/runtimes/train.Dockerfile
+    image: nowcasting-train:latest
+    env_file: .env
+    working_dir: /opt/project
+    volumes:
+      - .:/opt/project
+      - ~/.aws:/root/.aws:ro
+    environment:
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+    networks: [appnet]
+
+  runtime-track:
+    build:
+      context: .
+      dockerfile: infra/docker/runtimes/track.Dockerfile
+    image: nowcasting-track:latest
+    env_file: .env
+    working_dir: /opt/project
+    volumes:
+      - .:/opt/project
+      - ~/.aws:/root/.aws:ro
+    environment:
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+    networks: [appnet]
+
+  runtime-select:
+    build:
+      context: .
+      dockerfile: infra/docker/runtimes/select.Dockerfile
+    image: nowcasting-select:latest
+    env_file: .env
+    working_dir: /opt/project
+    volumes:
+      - .:/opt/project
+      - ~/.aws:/root/.aws:ro
+    environment:
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+    networks: [appnet]
+
+networks:
+  appnet:
+    name: e2e-macro-nowcasting-net
