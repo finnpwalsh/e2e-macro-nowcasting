@@ -30,7 +30,7 @@ Production-flavored infra hardening.
 
 ---
 
-### February XX, 2026
+### February 14, 2026
 
 **CONTEXT**
 
@@ -43,11 +43,16 @@ Production-flavored infra hardening.
 - created `docker-compose.dev.yml` with stage-specific images
 - added `nowcasting-base` image to `docker-compose.yml`
 - updated `Makefile` accordingly
+- added `registry` to `anchors`
+- added `assembler`, `canonicalizer`, `feature_builder`, and `provider` interfaces to `interfaces` + implementations to `anchors`
+- finalized `anchors` prep jobs:
+    - `source/<source>.py`, `assemble.py`, `build_features.py`
 
 **NEXT**
 
 - remove `yfinance`, add `tiingo`
 - remove `assemble` step -> two-model system (`baseline` + `residuals`)
+- finalize `shocks` prep jobs
 
 ---
 
