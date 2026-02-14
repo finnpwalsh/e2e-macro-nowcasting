@@ -6,6 +6,7 @@
 data/
 /artifacts/
 mlruns/
+/airflow/
 
 # Airflow generated files
 airflow/logs/**
