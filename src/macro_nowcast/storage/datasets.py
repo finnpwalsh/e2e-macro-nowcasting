@@ -1,10 +1,22 @@
 """
 Canonical dataset keys for the macro_nowcast domain.
 
-Rules:
-    - Raw layer may reference upstream data sources.
-    - Canonical layer must be source-agnostic and reflect modeling semantics only.
-    - This module defines dataset locations only. It does not read or write data
+Layering Rules:
+
+Raw:
+    - Full upstream snapshots
+    - May reference external providers
+
+Canonical:
+    - Source-specific cleaned datasets
+    - Validated against domain contract
+    - NOT merged across sources
+    - NOT modeling tables
+
+ModelReady:
+    - Modeling tables only
+    - Anchors and shocks separated
+    - No source semantics
 """
 from __future__ import annotations
 from dataclasses import dataclass
@@ -12,12 +24,6 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class RawDatasets:
-    """
-    Raw ingestion layer.
-
-    These datasets represent full snapshots of upstream sources.
-    They are allowed to reference external providers.
-    """
     root: str = "data/raw"
 
     @property
@@ -25,44 +31,38 @@ class RawDatasets:
         return f"{self.root}/fred/snapshot.parquet"
     
     @property
-    def yfinance_snapshot(self) -> str:
-        return f"{self.root}/yfinance/snapshot.parquet"
+    def tiingo_snapshot(self) -> str:
+        return f"{self.root}/tiingo/snapshot.parquet"
     
 
 @dataclass(frozen=True)
 class CanonicalDatasets:
-    """
-    Canonical modeling datasets.
-
-    These datasets must NOT reference data sources.
-    They are divided strictly by modeling semantics:
-        - anchors
-        - shocks
-        - assembled
-    """
     root: str = "data/canonical"
 
     @property
-    def anchors(self) -> str:
-        return f"{self.root}/anchors/dataset.parquet"
+    def anchors_fred(self) -> str:
+        return f"{self.root}/anchors/fred.parquet"
     
     @property
-    def shocks(self) -> str:
-        return f"{self.root}/shocks/dataset.parquet"
+    def shocks_tiingo(self) -> str:
+        return f"{self.root}/shocks/tiingo.parquet"
     
     @property
     def targets(self) -> str:
-        return f"{self.root}/shocks/dataset.parquet"
+        return f"{self.root}/targets/target.parquet"
 
 
 @dataclass(frozen=True)
 class ModelReadyDatasets:
-    """Model-ready supervised table (features + target)."""
     root: str = "data/model_ready"
 
     @property
-    def assembled(self) -> str:
-        return f"{self.root}/assembled.parquet"
+    def anchors_table(self) -> str:
+        return f"{self.root}/anchors_table.parquet"
+    
+    @property
+    def shocks_table(self) -> str:
+        return f"{self.root}/shocks_table.parquet"
 
 
 @dataclass(frozen=True)
