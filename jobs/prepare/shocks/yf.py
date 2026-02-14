@@ -10,8 +10,6 @@ Writes:
 """
 from __future__ import annotations
 
-import os
-
 from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage
