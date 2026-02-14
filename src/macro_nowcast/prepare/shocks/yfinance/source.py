@@ -25,12 +25,12 @@ class YFSource(Source):
         dfs: list[pd.DataFrame] = []
 
         for ticker_name, ticker_id in tickers.items():
-            t = yf.download(ticker_id, start=start_date, progress=False)
+            t = yf.Ticker(ticker_id).history(start=start_date, auto_adjust=False)
 
             t = t.copy()
 
             if t is None or t.empty:
-                print(f"[PREPARE][SHOCKS][YF] {ticker_id} no data. Skipping.")
+                print(f"[PREPARE][SHOCKS][YF] {ticker_id} has no data. Skipping.")
                 continue
             
             col = "Adj Close" if "Adj Close" in t.columns else "Close"
