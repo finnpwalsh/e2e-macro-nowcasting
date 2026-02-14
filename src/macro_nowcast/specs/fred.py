@@ -1,5 +1,5 @@
 """
-FRED anchors series configuration.
+FRED anchors series specs.
 
 Maps internal feature names to FRED series IDs.
 """
@@ -13,4 +13,3 @@ SERIES: dict[str, str] = {
     "federal_funds": "FEDFUNDS",
     "unemployment_rate": "UNRATE",
 }
-
