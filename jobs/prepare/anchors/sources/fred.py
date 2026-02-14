@@ -1,12 +1,12 @@
 """
-Prepare: ingest, canonicalize, and validate FRED anchor series.
+Prepare: ingest and canonicalize raw FRED anchor series.
 
 Lifecycle stage:
     Prepare
 
 Writes:
     - DATASETS.raw.fred_snapshot
-    - DATASETS.canonical.anchors
+    - DATASETS.canonical.anchors_fred
 """
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from macro_nowcast.storage.datasets import DATASETS
 
 from macro_nowcast.externals.clients.fred import FREDClient
 from macro_nowcast.externals.providers.fred import FREDProvider
-from macro_nowcast.prepare.anchors.canonicalizers.fred import FREDAnchorCanonicalizer
+from macro_nowcast.prepare.anchors.registry import ANCHOR_SOURCES
 
 from macro_nowcast.specs.fred import SERIES
 
@@ -34,7 +34,7 @@ def run(storage: Storage) -> None:
     
     client = FREDClient(api_key=api_key)
     provider = FREDProvider(client)
-    canonicalizer = FREDAnchorCanonicalizer()
+    canonicalizer = ANCHOR_SOURCES["fred"].canonicalizer()
 
     raw = provider.fetch(series=SERIES, start_date=START_DATE)
     storage.write_parquet(df=raw, key=DATASETS.raw.fred_snapshot, index=False)
