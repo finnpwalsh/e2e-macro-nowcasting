@@ -37,18 +37,15 @@ class AnchorContract(Contract):
     
 
     def coerce(self, df: pd.DataFrame) -> pd.DataFrame:
-        # normalize datetime
+        df = df.copy()
+        
         df["ds"] = pd.to_datetime(df["ds"]).dt.tz_localize(None)
-
-        # enforce numeric value
         df["value"] = pd.to_numeric(df["value"], errors="raise")
 
-        # normalize identifiers
         df["series"] = df["series"].astype(str)
         df["series_id"] = df["series_id"].astype(str)
         df["source"] = df["source"].astype(str)
 
-        # deterministic ordering
         df = df.sort_values(list(self.primary_key)).reset_index(drop=True)
 
         return df
