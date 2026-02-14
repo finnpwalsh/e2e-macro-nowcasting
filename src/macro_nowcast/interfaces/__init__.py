@@ -1,7 +1,9 @@
+from .canonicalizer import Canonicalizer
 from .contract import Contract
-from .source import Source
+from .providers import Provider
 
 __all__ = [
+    "Canonicalizer",
     "Contract",
-    "Source",
+    "Provider",
 ]
