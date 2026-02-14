@@ -27,7 +27,7 @@ class ShockContract(Contract):
     def primary_key(self) -> Tuple[str, ...]:
         return (
             "source",
-            "series",
+            "ticker",
             "ts",
         )
     
@@ -36,8 +36,8 @@ class ShockContract(Contract):
         df["value"] = pd.to_numeric(df["value"], errors="raise")
 
         df["ticker"] = df["ticker"].astype(str)
-        df["ticker"] = df["ticker"].astype(str)
-        df["ticker"] = df["ticker"].astype(str)
+        df["ticker_id"] = df["ticker_id"].astype(str)
+        df["source"] = df["source"].astype(str)
 
         df = df.sort_values(list(self.primary_key)).reset_index(drop=True)
 
