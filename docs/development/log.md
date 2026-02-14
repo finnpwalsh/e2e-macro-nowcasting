@@ -40,10 +40,13 @@ Production-flavored infra hardening.
 
 - add Source, Contract interfaces
 - refactor `anchors`
+- refactor `shocks`
 
 **NEXT**
 
-- refactor `shocks`
+- refactor `assemble`
+- refactor data lake (minor)
+    - add source-specific directories inside domain-specific (anchor, shock) canon
 
 ---
 
