@@ -30,6 +30,27 @@ Production-flavored infra hardening.
 
 ---
 
+### February XX, 2026
+
+**CONTEXT**
+
+- v1.4.1 – lifecycle refactor: dev hardening
+
+**DONE**
+
+- refactor data lake (minor)
+    - add source-specific directories inside domain-specific (anchor, shock) canon
+- created `docker-compose.dev.yml` with stage-specific images
+- added `nowcasting-base` image to `docker-compose.yml`
+- updated `Makefile` accordingly
+
+**NEXT**
+
+- remove `yfinance`, add `tiingo`
+- remove `assemble` step -> two-model system (`baseline` + `residuals`)
+
+---
+
 ### February 13, 2026
 
 **CONTEXT**
