@@ -32,7 +32,7 @@ class ShockContract(Contract):
         )
     
     def coerce(self, df: pd.DataFrame) -> pd.DataFrame:
-        df["ds"] = pd.to_datetime(df["ds"]).dt.tz_localize(None)
+        df["ts"] = pd.to_datetime(df["ts"]).dt.tz_localize(None)
         df["value"] = pd.to_numeric(df["value"], errors="raise")
 
         df["ticker"] = df["ticker"].astype(str)
