@@ -1,4 +1,4 @@
-SERIES: dict[str, str] = {
+TICKERS: dict[str, str] = {
     "equities_risk": "SPY",
     "volatility": "^VIX",
     "rates_expectations": "IEF",

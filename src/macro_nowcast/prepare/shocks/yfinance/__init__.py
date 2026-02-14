@@ -1,7 +1,7 @@
 from .source import YFSource
-from .series import SERIES
+from .tickers import TICKERS
 
 __all__ = [
     "YFSource",
-    "SERIES",
+    "TICKERS",
 ]
