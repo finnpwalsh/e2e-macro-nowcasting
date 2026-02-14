@@ -42,3 +42,6 @@ class ShockContract(Contract):
         df = df.sort_values(list(self.primary_key)).reset_index(drop=True)
 
         return df
+    
+
+CONTRACT = ShockContract()
