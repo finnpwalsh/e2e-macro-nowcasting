@@ -28,7 +28,7 @@ def run(storage: Storage) -> None:
     """Ingest raw yfinance anchor series and persist both raw and canonical datasets."""
     source = YFSource()
 
-    raw = source.fetch(ticker=TICKERS, start_date=START_DATE)
+    raw = source.fetch(tickers=TICKERS, start_date=START_DATE)
     storage.write_parquet(df=raw, key=DATASETS.raw.yfinance_snapshot, index=False)
 
     canon = source.canonicalize(df=raw)
