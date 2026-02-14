@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from macro_nowcast.interfaces.feature_builder import FeatureBuilder
+from macro_nowcast.interfaces import FeatureBuilder
 
 
 class AnchorFeatureBuilder(FeatureBuilder):

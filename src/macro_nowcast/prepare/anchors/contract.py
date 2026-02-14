@@ -9,7 +9,7 @@ from typing import Tuple
 
 import pandas as pd
 
-from macro_nowcast.prepare.interfaces import Contract
+from macro_nowcast.interfaces import Contract
 
 
 class AnchorContract(Contract):

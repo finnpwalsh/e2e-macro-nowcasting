@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pandas as pd
 
-from macro_nowcast.interfaces.assembler import Assembler
-from macro_nowcast.prepare.anchors.contract import CONTRACT
+from macro_nowcast.interfaces import Assembler
+from macro_nowcast.prepare.anchors import CONTRACT
 
 
 class AnchorAssembler(Assembler):
