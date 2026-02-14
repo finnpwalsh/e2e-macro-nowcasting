@@ -16,9 +16,12 @@ from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage
 from macro_nowcast.storage.datasets import DATASETS
-from macro_nowcast.prepare.anchors.fred.client import FREDClient
-from macro_nowcast.prepare.anchors.fred.source import FREDSource
-from macro_nowcast.prepare.anchors.fred import SERIES
+
+from macro_nowcast.externals.clients.fred import FREDClient
+from macro_nowcast.externals.providers.fred import FREDProvider
+from macro_nowcast.prepare.anchors.canonicalizers.fred import FREDAnchorCanonicalizer
+
+from macro_nowcast.specs.fred import SERIES
 
 START_DATE = "2010-01-01"
 
@@ -30,14 +33,14 @@ def run(storage: Storage) -> None:
         raise RuntimeError("Missing FRED_API_KEY. Add it to .env")
     
     client = FREDClient(api_key=api_key)
-    source = FREDSource(client)
+    provider = FREDProvider(client)
+    canonicalizer = FREDAnchorCanonicalizer()
 
-    raw = source.fetch(series=SERIES, start_date=START_DATE)
+    raw = provider.fetch(series=SERIES, start_date=START_DATE)
     storage.write_parquet(df=raw, key=DATASETS.raw.fred_snapshot, index=False)
 
-    canon = source.canonicalize(df=raw)
-    valid = source.validate(df=canon)
-    storage.write_parquet(df=valid, key=DATASETS.canonical.anchors)
+    canon = canonicalizer.canonicalize(df=raw)
+    storage.write_parquet(df=canon, key=DATASETS.canonical.anchors_fred)
 
 
     INDENT = "    "
@@ -47,7 +50,7 @@ def run(storage: Storage) -> None:
     print(f"{SUB}Key:       {DATASETS.raw.fred_snapshot}")
     print(f"{SUB}Shape:     {raw.shape}")
     print(f"{INDENT}Canonical")
-    print(f"{SUB}Key:       {DATASETS.canonical.anchors}")
+    print(f"{SUB}Key:       {DATASETS.canonical.anchors_fred}")
     print(f"{SUB}Shape:     {raw.shape}")
 
 
