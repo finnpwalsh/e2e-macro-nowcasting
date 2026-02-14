@@ -3,8 +3,8 @@ from __future__ import annotations
 import pandas as pd
 import yfinance as yf
 
-from macro_nowcast.prepare import Source
-from macro_nowcast.prepare.shocks import CONTRACT
+from macro_nowcast.prepare.interfaces import Source
+from macro_nowcast.prepare.shocks.contract import CONTRACT
 
 
 class YFSource(Source):

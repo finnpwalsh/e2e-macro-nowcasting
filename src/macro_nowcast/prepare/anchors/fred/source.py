@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import pandas as pd
 
-from macro_nowcast.prepare import Source
-from macro_nowcast.prepare.anchors import CONTRACT
+from macro_nowcast.prepare.interfaces import Source
+from macro_nowcast.prepare.anchors.contract import CONTRACT
 from .client import FREDClient
 
 
