@@ -8,3 +8,6 @@ python-dotenv
 # S3
 boto3==1.34.162
 botocore==1.34.162
+
+# artifacts
+joblib==1.4.2
