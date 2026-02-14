@@ -16,10 +16,8 @@ from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage
 from macro_nowcast.storage.datasets import DATASETS
-from macro_nowcast.prepare.shocks.yfinance import (
-    YFSource,
-    TICKERS,
-)
+from macro_nowcast.prepare.shocks.yfinance.source import YFSource
+from macro_nowcast.prepare.shocks.yfinance import TICKERS
 
 START_DATE = "2010-01-01"
 

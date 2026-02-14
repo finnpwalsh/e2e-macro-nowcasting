@@ -16,13 +16,11 @@ from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage
 from macro_nowcast.storage.datasets import DATASETS
-from macro_nowcast.prepare.anchors.fred import (
-    FREDClient,
-    FREDSource,
-    SERIES,
-)
+from macro_nowcast.prepare.anchors.fred.client import FREDClient
+from macro_nowcast.prepare.anchors.fred.source import FREDSource
+from macro_nowcast.prepare.anchors.fred import SERIES
 
-START_DATE = "1990-01-01"
+START_DATE = "2010-01-01"
 
 
 def run(storage: Storage) -> None:
