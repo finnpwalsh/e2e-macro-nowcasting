@@ -59,17 +59,37 @@ shell:
 # --------------------------------------------------------
 .PHONY: prepare prepare-anchors prepare-shocks prepare-assemble train
 
+
+# ===== Prepare =====
 prepare: prepare-achors prepare-shocks prepare-assemble
 
-prepare-anchors:
-	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/anchors/fred.py)
+# Anchors
+prepare-anchors: prepare-anchors-fred prepare-anchors-assemble prepare-anchors-features
+	
+prepare-anchors-fred:
+	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/anchors/sources/fred.py)
+	
+prepare-anchors-assemble:
+	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/anchors/assemble.py)
 
-prepare-shocks:
-	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/shocks/yf.py)
+prepare-anchors-features:
+	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/anchors/build_features.py)
 
-prepare-assemble:
-	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/assemble/merge.py)
 
+# Shocks
+prepare-shocks: prepare-shocks-tiingo prepare-shocks-assemble prepare-shocks-features
+
+prepare-shocks-tiingo:
+	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/shocks/sources/tiingo.py)
+
+prepare-shocks-assemble:
+	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/shocks/assemble.py)
+
+prepare-shocks-features:
+	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/shocks/build_features.py)
+
+
+# ===== Train =====
 train: train-baseline
 
 train-baseline:
