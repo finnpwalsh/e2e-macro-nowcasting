@@ -39,4 +39,5 @@ class TiingoProvider:
         if not dfs:
             return pd.DataFrame()
         
-        return pd.concat(dfs, ignore_index=True)
+        out = pd.concat(dfs, ignore_index=True)
+        return out.drop_duplicates(subset=["ticker_id", "date"], keep="last")

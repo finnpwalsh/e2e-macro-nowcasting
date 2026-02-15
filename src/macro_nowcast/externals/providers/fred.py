@@ -27,9 +27,17 @@ class FREDProvider:
                 series_id=series_id,
                 start_date=start_date,
             )
+
+            if df is None or df.empty:
+                continue
+            
             df = df.copy()
             df["series"] = series_name
             df["series_id"] = series_id
             dfs.append(df)
         
-        return pd.concat(dfs, ignore_index=True)
+        if not dfs:
+            return pd.DataFrame()
+        
+        out = pd.concat(dfs, ignore_index=True)
+        return out.drop_duplicates(subset=["series_id", "date"], keep="last") 
