@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 
 from macro_nowcast.interfaces import Assembler
-from macro_nowcast.prepare.shocks import CONTRACT
+from .contract import CONTRACT
 
 
 class ShockAssembler(Assembler):
