@@ -12,7 +12,7 @@ from __future__ import annotations
 from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage
-from macro_nowcast.storage.datasets import DATASETS
+from macro_nowcast.storage import DATASETS
 
 from macro_nowcast.prepare.anchors.registry import ANCHOR_SOURCES
 from macro_nowcast.prepare.anchors import AnchorAssembler

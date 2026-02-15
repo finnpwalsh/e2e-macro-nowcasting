@@ -15,7 +15,7 @@ import os
 from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage
-from macro_nowcast.storage.datasets import DATASETS
+from macro_nowcast.storage import DATASETS
 
 from macro_nowcast.externals.clients.fred import FREDClient
 from macro_nowcast.externals.providers.fred import FREDProvider

@@ -12,7 +12,7 @@ from __future__ import annotations
 from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage
-from macro_nowcast.storage.datasets import DATASETS
+from macro_nowcast.storage import DATASETS
 
 from macro_nowcast.prepare.anchors import AnchorFeatureBuilder
 
@@ -30,7 +30,7 @@ def run(storage: Storage) -> None:
     print(f"\n[PREPARE][ANCHORS][FEATURES] Complete")
     print(f"{INDENT}Model-Ready")
     print(f"{SUB}Key:       {DATASETS.model_ready.anchors_table}")
-    print(f"{SUB}Shape:     {builder.shape}")
+    print(f"{SUB}Shape:     {table.shape}")
 
 
 def main() -> None:
