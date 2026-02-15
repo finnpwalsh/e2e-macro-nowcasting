@@ -1,7 +1,7 @@
 TICKERS: dict[str, str] = {
-    "equities_risk": "SPY",
-    "volatility": "^VIX",
-    "rates_expectations": "IEF",
-    "energy_prices":"CL=F",
-    "usd_strength":"UUP",
+    "sp500_equity": "SPY",
+    "long_term_treasury": "TLT",
+    "us_dollar_index": "UUP",
+    "energy_sector": "XLE",
+    "high_yield_credit":"HYG",
 }
