@@ -39,7 +39,7 @@ def run(storage: Storage) -> None:
     raw = provider.fetch(series=SERIES, start_date=START_DATE)
     storage.write_parquet(df=raw, key=DATASETS.raw.fred_snapshot, index=False)
 
-    canon = canonicalizer.canonicalize(df=raw)
+    canon = canonicalizer.canonicalize(raw=raw)
     storage.write_parquet(df=canon, key=DATASETS.canonical.anchors_fred)
 
 
