@@ -3,6 +3,7 @@ from .canonicalizer import Canonicalizer
 from .contract import Contract
 from .feature_builder import FeatureBuilder
 from .provider import Provider
+from .source_definition import SourceDefinition
 
 __all__ = [
     "Assembler",
@@ -10,4 +11,5 @@ __all__ = [
     "Contract",
     "Provider",
     "FeatureBuilder",
+    "SourceDefinition",
 ]

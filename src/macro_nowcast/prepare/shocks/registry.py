@@ -1,22 +1,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal
+from typing import Type
 
+from macro_nowcast.interfaces import SourceDefinition
 from .canonicalizers import ShockCanonicalizer, TiingoShockCanonicalizer
 from macro_nowcast.storage import DATASETS
 
 
 @dataclass(frozen=True)
-class ShockSourceSpec:
-    name: str
-    domain: Literal["shocks"] = "shocks"
-    canonicalizer: type[ShockCanonicalizer]
-    canonical_key: str
+class ShockSourceDefinition(SourceDefinition):
+    canonicalizer: Type[ShockCanonicalizer]
+    domain: str = "shocks"
 
 
-SHOCK_SOURCES: dict[str, ShockSourceSpec] = {
-    "tiingo": ShockSourceSpec(
+SHOCK_SOURCES: dict[str, ShockSourceDefinition] = {
+    "tiingo": ShockSourceDefinition(
         name="tiingo",
         canonicalizer=TiingoShockCanonicalizer,
         canonical_key=DATASETS.canonical.shocks_tiingo,
