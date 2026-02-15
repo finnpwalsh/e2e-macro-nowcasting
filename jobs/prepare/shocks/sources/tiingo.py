@@ -24,6 +24,7 @@ from macro_nowcast.specs.tiingo import TICKERS
 
 
 START_DATE = "2010-01-01"
+FREQ = "daily"
 
 
 def run(storage: Storage) -> None:
@@ -36,7 +37,7 @@ def run(storage: Storage) -> None:
     provider = TiingoProvider(client)
     canonicalizer = SHOCK_SOURCES["tiingo"].canonicalizer()
 
-    raw = provider.fetch(tickers=TICKERS, start_date=START_DATE)
+    raw = provider.fetch(tickers=TICKERS, start_date=START_DATE, frequency=FREQ)
     storage.write_parquet(df=raw, key=DATASETS.raw.tiingo_snapshot, index=False)
 
     canon = canonicalizer.canonicalize(raw=raw)
