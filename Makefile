@@ -67,33 +67,33 @@ prepare: prepare-achors prepare-shocks prepare-assemble
 prepare-anchors: prepare-anchors-fred prepare-anchors-assemble prepare-anchors-features
 	
 prepare-anchors-fred:
-	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/anchors/sources/fred.py)
+	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.anchors.sources.fred)
 	
 prepare-anchors-assemble:
-	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/anchors/assemble.py)
+	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.anchors.assemble)
 
 prepare-anchors-features:
-	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/anchors/build_features.py)
+	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.anchors.build_features)
 
 
 # Shocks
 prepare-shocks: prepare-shocks-tiingo prepare-shocks-assemble prepare-shocks-features
 
 prepare-shocks-tiingo:
-	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/shocks/sources/tiingo.py)
+	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.shocks.sources.tiingo)
 
 prepare-shocks-assemble:
-	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/shocks/assemble.py)
+	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.shocks.assemble.py)
 
 prepare-shocks-features:
-	$(call RUN_STAGE,runtime-prepare,python jobs/prepare/shocks/build_features.py)
+	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.shocks.build_features)
 
 
 # ===== Train =====
 train: train-baseline
 
 train-baseline:
-	$(call RUN_STAGE,runtime-train,python jobs/train/baseline.py)
+	$(call RUN_STAGE,runtime-train,python -m jobs.train.baseline)
 
 # --------------------------------------------------------
 # Control Plane
@@ -101,10 +101,10 @@ train-baseline:
 .PHONY: track select
 
 track:
-	$(call RUN_STAGE,runtime-track,python jobs/track/publish.py)
+	$(call RUN_STAGE,runtime-track,python -m jobs.track.publish)
 
 select:
-	$(call RUN_STAGE,runtime-select,python jobs/select/promote.py)
+	$(call RUN_STAGE,runtime-select,python -m jobs.select.promote)
 
 # --------------------------------------------------------
 # Testing

@@ -10,6 +10,7 @@ services:
       - .:/opt/project
       - ~/.aws:/root/.aws:ro
     environment:
+      PYTHONPATH: /opt/project/src
       AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
     networks: [appnet]
 
@@ -24,6 +25,7 @@ services:
       - .:/opt/project
       - ~/.aws:/root/.aws:ro
     environment:
+      PYTHONPATH: /opt/project/src
       AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
     networks: [appnet]
 
@@ -38,6 +40,7 @@ services:
       - .:/opt/project
       - ~/.aws:/root/.aws:ro
     environment:
+      PYTHONPATH: /opt/project/src
       AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
     networks: [appnet]
 
@@ -52,6 +55,7 @@ services:
       - .:/opt/project
       - ~/.aws:/root/.aws:ro
     environment:
+      PYTHONPATH: /opt/project/src
       AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
     networks: [appnet]
 
