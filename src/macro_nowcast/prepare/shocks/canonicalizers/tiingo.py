@@ -17,4 +17,4 @@ class TiingoShockCanonicalizer(ShockCanonicalizer):
         out = out.rename(columns={"date":"ts"})
         out["source"] = self.name
 
-        return out[["ds", "value", "ticker", "ticker_id", "source"]]
+        return out[["ts", "value", "ticker", "ticker_id", "source"]]
