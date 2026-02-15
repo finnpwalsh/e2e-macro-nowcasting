@@ -83,7 +83,7 @@ prepare-shocks-tiingo:
 	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.shocks.sources.tiingo)
 
 prepare-shocks-assemble:
-	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.shocks.assemble.py)
+	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.shocks.assemble)
 
 prepare-shocks-features:
 	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.shocks.build_features)
