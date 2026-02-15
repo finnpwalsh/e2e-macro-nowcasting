@@ -3,8 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
-from .canonicalizers.tiingo import TiingoShockCanonicalizer
-from .canonicalizers.base import ShockCanonicalizer
+from .canonicalizers import ShockCanonicalizer, TiingoShockCanonicalizer
 from macro_nowcast.storage.datasets import DATASETS
 
 

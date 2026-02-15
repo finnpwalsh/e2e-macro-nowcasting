@@ -1,18 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Type
+from typing import Literal
 
-from .canonicalizers.fred import FREDAnchorCanonicalizer
-from macro_nowcast.interfaces.canonicalizer import Canonicalizer
-
+from .canonicalizers import AnchorCanonicalizer, FREDAnchorCanonicalizer
 from macro_nowcast.storage.datasets import DATASETS
 
 
 @dataclass(frozen=True)
 class AnchorSourceSpec:
     name: str
-    canonicalizer: Type[Canonicalizer]
+    domain: Literal["anchors"] = "anchors"
+    canonicalizer: type[AnchorCanonicalizer]
     canonical_key: str
 
 
