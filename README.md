@@ -14,7 +14,7 @@ This repository demonstrates how to design, version, evaluate and operate a macr
 
 ## Status
 
-**Feb 14, 2026**: Under active development
+**Feb 15, 2026**: Under active development
 
 - **Latest release**: v1.4.0 – S3-backed storage
 - **In progress**: v1.4.1 – lifecycle refactor

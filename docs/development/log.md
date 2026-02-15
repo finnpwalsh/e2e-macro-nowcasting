@@ -30,6 +30,24 @@ Production-flavored infra hardening.
 
 ---
 
+### February 15, 2026
+
+**CONTEXT**
+
+- v1.4.1 – lifecycle refactor: 
+
+**DONE**
+
+- remove `yfinance`, add `tiingo`
+- create `shocks` prep jobs
+
+**NEXT**
+
+- confirm `shocks` prep jobs run
+- remove `assemble` step -> two-model system (`baseline` + `residuals`)
+
+---
+
 ### February 14, 2026
 
 **CONTEXT**
