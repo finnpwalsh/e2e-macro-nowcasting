@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Literal
 
 from .canonicalizers import ShockCanonicalizer, TiingoShockCanonicalizer
-from macro_nowcast.storage.datasets import DATASETS
+from macro_nowcast.storage import DATASETS
 
 
 @dataclass(frozen=True)
