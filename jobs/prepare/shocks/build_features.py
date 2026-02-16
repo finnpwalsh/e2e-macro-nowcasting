@@ -23,13 +23,13 @@ def run(storage: Storage) -> None:
     builder = ShockFeatureBuilder()
     table = builder.build(canon)
 
-    storage.write_parquet(df=table, key=DATASETS.model_ready.shocks_table)
+    storage.write_parquet(df=table, key=DATASETS.model_ready.shocks)
 
     INDENT = "    "
     SUB = INDENT * 2
     print(f"\n[PREPARE][SHOCKS][FEATURES] Complete")
     print(f"{INDENT}Model-Ready")
-    print(f"{SUB}Key:       {DATASETS.model_ready.shocks_table}")
+    print(f"{SUB}Key:       {DATASETS.model_ready.shocks}")
     print(f"{SUB}Shape:     {table.shape}")
 
 

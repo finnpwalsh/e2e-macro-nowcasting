@@ -8,9 +8,7 @@ Raw:
     - May reference external providers
 
 Canonical:
-    - Source-specific cleaned datasets
     - Validated against domain contract
-    - NOT merged across sources
     - NOT modeling tables
 
 ModelReady:
@@ -49,15 +47,11 @@ class CanonicalDatasets:
     
     @property
     def shocks(self) -> str:
-        return f"{self.root}/shocks/shocks.parquet"
+        return f"{self.root}/shocks/all.parquet"
     
     @property
     def shocks_tiingo(self) -> str:
         return f"{self.root}/shocks/tiingo.parquet"
-    
-    @property
-    def targets(self) -> str:
-        return f"{self.root}/targets/target.parquet"
 
 
 @dataclass(frozen=True)
@@ -65,12 +59,12 @@ class ModelReadyDatasets:
     root: str = "data/model_ready"
 
     @property
-    def anchors_table(self) -> str:
-        return f"{self.root}/anchors_table.parquet"
+    def anchors(self) -> str:
+        return f"{self.root}/anchors/table.parquet"
     
     @property
-    def shocks_table(self) -> str:
-        return f"{self.root}/shocks_table.parquet"
+    def shocks(self) -> str:
+        return f"{self.root}/shocks/table.parquet"
 
 
 @dataclass(frozen=True)
