@@ -30,6 +30,26 @@ Production-flavored infra hardening.
 
 ---
 
+### February 16, 2026
+
+**CONTEXT**
+
+- v1.4.1: ops baseline: `train` hardening
+
+**DONE**
+
+- align `anchors` on month start
+- align `shocks` on day
+
+**NEXT**
+
+- `train` refactor:
+```
+prepare → train baseline → compute residual → train corrector → combine → version → promote
+```
+
+---
+
 ### February 15, 2026
 
 **CONTEXT**
