@@ -57,11 +57,14 @@ shell:
 # --------------------------------------------------------
 # Data Plane
 # --------------------------------------------------------
-.PHONY: prepare prepare-anchors prepare-shocks prepare-assemble train
+.PHONY: prepare 
+.PHONY: prepare-anchors prepare-anchors-fred prepare-anchors-assemble prepare-anchors-features
+.PHONY: prepare-shocks-tiingo prepare-shocks-assemble prepare-shocks-features
+.PHONY: train train-baseline
 
 
 # ===== Prepare =====
-prepare: prepare-achors prepare-shocks prepare-assemble
+prepare: prepare-anchors prepare-shocks
 
 # Anchors
 prepare-anchors: prepare-anchors-fred prepare-anchors-assemble prepare-anchors-features
@@ -90,6 +93,7 @@ prepare-shocks-features:
 
 
 # ===== Train =====
+
 train: train-baseline
 
 train-baseline:
