@@ -49,7 +49,7 @@ class CanonicalDatasets:
     
     @property
     def shocks(self) -> str:
-        return f"{self.root}/shocks/shocks.py"
+        return f"{self.root}/shocks/shocks.parquet"
     
     @property
     def shocks_tiingo(self) -> str:
