@@ -31,19 +31,6 @@ This document tracks short-term execution for the remaining V1 releases. It is i
 
 ---
 
-## Current focus – V1.4.1
-
-### Documentation
-- Add reproducibility, deployment, and operations documentation
-
-### Containerized orchestration
-- Update Docker requirements to install from `requirements/runtimes/*.txt`
-- Build images (ETL / Train / Track / Serve)
-- Smoke test each image by running its primary job locally
-- Swap DAG tasks to container execution (DockerOperator locally, ECSOperator later)
-
----
-
 ## Version Roadmap
 
 ### v1.4.2 — Contracts & Scalability Foundations

@@ -34,17 +34,19 @@ Production-flavored infra hardening.
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor: 
+- v1.4.1 – operational baseline: `prepare` finalization
 
 **DONE**
 
 - remove `yfinance`, add `tiingo`
-- create `shocks` prep jobs
+- finalize `shocks` prep jobs
+- confirm all `prepare` jobs run
+- rename version to operational baseline (more accurate)
+
 
 **NEXT**
 
-- confirm `shocks` prep jobs run
-- remove `assemble` step -> two-model system (`baseline` + `residuals`)
+- `train` finalization: remove `assemble` step -> two-model system (`baseline` + `residuals`)
 
 ---
 
