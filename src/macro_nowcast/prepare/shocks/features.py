@@ -8,10 +8,26 @@ class ShockFeatureBuilder(FeatureBuilder):
     domain="shocks"
 
     def build(self, canonical: pd.DataFrame) -> pd.DataFrame:
+        df = canonical.copy()
+        
+        df = df.drop(columns=["source"], errors="ignore")
+
+        df["ts"] = (
+            pd.to_datetime(df["ts"], errors="raise")
+            .dt.tz_localize(None)
+            .dt.floor("D")
+        )
+
+        df = (
+            df.sort_values(["ticker", "ts"])
+            .groupby(["ticker", "ts"], as_index=False)["value"]
+            .last()
+        )
+
         wide = (
-            canonical
-            .pivot(index="ts", columns="ticker", values="value")
+            df.pivot(index="ts", columns="tickers", values="value")
             .sort_index()
             .reset_index()
         )
+        
         return wide
