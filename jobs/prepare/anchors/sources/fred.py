@@ -19,9 +19,8 @@ from macro_nowcast.storage import DATASETS
 
 from macro_nowcast.externals.clients.fred import FREDClient
 from macro_nowcast.externals.providers.fred import FREDProvider
+from macro_nowcast.externals.definitions.fred import SERIES
 from macro_nowcast.prepare.anchors.registry import ANCHOR_SOURCES
-
-from macro_nowcast.specs.fred import SERIES
 
 START_DATE = "2010-01-01"
 

@@ -19,8 +19,8 @@ from macro_nowcast.storage import DATASETS
 
 from macro_nowcast.externals.clients.tiingo import TiingoClient
 from macro_nowcast.externals.providers.tiingo import TiingoProvider
+from macro_nowcast.externals.definitions.tiingo import TICKERS
 from macro_nowcast.prepare.shocks.registry import SHOCK_SOURCES
-from macro_nowcast.specs.tiingo import TICKERS
 
 
 START_DATE = "2010-01-01"
