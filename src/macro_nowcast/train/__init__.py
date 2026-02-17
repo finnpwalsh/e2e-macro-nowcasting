@@ -1,7 +1,5 @@
-from .regression import RegressionTrainer
-from .split import time_split_mask
+from .splitter import TimeSplitter
 
 __all__ = [
-    "RegressionTrainer",
-    "time_split_mask",
+    "TimeSplitter",
 ]
