@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Type
 
-from macro_nowcast.interfaces import SourceDefinition
+from macro_nowcast.prepare._interfaces import SourceDefinition
 from .canonicalizers import AnchorCanonicalizer, FREDAnchorCanonicalizer
 from macro_nowcast.storage import DATASETS
 
