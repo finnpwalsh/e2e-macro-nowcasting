@@ -1,14 +1,14 @@
-from __future__ import dataclass
+from __future__ import annotations
 
 from dataclasses import dataclass
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from macro_nowcast.train.trainer import Trainer
+from macro_nowcast.train.trainer import ModelTrainer
 
 
 @dataclass(frozen=True)
-class BaselineTrainer(Trainer):
+class BaselineModelTrainer(ModelTrainer):
     """
     Baseline trainer on monthly anchors (ds = MS).
     """
@@ -21,9 +21,10 @@ class BaselineTrainer(Trainer):
 
         return model
     
-    def predict(self, model: Pipeline, df: pd.DataFrame) -> pd.Series:
+    def predict(self, df: pd.DataFrame) -> pd.Series:
         X, _ = self._split_xy(df)
-
+    
+        model = self.spec.make_pipeline()
         y_hat = model.predict(X)
         
         return pd.Series(

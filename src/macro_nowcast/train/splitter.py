@@ -9,12 +9,12 @@ class TimeSplitter:
     time_col: str
 
     def split_mask(
+        self,
         df: pd.DataFrame,
         *,
-        time_col: str,
         split_date: str,
     ) -> tuple[pd.Series, pd.Series]:
-        d = pd.to_datetime(df[time_col])
+        d = pd.to_datetime(df[self.time_col])
         cutoff = pd.to_datetime(split_date)
         
         train_mask = d < cutoff
