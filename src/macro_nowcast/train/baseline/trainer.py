@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from macro_nowcast.train.trainer import ModelTrainer
+from macro_nowcast.train.model_trainer import ModelTrainer
 
 
 @dataclass(frozen=True)

@@ -1,7 +1,9 @@
-from .trainer import BaselineTrainer
+from .trainer import BaselineModelTrainer
 from .residuals import BaselineResiduals
+from .contract import BaselineTrainOutputs
 
 __all__ = [
-    "BaselineTrainer", 
+    "BaselineModelTrainer", 
     "BaselineResiduals",
+    "BaselineTrainOutputs",
 ]
