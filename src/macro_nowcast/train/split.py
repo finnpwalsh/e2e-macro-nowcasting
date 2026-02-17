@@ -1,18 +1,23 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import pandas as pd
 
 
-def time_split_mask(
-    df: pd.DataFrame,
-    *,
-    date_col: str="date",
-    split_date: str,
-) -> tuple[pd.Series, pd.Series]:
-    d = pd.to_datetime(df[date_col])
-    cutoff = pd.to_datetime(split_date)
-    
-    train = d < cutoff
-    valid = ~train
+@dataclass(frozen=True)
+class TimeSplitter:
+    time_col: str
 
-    return train, valid
+    def split_mask(
+        df: pd.DataFrame,
+        *,
+        time_col: str,
+        split_date: str,
+    ) -> tuple[pd.Series, pd.Series]:
+        d = pd.to_datetime(df[time_col])
+        cutoff = pd.to_datetime(split_date)
+        
+        train_mask = d < cutoff
+        valid_mask = ~train_mask
+
+        return train_mask, valid_mask
