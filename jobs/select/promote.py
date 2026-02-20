@@ -39,8 +39,8 @@ def promote() -> None:
     INDENT = "    "
     print("\n[SELECT][PROMOTE] Complete")
     print(f"{INDENT}Registry Name:  {written['registry_model_name']}")
-    print(f"{INDENT}Model Name:     {written['model_name']}")
     print(f"{INDENT}Alias:          {written['alias']}")
+    print(f"{INDENT}Version:        {written['version']}")
     print(f"{INDENT}Model URI:      {written['model_uri']}")
 
 
