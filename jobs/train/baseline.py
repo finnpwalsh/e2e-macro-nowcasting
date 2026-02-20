@@ -7,7 +7,7 @@ from ml_platform.artifacts import TrainArtifacts, EvalArtifacts, ModelPointers, 
 from macro_nowcast.storage.datasets import DATASETS
 
 from macro_nowcast.train.baseline import BaselineCandidateGenerator
-from macro_nowcast.train.models import RidgeModelSpec
+from macro_nowcast.train.models import MODELS
 
 MODEL_NAME = "baseline"
 TARGET_COL = "cpi_all_items"
@@ -34,7 +34,7 @@ def run(storage: Storage) -> None:
         SPLIT_DATE=SPLIT_DATE,
     )
 
-    out = gen.generate(df=df, spec=RidgeModelSpec(alpha=ALPHA))
+    out = gen.generate(df=df, spec=MODELS["ridge"].spec)
     
     write_joblib(storage, key=tr.model, obj=out.model)
     write_json(storage, key=tr.metrics, obj=out.metrics)
