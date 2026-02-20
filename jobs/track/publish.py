@@ -52,9 +52,9 @@ def run(storage: Storage) -> None:
     summary = read_json(storage, latest["summary_key"])
     
     run_id = latest["run_id"]
-    features = summary["features"]
-    input_key = summary["input_key"]
+    input_key = latest["input_key"]
     predictions_key = latest["predictions_key"]
+    features = summary["features"]
 
     written = log_and_register_model(
         model_name=model_name,
