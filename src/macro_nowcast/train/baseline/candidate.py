@@ -53,9 +53,10 @@ class BaselineCandidateGenerator:
         pred_df["y_hat"] = y_hat
 
         # 4) metrics
+        score_df = pred_df[[self.target_col, "y_hat"]].dropna(subset=[self.target_col, "y_hat"])
         metrics = regression_metrics(
-            y=pred_df[self.target_col],
-            y_hat=pred_df["y_hat"].to_numpy()
+            y=score_df[self.target_col],
+            y_hat=score_df["y_hat"].to_numpy()
         )
 
         # 5) summary
