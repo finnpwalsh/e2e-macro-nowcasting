@@ -10,7 +10,7 @@ from macro_nowcast.train.models.base import ModelSpec
 
 
 @dataclass(frozen=True)
-class ModelTrainer(ABC):
+class Trainer(ABC):
     """
     Base trainer contract for train components.
 

@@ -4,14 +4,15 @@ from dataclasses import dataclass
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from macro_nowcast.train.model_trainer import ModelTrainer
+from macro_nowcast.train.trainer import Trainer
 
 
 @dataclass(frozen=True)
-class BaselineModelTrainer(ModelTrainer):
+class BaselineTrainer(Trainer):
     """
     Baseline trainer on monthly anchors (ds = MS).
     """
+    model_name="baseline"
     
     def fit(self, df: pd.DataFrame) -> Pipeline:
         X, y = self._split_xy(df)

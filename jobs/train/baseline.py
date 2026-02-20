@@ -34,12 +34,17 @@ from __future__ import annotations
 from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage, write_joblib, write_json
-from ml_platform.artifacts import TrainArtifacts, EvalArtifacts, ModelPointers, new_run_id
 from macro_nowcast.storage.datasets import DATASETS
+from macro_nowcast.storage.artifacts import DataArtifacts
+from ml_platform.artifacts import TrainArtifacts, EvalArtifacts, ModelPointers, new_run_id
 
-from macro_nowcast.train import RegressionTrainer
-from macro_nowcast.evaluate.metrics import regression_metrics
-from macro_nowcast.train.baseline.models.ridge import make_ridge_pipeline
+from macro_nowcast.train.baseline import BaselineTrainer, BaselineResiduals
+from macro_nowcast.train.models.ridge import RidgeModelSpec
+from macro_nowcast.eval.regression import regression_metrics
+
+TARGET = "CPIAUCSL"
+SPLIT_DATE = "2020-01-01"
+ALPHA = 1.0
 
 
 def run(storage: Storage) -> None:
@@ -51,17 +56,12 @@ def run(storage: Storage) -> None:
     ev = EvalArtifacts(model_name=model_name, run_id=run_id)
     ptr = ModelPointers(model_name=model_name)
 
-    in_key = DATASETS.model_ready.assembled
+    in_key = DATASETS.model_ready.anchors
     df = storage.read_parquet(key=in_key)
 
-    # run config
-    target = "CPIAUCSL"
-    split_date = "2020-01-01"
-    alpha = 1.0
+    model = RidgeModelSpec(alpha)
+    
 
-    model = make_ridge_pipeline(alpha=alpha)
-    scorer = regression_metrics
-    trainer = RegressionTrainer(target=target, split_date=split_date)
 
     model, metrics, preds, features = trainer.fit(
         df,
