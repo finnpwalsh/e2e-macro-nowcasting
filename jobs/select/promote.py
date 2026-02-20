@@ -40,7 +40,7 @@ def promote() -> None:
     alias = os.getenv("NOWCAST_MODEL_ALIAS", "champion").strip()
 
     written = promote_latest(
-        model_name,
+        registry_name=model_name,
         alias=alias,
     )
 

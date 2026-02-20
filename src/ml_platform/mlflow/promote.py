@@ -47,7 +47,7 @@ def promote_latest(
     if not versions:
         raise RuntimeError(f"No model versions found for registry model: {registry_name}")
     
-    latest = max(versions, ket=lambda mv: int(mv.version))
+    latest = max(versions, key=lambda mv: int(mv.version))
     latest_version = str(latest.version)
 
     # Promote (alias mutation)
