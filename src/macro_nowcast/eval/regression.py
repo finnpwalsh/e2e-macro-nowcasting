@@ -11,14 +11,14 @@ from sklearn.metrics import (
 
 def regression_metrics(
         y: pd.Series,
-        y_pred: pd.Series | np.ndarray,
+        y_hat: pd.Series | np.ndarray,
 ) -> dict[str, float]:
     """
     Computes regression metrics for model evaluation.
 
     Args:
         y: observed target values
-        y_pred: predicted values
+        y_hat: predicted values
     
     Returns:
         dict[str, float]: regression metrics
@@ -28,13 +28,13 @@ def regression_metrics(
             - mape
     """
     y = np.asarray(y)
-    y_pred = np.asarray(y_pred)
+    y_hat = np.asarray(y_hat)
 
-    rmse = float(np.sqrt(mean_squared_error(y, y_pred)))
-    mae = float(mean_absolute_error(y, y_pred))
-    r2 = float(r2_score(y, y_pred))
+    rmse = float(np.sqrt(mean_squared_error(y, y_hat)))
+    mae = float(mean_absolute_error(y, y_hat))
+    r2 = float(r2_score(y, y_hat))
 
-    mape = float(np.mean(np.abs((y-y_pred) / y)) * 100)
+    mape = float(np.mean(np.abs((y-y_hat) / y)) * 100)
 
     return {
         "rmse": rmse,
