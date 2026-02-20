@@ -40,12 +40,11 @@ Production-flavored infra hardening.
 
 - `candidate` train generator
 - finalize baseline `train` job
+- finalize `track` + `select`
 
 **NEXT**
 
-- `jobs`:
-    `baseline.py` -> `baseline/train.py`
-    `baseline/residuals.py`
+- `DockerOperator` DAG
 
 ---
 
