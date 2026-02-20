@@ -30,6 +30,25 @@ Production-flavored infra hardening.
 
 ---
 
+### February 20, 2026
+
+**CONTEXT**
+
+- v1.4.1: ops baseline: `train` hardening
+
+**DONE**
+
+- `candidate` train generator
+- finalize baseline `train` job
+
+**NEXT**
+
+- `jobs`:
+    `baseline.py` -> `baseline/train.py`
+    `baseline/residuals.py`
+
+---
+
 ### February 16, 2026
 
 **CONTEXT**
