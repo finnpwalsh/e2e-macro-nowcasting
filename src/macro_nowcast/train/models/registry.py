@@ -15,6 +15,6 @@ class ModelSpecDefinition:
 MODELS: dict[str, ModelSpecDefinition] = {
     "ridge": ModelSpecDefinition(
         name="ridge",
-        spec=RidgeModelSpec,
+        spec=RidgeModelSpec(),
     )
 }
