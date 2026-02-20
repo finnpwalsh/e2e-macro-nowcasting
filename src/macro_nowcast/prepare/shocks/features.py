@@ -25,7 +25,7 @@ class ShockFeatureBuilder(FeatureBuilder):
         )
 
         wide = (
-            df.pivot(index="ts", columns="tickers", values="value")
+            df.pivot(index="ts", columns="ticker", values="value")
             .sort_index()
             .reset_index()
         )
