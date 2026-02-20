@@ -31,7 +31,7 @@ def run(storage: Storage) -> None:
         model_name=MODEL_NAME,
         time_col=TIME_COL,
         target_col=TARGET_COL,
-        SPLIT_DATE=SPLIT_DATE,
+        split_date=SPLIT_DATE,
     )
 
     out = gen.generate(df=df, spec=MODELS["ridge"].spec)
