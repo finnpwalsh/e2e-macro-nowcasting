@@ -36,17 +36,20 @@ from ml_platform.mlflow import promote_latest
 
 
 def promote() -> None:
-    model_name = os.getenv("NOWCAST_REGISTRY_MODEL", "nowcasting-models").strip()
+    registry_name = os.getenv("NOWCAST_REGISTRY_MODEL", "nowcasting-models").strip()
+    MODEL_NAME = "baseline"
     alias = os.getenv("NOWCAST_MODEL_ALIAS", "champion").strip()
 
     written = promote_latest(
-        registry_name=model_name,
+        registry_root=registry_name,
+        model_name=MODEL_NAME,
         alias=alias,
     )
 
     INDENT = "    "
     print("\n[SELECT][PROMOTE] Complete")
     print(f"{INDENT}Registry Name:  {written['registry_model_name']}")
+    print(f"{INDENT}Model Name:     {written['model_name']}")
     print(f"{INDENT}Alias:          {written['alias']}")
     print(f"{INDENT}Model URI:      {written['model_uri']}")
 

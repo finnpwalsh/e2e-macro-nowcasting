@@ -31,16 +31,20 @@ def _require_env(var: str) -> str:
     v = os.getenv(var, "").strip()
     if not v:
         raise RuntimeError("Missing required env var: {var}")
+    return v
     
 
 def promote_latest(
         *,
-        registry_name: str,
+        registry_root: str,
+        model_name: str = "baseline",
         alias: str = "champion",
 ) -> dict:
     """Promote the latest registered model version to an alias."""
     mlflow.set_tracking_uri(_require_env("MLFLOW_TRACKING_URI"))
     client = MlflowClient()
+
+    registry_name = f"{registry_root}.{model_name}"
 
     # Resolve latest = max(version)
     versions = client.search_model_versions(f"name='{registry_name}'")
