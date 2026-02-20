@@ -23,6 +23,7 @@ import pandas as pd
 
 import mlflow
 import mlflow.sklearn
+from mlflow.tracking import MlflowClient
 
 
 # --- helpers ---
@@ -72,7 +73,7 @@ def log_and_register_model(
     exp_name = _require_env("MLFLOW_EXPERIMENT_NAME")
     mlflow.set_experiment(exp_name)
 
-    registry_name = os.getenv("MLFLOW_REGISTRY_MODEL_NAME", model_name)
+    registry_name = os.getenv("NOWCAST_REGISTRY_MODEL", "nowcasting-models").strip()
 
     with mlflow.start_run(run_name=f"{model_name}:{run_id}") as run:
         mlflow.set_tags(
@@ -127,25 +128,21 @@ def log_and_register_model(
             registered_model_name=registry_name,
         )
 
+        client = MlflowClient()
+        versions = client.search_model_versions(f"name='{registry_name}'")
+        if not versions:
+            raise RuntimeError(f"Model registered but no versions found for: {registry_name}")
+        
+        latest = max(versions, key=lambda mv: int(mv.version))
+        version = str(latest.version)
 
-        version = getattr(model_info, "registered_model_version", None)
-        if version is None:
-            uri = getattr(model_info, "model_uri", "") or ""
-            parts = uri.split("/")
-            version = parts[-1] if parts else None
-            
-        if not version or str(version).strip() == "":
-            raise RuntimeError(
-                "Model registered but could not resolve registry version."
-            )
-
-        version = str(version)
         model_uri = f"models:/{registry_name}/{version}"
+
         return {
             "mlflow_run_id": run.info.run_id,
             "experiment_id": run.info.experiment_id,
             "registry_model_name": registry_name,
             "registry_model_version": str(version),
-            "model_uri": model_uri,
+            "registry_model_uri": model_uri,
             "predictions_key": predictions_key,
         }

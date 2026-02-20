@@ -36,27 +36,18 @@ from ml_platform.mlflow import promote_latest
 
 
 def promote() -> None:
-    registry_name = "baseline"
-    alias = "champion"
-    version = os.getenv("MLFLOW_PROMOTE_VERSION").strip()
-
-    if not version:
-        raise RuntimeError(
-            "Missing required env var: MLFLOW_PROMOTE_VERSION "
-            "(explicit model registry version to promote)"
-        )
+    model_name = os.getenv("NOWCAST_REGISTRY_MODEL", "nowcasting-models").strip()
+    alias = os.getenv("NOWCAST_MODEL_ALIAS", "champion").strip()
 
     written = promote_latest(
-        registry_name,
+        model_name,
         alias=alias,
-        version=version,
     )
 
     INDENT = "    "
     print("\n[SELECT][PROMOTE] Complete")
     print(f"{INDENT}Registry Name:  {written['registry_model_name']}")
     print(f"{INDENT}Alias:          {written['alias']}")
-    print(f"{INDENT}Version:        {written['version']}")
     print(f"{INDENT}Model URI:      {written['model_uri']}")
 
 

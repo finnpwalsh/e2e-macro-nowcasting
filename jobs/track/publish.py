@@ -74,7 +74,7 @@ def run(storage: Storage) -> None:
     print(f"{INDENT}Experiment ID:   {written['experiment_id']}")
     print(f"{INDENT}Registry Name:   {written['registry_model_name']}")
     print(f"{INDENT}Version:         {written['registry_model_version']}")
-    print(f"{INDENT}Model URI:       {written['model_uri']}")
+    print(f"{INDENT}Model URI:       {written['registry_model_uri']}")
     print(f"{INDENT}Predictions Key: {written['predictions_key']}")
 
 
