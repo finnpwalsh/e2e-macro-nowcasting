@@ -12,7 +12,7 @@ class BaselineTrainer(Trainer):
     """
     Baseline trainer on monthly anchors (ds = MS).
     """
-    model_name="baseline"
+    model_name = "baseline"
     
     def fit(self, df: pd.DataFrame) -> Pipeline:
         X, y = self._split_xy(df)
@@ -22,14 +22,12 @@ class BaselineTrainer(Trainer):
 
         return model
     
-    def predict(self, df: pd.DataFrame) -> pd.Series:
+    def predict(self, *, model: Pipeline, df: pd.DataFrame) -> pd.Series:
         X, _ = self._split_xy(df)
-    
-        model = self.spec.make_pipeline()
         y_hat = model.predict(X)
         
         return pd.Series(
             y_hat,
             index=df.index,
-            name="f{self.target_col}_hat_baseline"
+            name=f"{self.target_col}_hat_baseline",
         )

@@ -46,7 +46,7 @@ class BaselineCandidateGenerator:
         trainer = BaselineTrainer(spec=spec, target_col=self.target_col, time_col=self.time_col)
         model = trainer.fit(df=train_df)
 
-        y_hat = trainer.predict(df=valid_df)
+        y_hat = trainer.predict(model=model, df=valid_df)
 
         # 3) eval table
         pred_df = valid_df[[self.time_col, self.target_col]].copy()
