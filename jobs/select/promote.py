@@ -28,23 +28,13 @@ Notes:
 """
 from __future__ import annotations
 
-import os
-
 from dotenv import load_dotenv
 
 from ml_platform.mlflow import promote_latest
 
 
 def promote() -> None:
-    registry_name = os.getenv("NOWCAST_REGISTRY_MODEL", "nowcasting-models").strip()
-    MODEL_NAME = "baseline"
-    alias = os.getenv("NOWCAST_MODEL_ALIAS", "champion").strip()
-
-    written = promote_latest(
-        registry_root=registry_name,
-        model_name=MODEL_NAME,
-        alias=alias,
-    )
+    written = promote_latest(model_name="baseline")
 
     INDENT = "    "
     print("\n[SELECT][PROMOTE] Complete")
