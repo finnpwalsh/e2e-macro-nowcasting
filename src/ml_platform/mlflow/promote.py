@@ -36,11 +36,12 @@ def _require_env(var: str) -> str:
 
 def promote_latest(
         *,
-        registry_root: str,
         model_name: str = "baseline",
-        alias: str = "champion",
 ) -> dict:
     """Promote the latest registered model version to an alias."""
+    registry_root = _require_env("NOWCAST_REGISTRY_MODEL")
+    alias = _require_env("NOWCAST_MODEL_ALIAS")
+
     mlflow.set_tracking_uri(_require_env("MLFLOW_TRACKING_URI"))
     client = MlflowClient()
 
