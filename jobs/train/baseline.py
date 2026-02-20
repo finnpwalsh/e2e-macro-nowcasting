@@ -1,131 +1,68 @@
-"""
-Train job: baseline monthly model candidate generation.
-
-Lifecycle stage:
-    Train
-
-Responsibilities:
-    - Load the prepared training dataset
-    - Fit the baseline model (ridge)
-    - Produce versioned candidate artifacts required downstream
-
-Inputs:
-    - Model-ready training table from Prepare (storage key: DATASETS.model_ready_assemble)
-
-Outputs (versioned by run_id):
-    - Model artifact (joblib)
-    - Metrics (json)
-    - Evaluation predictions (parquet)
-    - Run summary metadata
-    - Latest pointer metadata (json) for downstream Track/Select/Serve
-
-Out of scope:
-    - Publishing to external tracking/registry systems
-    - Model selection, promotion, or rollback
-    - Online serving or inference APIs
-
-Notes:
-    This job writes all artifacts to persistent storage. Downstream stages read
-    `model_latest(model_name)` / `run.json`-style metadata to locate the exact
-    artifacts for a given run.
-"""
 from __future__ import annotations
 
 from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage, write_joblib, write_json
-from macro_nowcast.storage.datasets import DATASETS
-from macro_nowcast.storage.artifacts import DataArtifacts
 from ml_platform.artifacts import TrainArtifacts, EvalArtifacts, ModelPointers, new_run_id
+from macro_nowcast.storage.datasets import DATASETS
 
-from macro_nowcast.train.baseline import BaselineTrainer, BaselineResiduals
-from macro_nowcast.train.models.ridge import RidgeModelSpec
-from macro_nowcast.eval.regression import regression_metrics
+from macro_nowcast.train.baseline import BaselineCandidateGenerator
+from macro_nowcast.train.models import RidgeModelSpec
 
-TARGET = "CPIAUCSL"
+MODEL_NAME = "baseline"
+TARGET_COL = "cpi_all_items"
+TIME_COL = "ds"
+
 SPLIT_DATE = "2020-01-01"
 ALPHA = 1.0
 
 
 def run(storage: Storage) -> None:
-    """Train the baseline model and persist versioned candidate artifacts for downstream storage."""
     run_id = new_run_id()
-    model_name="baseline"
 
-    tr = TrainArtifacts(model_name=model_name, run_id=run_id)
-    ev = EvalArtifacts(model_name=model_name, run_id=run_id)
-    ptr = ModelPointers(model_name=model_name)
+    tr = TrainArtifacts(model_name=MODEL_NAME, run_id=run_id)
+    ev = EvalArtifacts(model_name=MODEL_NAME, run_id=run_id)
+    ptr = ModelPointers(model_name=MODEL_NAME)
 
     in_key = DATASETS.model_ready.anchors
     df = storage.read_parquet(key=in_key)
 
-    model = RidgeModelSpec(alpha)
+    gen = BaselineCandidateGenerator(
+        model_name=MODEL_NAME,
+        time_col=TIME_COL,
+        target_col=TARGET_COL,
+        SPLIT_DATE=SPLIT_DATE,
+    )
+
+    out = gen.generate(df=df, spec=RidgeModelSpec(alpha=ALPHA))
     
+    write_joblib(storage, key=tr.model, obj=out.model)
+    write_json(storage, key=tr.metrics, obj=out.metrics)
+    storage.write_parquet(key=ev.predictions, df=out.predictions)
+    write_json(storage, key=ev.summary, payload=out.summary)
 
-
-    model, metrics, preds, features = trainer.fit(
-        df,
-        model=model,
-        scorer=scorer,
-    )
-
-    metrics.update(
-        {
-            "model_type": "ridge",
-            "alpha": "alpha",
-        }
-    )
-
-    # train artifacts
-    write_joblib(storage, key=tr.model, obj=model)
-    write_json(storage, key=tr.metrics, obj=metrics)
-    
-    # eval artifacts
-    storage.write_parquet(key=ev.predictions, df=preds)
-    write_json(
-        storage,
-        key=ev.summary,
-        payload={
-            "model_name": model_name,
-            "run_id": run_id,
-            "input_key": in_key,
-            "predictions_key": ev.predictions,
-            "n_rows": len(preds),
-            "n_cols": preds.shape[1],
-            "columns": list(preds.columns),
-            "n_features": len(features),
-            "features": list(features),
-        },
-    )
-
-    # latest pointer
+    # pointer
     write_json(
         storage,
         key=ptr.latest,
         payload={
-            "model_name": model_name,
+            "model_name": MODEL_NAME,
             "run_id": run_id,
+            "input_key": in_key,
             "model_key": tr.model,
             "metrics_key": tr.metrics,
             "predictions_key": ev.predictions,
             "summary_key": ev.summary,
-            "input_key": in_key,
         },
     )
     
 
     INDENT = "    "
-    SUB = INDENT * 2
-    print("\n[Train] Complete")
-    print(f"{INDENT}Model:       {model_name}")
-    print(f"{INDENT}Run ID:      {run_id}")
-    print(f"{INDENT}Input:       {in_key}")
-    print(f"{INDENT}Artifact store:")
-    print(f"{SUB}model:       {tr.model}")
-    print(f"{SUB}metrics:     {tr.metrics}")
-    print(f"{SUB}preds:       {ev.predictions}")
-    print(f"{SUB}summary:     {ev.summary}")
-    print(f"{SUB}latest:      {ptr.latest}")
+    print("\n[Train][BASELINE] Complete")
+    print(f"{INDENT}model:       {MODEL_NAME}")
+    print(f"{INDENT}run id:      {run_id}")
+    print(f"{INDENT}input:       {in_key}")
+    print(f"{INDENT}latest:      {ptr.latest}")
 
 
 def main() -> None:
