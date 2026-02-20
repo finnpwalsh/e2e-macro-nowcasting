@@ -67,18 +67,17 @@ def log_and_register_model(
         - This does NOT perform model selection.
         - This does NOT promote/alias any model version (SELECT)
     """
-    tracking_uri = _require_env("MLFLOW_TRACKING_URI")
-    mlflow.set_tracking_uri(tracking_uri)
+    mlflow.set_tracking_uri(_require_env("MLFLOW_TRACKING_URI"))
+    mlflow.set_experiment(_require_env("MLFLOW_EXPERIMENT_NAME"))
 
-    exp_name = _require_env("MLFLOW_EXPERIMENT_NAME")
-    mlflow.set_experiment(exp_name)
+    registry_root = _require_env("NOWCAST_REGISTRY_MODEL")
+    registry_name = f"{registry_root}.{model_name}"
 
-    registry_name = os.getenv("NOWCAST_REGISTRY_MODEL", "nowcasting-models").strip()
-
-    with mlflow.start_run(run_name=f"{model_name}:{run_id}") as run:
+    with mlflow.start_run(run_name=f"{registry_name}:{run_id}") as run:
         mlflow.set_tags(
             {
-                "model_name": model_name,
+                "model_family": model_name,
+                "registry_model_name": registry_name,
                 "run_id": run_id,
                 "created_utc": run_id,
                 "input_key": input_key,
@@ -86,10 +85,8 @@ def log_and_register_model(
             }
         )
 
-        # metrics (scalar only)
         mlflow.log_metrics(_flatten_metrics(metrics))
 
-        # metrics (structured artifact)
         mlflow.log_dict(
             {
                 "model_name": model_name,
@@ -102,7 +99,6 @@ def log_and_register_model(
             artifact_file="metrics.json",
         )
 
-        # minimal eval summary (derived from preds, but not writing preds)
         mlflow.log_dict(
             {
                 "n_rows": int(len(preds)),
@@ -112,7 +108,6 @@ def log_and_register_model(
             artifact_file="eval_summary.json",
         )
 
-        # feature schema
         mlflow.log_dict(
             {
                 "features": list(features),
@@ -121,7 +116,7 @@ def log_and_register_model(
             artifact_file="features.json",
         )
 
-        # model -> MLflow + registry
+        # register model info
         model_info = mlflow.sklearn.log_model(
             sk_model=model,
             artifact_path="model",
