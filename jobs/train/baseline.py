@@ -37,7 +37,7 @@ def run(storage: Storage) -> None:
     out = gen.generate(df=df, spec=MODELS["ridge"].spec)
     
     write_joblib(storage, key=tr.model, obj=out.model)
-    write_json(storage, key=tr.metrics, obj=out.metrics)
+    write_json(storage, key=tr.metrics, payload=out.metrics)
     storage.write_parquet(key=ev.predictions, df=out.predictions)
     write_json(storage, key=ev.summary, payload=out.summary)
 
@@ -58,11 +58,15 @@ def run(storage: Storage) -> None:
     
 
     INDENT = "    "
+    SUB = INDENT * 2
     print("\n[Train][BASELINE] Complete")
     print(f"{INDENT}model:       {MODEL_NAME}")
     print(f"{INDENT}run id:      {run_id}")
     print(f"{INDENT}input:       {in_key}")
     print(f"{INDENT}latest:      {ptr.latest}")
+    print(f"{INDENT}metrics:")
+    for k, v in out.metrics.items():
+        print(f"{SUB}{k}: {v:.6f}" if isinstance(v, float) else f"{SUB}{k}: {v}")
 
 
 def main() -> None:
