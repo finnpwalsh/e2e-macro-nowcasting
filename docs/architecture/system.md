@@ -1,3 +1,5 @@
+← [Back to Docs](../README.md)
+
 # System Architecture
 
 This document defines the structural architecture of the macro nowcasting platform.

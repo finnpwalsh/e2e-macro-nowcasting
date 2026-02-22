@@ -1,3 +1,5 @@
+← [Back to Docs](../README.md)
+
 # Storage Architecture
 
 This document defines the storage layout and data semantics of the macro nowcasting platform.
