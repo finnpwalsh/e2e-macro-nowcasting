@@ -32,11 +32,27 @@ Production-flavored infra hardening.
 
 ---
 
+### February XX, 2026
+
+**CONTEXT**
+
+- v1.4.1 – ops baseline: docs + Airflow DAG
+
+**DONE**
+
+- `docs/` audit
+
+**NEXT**
+
+- `DockerOperator`
+
+---
+
 ### February 20, 2026
 
 **CONTEXT**
 
-- v1.4.1: ops baseline: `train` hardening
+- v1.4.1 – ops baseline: `train` hardening
 
 **DONE**
 
@@ -54,7 +70,7 @@ Production-flavored infra hardening.
 
 **CONTEXT**
 
-- v1.4.1: ops baseline: `train` hardening
+- v1.4.1 – ops baseline: `train` hardening
 
 **DONE**
 
