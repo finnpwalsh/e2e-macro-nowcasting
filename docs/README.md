@@ -2,21 +2,48 @@
 
 # Documentation Index
 
-This folder contains system documentation for the macro nowcasting pipeline.
-
-> See [Getting Started](./quickstart.md) to boot up the system
+Docs directory.
 
 ---
 
-## Core System Docs
+## 1. Architecture
 
-- **[Architecture](./architecture.md)** – architectural structure and system organizaton
-- **[Lifecycle](./lifecycle/README.md)** – end-to-end ML lifecycle semantics
-- **[Evolution](./evolution.md)** – version scopes and system evolution
+Architectural structure and system organizaton.
+
+Docs:
+- [Lifecycle](./architecture/lifecycle.md)
+- [Storage](./architecture/storage.md)
+- [System](./architecture/system.md)
 
 ---
 
-## Development Artifacts
+## 2. Contracts
 
-- **[`Log`](./development/log.md)** – append-only historical development notes
-- **[`Plan`](./development/plan.md)** – short-term execution planning
+Guarantees and definitons of lifecycle stages.
+
+Docs:
+- [Prepare](./contracts/prepare.md)
+- [Train](./contracts/train.md)
+- [Track](./contracts/track.md)
+- [Select](./contracts/select.md)
+- [Serve](./contracts/serve.md)
+
+---
+
+## 3. History
+
+Version history and planning.
+
+Docs:
+- [Devlog](./history/devlog.md)
+- [Roadmap](./history/roadmap.md)
+- [Versions](./history/versions.md)
+
+---
+
+## 4. Quickstart
+
+System boot-up.
+
+Docs:
+- [Quickstart](./quickstart.md)
