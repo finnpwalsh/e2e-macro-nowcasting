@@ -39,7 +39,7 @@ class CanonicalDatasets:
 
     @property
     def anchors(self) -> str:
-        return f"{self.root}/anchors/anchors.parquet"
+        return f"{self.root}/anchors/all.parquet"
     
     @property
     def anchors_fred(self) -> str:
