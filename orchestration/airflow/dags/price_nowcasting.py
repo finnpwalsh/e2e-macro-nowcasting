@@ -1,72 +1,95 @@
-"""
-End-to-end FRED + yfinance data pipeline (V1).
+from __future__ import annotations
 
-Manually triggered pipeline that ingests raw FRED + yfinance
-time-series data, cleans and prepares modeling datasets, merges, 
-and trains a baseline Ridge regression model for evaluation.
-"""
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.models.baseoperator import chain
 
-from scripts.ingest_fred import main as ingest_fred
-from scripts.ingest_yfinance import main as ingest_yfinance
-from scripts.clean_fred import main as clean_fred
-from scripts.clean_yfinance import main as clean_yfinance
-from scripts.merge import main as merge
-from scripts.train_ridge import main as train_ridge
+APP_NET = "e2e-macro-nowcasting-net"
 
-DEFAULT_ARGS = {
-    "owner": "ml-platform",
-    "retries": 1,
-    "retry_delay": timedelta(minutes=5),
+COMMON_ENV = {
+    "PYTHONPATH": "/opt/project/src",
+    "STORAGE_BACKEND": "s3",
+    "AWS_REGION": "us-east-1",
+    "AWS_DEFAULT_REGION": "us-east-1",
+    "MLFLOW_TRACKING_URI": "http://mlflow:5000",
+    "MLFLOW_EXPERIMENT_NAME": "nowcasting",
+    "NOWCAST_REGISTRY_MODEL": "nowcasting-models",
+    "NOWCAST_MODEL_ALIAS": "champion",
 }
 
 with DAG(
-    dag_id="price_nowcasting",
-    description=
-        ("Manual V1 pipeline: ingest (FRED+yfinance), clean, merge train baseline."),
-    default_args=DEFAULT_ARGS,
-    start_date=datetime(2025,12,1),
-    schedule_interval=None, # manual trigger for v1
+    dag_id="price_nowcast",
+    start_date=datetime(2010, 1, 1),
     catchup=False,
-    tags=["v1", "fred", "yfinance", "baseline"]
+    tags=["nowcast", "baseline", "docker"],
 ) as dag:
-    ingest_fred_task = PythonOperator(
-        task_id="ingest_fred",
-        python_callable=ingest_fred,
+    prepare_anchors_fred = DockerOperator(
+        task_id="prepare_anchors_fred",
+        image="nowcasting-prepare:latest",
+        command="bash -lc 'python -m jobs.prepare.anchors.sources.fred'",
+        auto_remove=True,
+        mount_tmp_dir=False,
+        network_mode=APP_NET,
+        environment=COMMON_ENV,
     )
 
-    ingest_yfinance_task = PythonOperator(
-        task_id="ingest_yfinance",
-        python_callable=ingest_yfinance,
+    prepare_anchors_assemble = DockerOperator(
+        task_id="prepare_anchors_assemble",
+        image="nowcasting-prepare:latest",
+        command="bash -lc 'python -m jobs.prepare.anchors.assemble'",
+        auto_remove=True,
+        mount_tmp_dir=False,
+        network_mode=APP_NET,
+        environment=COMMON_ENV,
     )
 
-    clean_fred_task = PythonOperator(
-        task_id="clean_fred",
-        python_callable=clean_fred,
+    prepare_anchors_features = DockerOperator(
+        task_id="prepare_anchors_features",
+        image="nowcasting-prepare:latest",
+        command="bash -lc 'python -m jobs.prepare.anchors.build_features'",
+        auto_remove=True,
+        mount_tmp_dir=False,
+        network_mode=APP_NET,
+        environment=COMMON_ENV,
     )
 
-    clean_yfinance_task = PythonOperator(
-        task_id="clean_yfinance",
-        python_callable=clean_yfinance,
+    train_baseline = DockerOperator(
+        task_id="train_baseline",
+        image="nowcasting-train:latest",
+        command="bash -lc 'python -m jobs.train.baseline'",
+        auto_remove=True,
+        mount_tmp_dir=False,
+        network_mode=APP_NET,
+        environment=COMMON_ENV,
     )
 
-    merge_task = PythonOperator(
-        task_id="merge",
-        python_callable=merge,
+    track_publish = DockerOperator(
+        task_id="track_publish",
+        image="nowcasting-track:latest",
+        command="bash -lc 'python -m jobs.track.publish'",
+        auto_remove=True,
+        mount_tmp_dir=False,
+        network_mode=APP_NET,
+        environment=COMMON_ENV,
     )
 
-    train_task = PythonOperator(
-        task_id="train_ridge",
-        python_callable=train_ridge,
-    )
 
-    chain(
-        [ingest_fred_task, ingest_yfinance_task],
-        [clean_fred_task, clean_yfinance_task],
-        merge_task,
-        train_task,
+    select_promote = DockerOperator(
+            task_id="select_promote",
+            image="nowcasting-select:latest",
+            command="bash -lc 'python -m jobs.select.promote'",
+            auto_remove=True,
+            mount_tmp_dir=False,
+            network_mode=APP_NET,
+            environment=COMMON_ENV,
+        )
+    chain = (
+        prepare_anchors_fred,
+        prepare_anchors_assemble,
+        prepare_anchors_features,
+        train_baseline,
+        track_publish,
+        select_promote,
     )
