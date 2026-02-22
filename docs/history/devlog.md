@@ -1,6 +1,8 @@
+← [Back to Docs](../README.md)
+
 # Activity Log
 
-Doc for keeping track of development activity. Split by version + day.
+Doc for keeping track of development activity. Split by major version + day.
 
 --- 
 
