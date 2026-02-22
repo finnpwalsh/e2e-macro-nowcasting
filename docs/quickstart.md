@@ -1,3 +1,5 @@
+← [Back to Docs](../README.md)
+
 # Quickstart
 
 This document includes how to run the full pipeline locally using Airflow and S3-backed storage.
@@ -7,6 +9,7 @@ This document includes how to run the full pipeline locally using Airflow and S3
 - Docker + Docker Compose
 - Make
 - A FRED API key ([get one here](https://fred.stlouisfed.org/docs/api/api_key.html))
+- A Tiingo API token ([get one here](https://www.tiingo.com/account/api/token))
 
 Docker is the source of truth for runtime behavior.
 
@@ -29,9 +32,6 @@ Copy the example file and fill in required values:
 ```
 cp .env.example .env
 ```
-
-At minimum, set:
-`FRED_API_KEY` • `AIRFLOW__WEBSERVER__SECRET_KEY` • `AWS_S3_BUCKET_DATA` • `AWS_S3_BUCKET_ARTIFACTS` • `AWS_S3_REGION` • `AWS_PROFILE`
 
 ---
 
@@ -78,8 +78,8 @@ make down
 
 These targets run individual pipeline stages inside containers without requiring a full DAG execution.
 
-- `make ingest`
-- `make clean`
+- `make prepare`
 - `make train`
-- `make merge`
+- `make track`
+- `make select`
 - `make test` (data contract testing via pytest)

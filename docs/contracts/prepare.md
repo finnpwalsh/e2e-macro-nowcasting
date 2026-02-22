@@ -4,8 +4,6 @@
 
 This document defines the Prepare stage in the price nowcasting execution lifecycle.
 
-> Find boundaries [here](../contracts/prepare.md)
-
 **Responsibilities**
 - Ingest data from external sources
 - Clean, normalize, and align time series

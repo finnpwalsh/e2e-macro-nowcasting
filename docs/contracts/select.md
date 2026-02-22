@@ -4,8 +4,6 @@
 
 This document defines the Select stage in the price nowcasting execution lifecycle.
 
-> Find boundaries [here](../contracts/select.md)
-
 **Responsibilities**
 - Consume logged run metadata and references to trained model artifacts
 - Compare model performance across models and runs

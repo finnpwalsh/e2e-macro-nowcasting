@@ -4,8 +4,6 @@
 
 This document defines the Track stage in the price nowcasting execution lifecycle.
 
-> Find boundaries [here](../contracts/track.md)
-
 **Responsibilities**
 - Record run metadata for training and evaluation jobs
 - Log metrics, parameters, and artifacts produced by models

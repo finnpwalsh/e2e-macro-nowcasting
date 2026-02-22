@@ -20,7 +20,6 @@ Version history and planned evolution.
 
 **Theme**: Infrastructure platform – MLOps
 
-- **v1.4.2**: Contracts & scalability foundations
 - **v1.5.0**: FastAPI + ECS Fargate serving
 - **v1.6.0**: Terraform + CI/CD
 - **v1.7.0**: Promotion & rollback primitive

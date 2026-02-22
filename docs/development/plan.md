@@ -33,13 +33,6 @@ This document tracks short-term execution for the remaining V1 releases. It is i
 
 ## Version Roadmap
 
-### v1.4.2 — Contracts & Scalability Foundations
-- Define dataset and artifact contracts
-- Move validation logic to source-owned modules
-- Add train-time merged dataset validation
-- Add contract tests
-- refactor data lakehouse
-
 ### v1.5.0 — Serving
 - Implement FastAPI service for inference
 - Deploy via ECS Fargate
