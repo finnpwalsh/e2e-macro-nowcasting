@@ -10,28 +10,6 @@ terraform {
 }
 
 # ---------------
-# Variables
-# ---------------
-
-variable "aws_region" {
-  description = "AWS region for infrastructure"
-  type        = string
-  default     = "us-east-1"
-}
-
-variable "project" {
-  description = "Project name prefix"
-  type        = string
-  default     = "nowcasting"
-}
-
-variable "env" {
-  description = "Environment name (dev | prod)"
-  type        = string
-  default     = "dev"
-}
-
-# ---------------
 # Provider
 # ---------------
 
@@ -65,6 +43,10 @@ resource "aws_s3_bucket" "airflow_logs" {
   bucket = local.airflow_logs_bucket_name
 }
 
+# ---------------
+# Access Blocks
+# ---------------
+
 resource "aws_s3_bucket_public_access_block" "data" {
   bucket                  = aws_s3_bucket.data.id
   block_public_acls       = true
@@ -87,20 +69,4 @@ resource "aws_s3_bucket_public_access_block" "airflow_logs" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-}
-
-# ---------------
-# Outputs
-# ---------------
-
-output "data_bucket" {
-  value = aws_s3_bucket.data.bucket
-}
-
-output "artifacts_bucket" {
-  value = aws_s3_bucket.artifacts.bucket
-}
-
-output "airflow_logs_bucket" {
-  value = aws_s3_bucket.airflow_logs.bucket
 }
