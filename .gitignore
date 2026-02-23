@@ -9,7 +9,7 @@ mlruns/
 /airflow/
 
 # Airflow generated files
-airflow/logs/**
+orchestration/airflow/logs/**
 airflow/*.db
 airflow/*.pid
 airflow/airflow.cfg
