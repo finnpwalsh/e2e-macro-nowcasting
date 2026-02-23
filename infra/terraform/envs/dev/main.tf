@@ -9,6 +9,8 @@ module "ssm_config" {
     NOWCAST_REGISTRY_NAME  = "nowcasting-models"
     NOWCAST_MODEL_ALIAS    = "champion"
     STORAGE_BACKEND        = "S3"
+    AIRFLOW_ADMIN_USERNAME = "admin"
+    AIRFLOW_ADMIN_EMAIL    = "admin@example.com"
   }
 }
 
