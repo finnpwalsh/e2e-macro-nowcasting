@@ -32,7 +32,25 @@ Production-flavored infra hardening.
 
 ---
 
-### February XX, 2026
+### February 23, 2026
+
+**CONTEXT**
+
+- v1.4.1 – ops baseline: AWS + `terraform`
+
+**DONE**
+
+- Created AWS organization + user + nowcasting-dev & nowcasting-prod users
+- Refactored terraform-managed S3 buckets
+- configured + implemented AWS SSM Parameter Store + Secrets Manager
+
+**NEXT**
+
+- wire IAM runtime policy
+
+---
+
+### February 22, 2026
 
 **CONTEXT**
 
