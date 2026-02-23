@@ -13,10 +13,9 @@ x-airflow-env: &airflow_env
   AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
   AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
 
-  # Logging (S3)
+  # Logging (LOCAL)
   AIRFLOW__LOGGING__REMOTE_LOGGING: "False"
-  AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER: ""
-  AIRFLOW__LOGGING__REMOTE_LOG_CONN_ID: ""
+  AIRFLOW__LOGGING__BASE_LOG_FOLDER: "/opt/airflow/logs"
   
   # Project
   PYTHONPATH: /opt/project/src
@@ -43,6 +42,7 @@ x-airflow-env: &airflow_env
 x-airflow-volumes: &airflow_vols
   - ./:/opt/project
   - ./orchestration/airflow/dags:/opt/orchestration/airflow/dags
+  - ./orchestration/airflow/logs:/opt/airflow/logs
   - ~/.aws:/home/airflow/.aws:ro
   - /var/run/docker.sock:/var/run/docker.sock
 
