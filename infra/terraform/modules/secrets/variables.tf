@@ -6,7 +6,7 @@ variable "env" {
     type = string
 }
 
-variable "values" {
-    description = "Map of KEY secret string value"
-    type = map(string)
+variable "keys" {
+    description = "Set of secret keys to create"
+    type = set(string)
 }

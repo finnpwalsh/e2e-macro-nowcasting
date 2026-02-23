@@ -3,9 +3,15 @@ output "base_path" {
 }
 
 output "arns" {
-    value = { for k, s in aws_secretsmanager_secret.this : k => s.arn }
+    value = {
+        for k, s in aws_secretsmanager_secret.this :
+        k => s.arn
+    }
 }
 
 output "names" {
-    value = { for k, s in aws_secretsmanager_secret.this : k => s.name }
+    value = {
+        for k, s in aws_secretsmanager_secret.this :
+        k => s.name
+    }
 }
