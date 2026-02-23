@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import os
 
 from airflow import DAG
 from airflow.providers.docker.operators.docker import DockerOperator
@@ -10,14 +11,22 @@ APP_NET = "e2e-macro-nowcasting-net"
 
 COMMON_ENV = {
     "PYTHONPATH": "/opt/project/src",
-    "STORAGE_BACKEND": "s3",
-    "AWS_REGION": "us-east-1",
-    "AWS_DEFAULT_REGION": "us-east-1",
-    "MLFLOW_TRACKING_URI": "http://mlflow:5000",
-    "MLFLOW_EXPERIMENT_NAME": "nowcasting",
-    "NOWCAST_REGISTRY_MODEL": "nowcasting-models",
-    "NOWCAST_MODEL_ALIAS": "champion",
+    "HOME": "/home/airflow",
+
+    "STORAGE_BACKEND": os.getenv("STORAGE_BACKEND"),
+    
+    "AWS_REGION": os.getenv("AWS_REGION"),
+    "AWS_DEFAULT_REGION": os.getenv("AWS_DEFAULT_REGION"),
+    "AWS_PROFILE": os.getenv("AWS_PROFILE"),
+    "AWS_SDK_LOAD_CONFIG": "1",
+    
+    "MLFLOW_TRACKING_URI": os.getenv("MLFLOW_TRACKING_URI"),
+    "MLFLOW_EXPERIMENT_NAME": os.getenv("MLFLOW_EXPERIMENT_NAME"),
+    
+    "NOWCAST_REGISTRY_MODEL": os.getenv("NOWCAST_REGISTRY_MODEL"),
+    "NOWCAST_MODEL_ALIAS": os.getenv("NOWCAST_MODEL_ALIAS"),
 }
+
 
 with DAG(
     dag_id="price_nowcasting",
