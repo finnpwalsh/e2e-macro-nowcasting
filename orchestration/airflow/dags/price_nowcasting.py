@@ -1,99 +1,64 @@
 from __future__ import annotations
 
 from datetime import datetime
-import os
+import importlib
 
 from airflow import DAG
-from airflow.providers.docker.operators.docker import DockerOperator
+from airflow.operators.python import PythonOperator
 from airflow.models.baseoperator import chain
 
-APP_NET = "e2e-macro-nowcasting-net"
 
-COMMON_ENV = {
-    "PYTHONPATH": "/opt/project/src",
-    "HOME": "/home/airflow",
+def call_job(module: str) -> None:
+    mod = importlib.import_module(f"jobs.{module}")
+    mod.run()
 
-    "STORAGE_BACKEND": os.getenv("STORAGE_BACKEND"),
-    
-    "AWS_REGION": os.getenv("AWS_REGION"),
-    "AWS_DEFAULT_REGION": os.getenv("AWS_DEFAULT_REGION"),
-    "AWS_PROFILE": os.getenv("AWS_PROFILE"),
-    "AWS_SDK_LOAD_CONFIG": "1",
-    
-    "MLFLOW_TRACKING_URI": os.getenv("MLFLOW_TRACKING_URI"),
-    "MLFLOW_EXPERIMENT_NAME": os.getenv("MLFLOW_EXPERIMENT_NAME"),
-    
-    "NOWCAST_REGISTRY_MODEL": os.getenv("NOWCAST_REGISTRY_MODEL"),
-    "NOWCAST_MODEL_ALIAS": os.getenv("NOWCAST_MODEL_ALIAS"),
-}
+
+def job(task_id: str, module: str) -> PythonOperator:
+    return PythonOperator(
+        task_id=task_id,
+        python_callable=call_job,
+        op_args=[module],
+    )
 
 
 with DAG(
-    dag_id="price_nowcasting",
+    dag_id="price_nowcasting_baseline",
     start_date=datetime(2010, 1, 1),
+    schedule="@monthly",   # or None for manual only
     catchup=False,
-    tags=["nowcast", "baseline", "docker"],
+    max_active_runs=1,
+    tags=["nowcast", "baseline"],
 ) as dag:
-    prepare_anchors_fred = DockerOperator(
+
+    prepare_anchors_fred = job(
         task_id="prepare_anchors_fred",
-        image="nowcasting-prepare:latest",
-        command="bash -lc 'python -m jobs.prepare.anchors.sources.fred'",
-        auto_remove=True,
-        mount_tmp_dir=False,
-        network_mode=APP_NET,
-        environment=COMMON_ENV,
+        module="prepare.anchors.sources.fred",
     )
 
-    prepare_anchors_assemble = DockerOperator(
+    prepare_anchors_assemble = job(
         task_id="prepare_anchors_assemble",
-        image="nowcasting-prepare:latest",
-        command="bash -lc 'python -m jobs.prepare.anchors.assemble'",
-        auto_remove=True,
-        mount_tmp_dir=False,
-        network_mode=APP_NET,
-        environment=COMMON_ENV,
+        module="prepare.anchors.assemble",
     )
 
-    prepare_anchors_features = DockerOperator(
+    prepare_anchors_features = job(
         task_id="prepare_anchors_features",
-        image="nowcasting-prepare:latest",
-        command="bash -lc 'python -m jobs.prepare.anchors.build_features'",
-        auto_remove=True,
-        mount_tmp_dir=False,
-        network_mode=APP_NET,
-        environment=COMMON_ENV,
+        module="prepare.anchors.build_features",
     )
 
-    train_baseline = DockerOperator(
+    train_baseline = job(
         task_id="train_baseline",
-        image="nowcasting-train:latest",
-        command="bash -lc 'python -m jobs.train.baseline'",
-        auto_remove=True,
-        mount_tmp_dir=False,
-        network_mode=APP_NET,
-        environment=COMMON_ENV,
+        module="train.baseline",
     )
 
-    track_publish = DockerOperator(
+    track_publish = job(
         task_id="track_publish",
-        image="nowcasting-track:latest",
-        command="bash -lc 'python -m jobs.track.publish'",
-        auto_remove=True,
-        mount_tmp_dir=False,
-        network_mode=APP_NET,
-        environment=COMMON_ENV,
+        module="track.publish",
     )
 
-
-    select_promote = DockerOperator(
-            task_id="select_promote",
-            image="nowcasting-select:latest",
-            command="bash -lc 'python -m jobs.select.promote'",
-            auto_remove=True,
-            mount_tmp_dir=False,
-            network_mode=APP_NET,
-            environment=COMMON_ENV,
-        )
+    select_promote = job(
+        task_id="select_promote",
+        module="select.promote",
+    )
 
     chain(
         prepare_anchors_fred,
