@@ -7,6 +7,6 @@ variable "env" {
 }
 
 variable "values" {
-    description = "Map of KEY -> value (non-secret config)
+    description = "Map of KEY -> value (non-secret config)"
     type = map(string)
 }
