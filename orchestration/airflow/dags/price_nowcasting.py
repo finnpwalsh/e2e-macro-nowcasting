@@ -20,7 +20,7 @@ COMMON_ENV = {
 }
 
 with DAG(
-    dag_id="price_nowcast",
+    dag_id="price_nowcasting",
     start_date=datetime(2010, 1, 1),
     catchup=False,
     tags=["nowcast", "baseline", "docker"],
@@ -85,7 +85,8 @@ with DAG(
             network_mode=APP_NET,
             environment=COMMON_ENV,
         )
-    chain = (
+
+    chain(
         prepare_anchors_fred,
         prepare_anchors_assemble,
         prepare_anchors_features,

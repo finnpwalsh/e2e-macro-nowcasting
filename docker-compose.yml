@@ -5,7 +5,7 @@ x-airflow-env: &airflow_env
   # Core
   AIRFLOW__CORE__EXECUTOR: LocalExecutor
   AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW_DB_URI}
-  AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+  AIRFLOW__CORE__DAGS_FOLDER: /opt/orchestration/airflow/dags
   AIRFLOW__CORE__LOAD_EXAMPLES: "False"
   AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
   AIRFLOW__CORE__STORE_SERIALIZED_DAGS: "True"
@@ -42,7 +42,7 @@ x-airflow-env: &airflow_env
 # ----------------------------------------------------------
 x-airflow-volumes: &airflow_vols
   - ./:/opt/project
-  - ./airflow/dags:/opt/airflow/dags
+  - ./orchestration/airflow/dags:/opt/orchestration/airflow/dags
   - ~/.aws:/home/airflow/.aws:ro
   - /var/run/docker.sock:/var/run/docker.sock
 
