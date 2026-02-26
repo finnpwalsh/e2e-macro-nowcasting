@@ -1,7 +1,7 @@
 module "ssm_config" {
   source  = "../../modules/ssm_parameters"
-  project = "nowcasting"
-  env     = "dev"
+  project = var.project
+  env     = var.env
 
   values = {
     MLFLOW_TRACKING_URI    = "http://mlflow:5000"
@@ -16,8 +16,8 @@ module "ssm_config" {
 
 module "secrets" {
   source  = "../../modules/secrets"
-  project = "nowcasting"
-  env     = "dev"
+  project = var.project
+  env     = var.env
 
   keys = [
     "FRED_API_KEY",
@@ -28,4 +28,12 @@ module "secrets" {
     "AIRFLOW_DB_URI",
     "MLFLOW_BACKEND_STORE_URI",
   ]
+}
+
+module "iam_runtime_read" {
+  source = "../../modules/iam_runtime_read"
+
+  project = var.project
+  env = var.env
+  role_name = "runtime"
 }
