@@ -30,8 +30,8 @@ resource "aws_iam_role" "task" {
     assume_role_policy = local.assume_role_policy
 }
 
-resource "aws_iam_policy" "runtime_read" {
-    name = "${local.name_prefix}-${var.role_name}-read"
+resource "aws_iam_policy" "stage" {
+    name = "${local.name_prefix}-${var.role_name}-policy"
 
     policy = jsonencode({
         Version = "2012-10-17"
@@ -49,6 +49,13 @@ resource "aws_iam_policy" "runtime_read" {
                 Action = ["s3:GetObject"]
                 Resource = [for b in var.s3_read_bucket_arns : "${b}/*"]
             },
+            # S3 Write
+            {
+                Sid = "S3WriteObjects"
+                Effect = "Allow"
+                Action = ["s3:PutObject"]
+                Resource = [for b in var.s3_write_bucket_arns : "${b}/*"]
+            }
             # SSM Read
             {
                 Sid = "SSMReadByPath"
@@ -60,6 +67,13 @@ resource "aws_iam_policy" "runtime_read" {
                 ]
                 Resource = local.ssm_path_arn
             },
+            # SSM Write
+            {
+                Sid = "SSMWriteParameters"
+                Effect = "Allow"
+                Action = ["ssm:PutParameter"]
+                Resource = var.ssm_write_parameter_arns
+            }
             # Secrets Read
             {
                 Sid = "SecretsRead"
@@ -76,5 +90,5 @@ resource "aws_iam_policy" "runtime_read" {
 
 resource "aws_iam_role_policy_attachment" "attach" {
     role = aws_iam_role.task.name
-    policy_arn = aws_iam_policy.runtime_read.arn
+    policy_arn = aws_iam_policy.stage.arn
 }
