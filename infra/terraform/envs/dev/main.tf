@@ -1,3 +1,31 @@
+# ========================================
+# Locals
+# ========================================
+
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+locals = {
+  ssm_config_prefix = "/${var.project}/${var.env}/config/"
+  ssm_champion_param_arn = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${trimprefix(local.ssm_config_prefix, "/)}champion"
+}
+
+# ========================================
+# S3 Buckets
+# ========================================
+
+module "s3_buckets" {
+  source = "../../modules/s3_buckets"
+
+  project = var.project
+  env = var.env
+  aws_region = var.aws_region
+}
+
+# ========================================
+# SSM Parameters
+# ========================================
+
 module "ssm_config" {
   source  = "../../modules/ssm_parameters"
   project = var.project
@@ -13,6 +41,10 @@ module "ssm_config" {
     AIRFLOW_ADMIN_EMAIL    = "admin@example.com"
   }
 }
+
+# ========================================
+# Secrets Manager
+# ========================================
 
 module "secrets" {
   source  = "../../modules/secrets"
@@ -30,10 +62,68 @@ module "secrets" {
   ]
 }
 
-module "iam_runtime_read" {
-  source = "../../modules/iam_runtime_read"
+# ========================================
+# IAM Roles
+# ========================================
 
-  project = var.project
-  env = var.env
-  role_name = "runtime"
+module "iam_prepare" {
+  source = "../../modules/iam_stage_role"
+
+  project   = var.project
+  env       = var.env
+  role_name = "prepare"
+
+  s3_read_bucket_arns  = [module.s3_buckets.data_bucket_arn]
+  s3_write_bucket_arns = [module.s3_buckets.data_bucket_arn]
+
+  ssm_read_path_prefix = local.ssm_config_prefix
+
+  secrets_read_secret_arns = [
+    module.secrets.secret_arns["FRED_API_KEY"],
+    module.secrets.secret_arns["TIINGO_API_KEY"],
+  ]
+}
+
+module "iam_train" {
+  source = "../../modules/iam_stage_role"
+
+  project   = var.project
+  env       = var.env
+  role_name = "train"
+
+  s3_read_bucket_arns  = [module.s3_buckets.data_bucket_arn]
+  s3_write_bucket_arns = [module.s3_buckets.artifacts_bucket_arn]
+
+  ssm_read_path_prefix = local.ssm_config_prefix
+}
+
+module "iam_track" {
+  source = "../../modules/iam_stage_role"
+
+  project   = var.project
+  env       = var.env
+  role_name = "track"
+
+  s3_read_bucket_arns  = [module.s3_buckets.artifacts_bucket_arn]
+
+  ssm_read_path_prefix = local.ssm_config_prefix
+
+  secrets_read_secret_arns = [
+    module.secrets.secret_arns["MLFLOW_BACKEND_STORE_URI"],
+  ]
+}
+
+module "iam_select" {
+  source = "../../modules/iam_stage_role"
+
+  project   = var.project
+  env       = var.env
+  role_name = "select"
+
+  ssm_read_path_prefix = local.ssm_config_prefix
+  ssm_write_parameter_arns = [local.ssm_champion_param_arn]
+
+  secrets_read_secret_arns = [
+    module.secrets.secret_arns["MLFLOW_BACKEND_STORE_URI"],
+  ]
 }
