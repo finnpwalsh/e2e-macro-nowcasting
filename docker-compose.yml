@@ -50,7 +50,7 @@ x-airflow-volumes: &airflow_vols
 # Shared Airflow Image
 # ----------------------------------------------------------
 x-airflow-image: &airflow_image
-  image: e2e-macro-nowcasting-airflow:dev
+  image: nowcasting-airflow:dev
   build:
     context: .
     dockerfile: infra/docker/services/airflow/Dockerfile
@@ -142,7 +142,7 @@ services:
     networks: [appnet]
 
   mlflow:
-    image: e2e-macro-nowcasting-mlflow:dev
+    image: nowcasting-mlflow:dev
     build:
       context: .
       dockerfile: infra/docker/services/mlflow/Dockerfile
