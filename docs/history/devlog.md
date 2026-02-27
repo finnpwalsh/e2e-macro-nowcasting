@@ -36,12 +36,15 @@ Production-flavored infra hardening.
 
 **CONTEXT**
 
-- v1.4.1 – ops baseline: AWS via `terraform`
+- v1.5.0 – execution + contract hardening: AWS via `terraform`
 
 **DONE**
 
 - refactor IAM stages to a single module with a stage map
 - add ECR Repositories + tag Docker images
+- add CloudWatch logs
+- add ECS
+    - Execution Role, Security Groups, Cluster, Service (Fargate)
 
 **NEXT**
 
@@ -53,7 +56,7 @@ Production-flavored infra hardening.
 
 **CONTEXT**
 
-- v1.4.1 – ops baseline: AWS via `terraform`
+- v1.5.0 – execution + contract hardening: AWS via `terraform`
 
 **DONE**
 
@@ -69,7 +72,7 @@ Production-flavored infra hardening.
 
 **CONTEXT**
 
-- v1.4.1 – ops baseline: AWS + `terraform`
+- v1.5.0 – execution + contract hardening: AWS + `terraform`
 
 **DONE**
 
@@ -87,7 +90,7 @@ Production-flavored infra hardening.
 
 **CONTEXT**
 
-- v1.4.1 – ops baseline: docs + Airflow DAG
+- v1.5.0 – execution + contract hardening: docs + Airflow DAG
 
 **DONE**
 
@@ -103,7 +106,7 @@ Production-flavored infra hardening.
 
 **CONTEXT**
 
-- v1.4.1 – ops baseline: `train` hardening
+- v1.5.0 – execution + contract hardening: `train` hardening
 
 **DONE**
 
@@ -121,7 +124,7 @@ Production-flavored infra hardening.
 
 **CONTEXT**
 
-- v1.4.1 – ops baseline: `train` hardening
+- v1.5.0 – execution + contract hardening: `train` hardening
 
 **DONE**
 
@@ -141,7 +144,7 @@ prepare → train baseline → compute residual → train corrector → combine 
 
 **CONTEXT**
 
-- v1.4.1 – operational baseline: `prepare` finalization
+- v1.5.0 – execution + contract hardening: `prepare` finalization
 
 **DONE**
 
@@ -161,7 +164,7 @@ prepare → train baseline → compute residual → train corrector → combine 
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor: dev hardening
+- v1.5.0 – execution + contract hardening: dev hardening
 
 **DONE**
 
@@ -187,7 +190,7 @@ prepare → train baseline → compute residual → train corrector → combine 
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor: `Prepare` hardening
+- v1.5.0 – execution + contract hardening: `Prepare` hardening
 
 **DONE**
 
@@ -207,7 +210,7 @@ prepare → train baseline → compute residual → train corrector → combine 
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor: storage refactor
+- v1.5.0 – execution + contract hardening: storage refactor
 
 **DONE**
 
@@ -241,7 +244,7 @@ src/ml_platform/storage/
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor: Docker, requirements audit
+- v1.5.0 – execution + contract hardening: Docker, requirements audit
 
 **DONE**
 
@@ -263,7 +266,7 @@ src/ml_platform/storage/
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor: Select
+- v1.5.0 – execution + contract hardening: Select
 
 **DONE**
 
@@ -285,7 +288,7 @@ src/ml_platform/storage/
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor: `jobs/` audit
+- v1.5.0 – execution + contract hardening: `jobs/` audit
 
 **DONE**
 
@@ -304,7 +307,7 @@ src/ml_platform/storage/
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor: `src/` audit
+- v1.5.0 – execution + contract hardening: `src/` audit
 
 **DONE**
 
@@ -324,7 +327,7 @@ src/ml_platform/storage/
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor: hardening docs
+- v1.5.0 – execution + contract hardening: hardening docs
 
 **DONE**
 
@@ -345,7 +348,7 @@ src/ml_platform/storage/
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor: hardening docs
+- v1.5.0 – execution + contract hardening: hardening docs
 
 **DONE**
 
@@ -364,7 +367,7 @@ src/ml_platform/storage/
 
 **CONTEXT**
 
-- v1.4.1 – lifecycle refactor
+- v1.5.0 – execution + contract hardening
 
 **DONE**
 
