@@ -6,7 +6,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  ssm_config_prefix = "/${var.project}/${var.env}/config/"
+  ssm_config_prefix      = "/${var.project}/${var.env}/config/"
   ssm_champion_param_arn = "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter${trimprefix(local.ssm_config_prefix, "/")}/champion"
 }
 
@@ -17,8 +17,8 @@ locals {
 module "s3_buckets" {
   source = "../../modules/s3_buckets"
 
-  project = var.project
-  env = var.env
+  project    = var.project
+  env        = var.env
   aws_region = var.aws_region
 }
 
@@ -73,9 +73,9 @@ module "iam_stages" {
 
   stages = {
     prepare = {
-      s3_read_bucket_arns = [module.s3_buckets.data_bucket_arn]
-      s3_write_bucket_arns = [module.s3_buckets.data_bucket_arn]
-      ssm_read_path_prefix = local.ssm_config_prefix
+      s3_read_bucket_arns      = [module.s3_buckets.data_bucket_arn]
+      s3_write_bucket_arns     = [module.s3_buckets.data_bucket_arn]
+      ssm_read_path_prefix     = local.ssm_config_prefix
       ssm_write_parameter_arns = []
       secrets_read_secret_arns = [
         module.secrets.arns["FRED_API_KEY"],
@@ -84,17 +84,17 @@ module "iam_stages" {
     }
 
     train = {
-      s3_read_bucket_arns  = [module.s3_buckets.data_bucket_arn]
-      s3_write_bucket_arns = [module.s3_buckets.artifacts_bucket_arn]
-      ssm_read_path_prefix = local.ssm_config_prefix
+      s3_read_bucket_arns      = [module.s3_buckets.data_bucket_arn]
+      s3_write_bucket_arns     = [module.s3_buckets.artifacts_bucket_arn]
+      ssm_read_path_prefix     = local.ssm_config_prefix
       ssm_write_parameter_arns = []
       secrets_read_secret_arns = []
     }
 
     track = {
-      s3_read_bucket_arns  = [module.s3_buckets.artifacts_bucket_arn]
-      s3_write_bucket_arns = []
-      ssm_read_path_prefix = local.ssm_config_prefix
+      s3_read_bucket_arns      = [module.s3_buckets.artifacts_bucket_arn]
+      s3_write_bucket_arns     = []
+      ssm_read_path_prefix     = local.ssm_config_prefix
       ssm_write_parameter_arns = []
       secrets_read_secret_arns = [
         module.secrets.arns["MLFLOW_BACKEND_STORE_URI"],
@@ -102,9 +102,9 @@ module "iam_stages" {
     }
 
     select = {
-      s3_read_bucket_arns  = [module.s3_buckets.artifacts_bucket_arn]
-      s3_write_bucket_arns = []
-      ssm_read_path_prefix = local.ssm_config_prefix
+      s3_read_bucket_arns      = [module.s3_buckets.artifacts_bucket_arn]
+      s3_write_bucket_arns     = []
+      ssm_read_path_prefix     = local.ssm_config_prefix
       ssm_write_parameter_arns = [local.ssm_champion_param_arn]
       secrets_read_secret_arns = [
         module.secrets.arns["MLFLOW_BACKEND_STORE_URI"],
@@ -122,7 +122,7 @@ module "ecr" {
 
   project = var.project
   env     = var.env
-  
+
   repositories = [
     "base",
     "prepare",
@@ -133,4 +133,27 @@ module "ecr" {
     "mlflow",
     "serve"
   ]
+}
+
+# ========================================
+# ECS
+# ========================================
+
+module "ecs_cluster" {
+  source  = "../../modules/ecs_cluster"
+  project = var.project
+  env     = var.env
+}
+
+module "ecs_execution_role" {
+  source  = "../../modules/ecs_execution_role"
+  project = var.project
+  env     = var.env
+}
+
+module "ecs_sg" {
+  source  = "../../modules/ecs_security_groups"
+  project = var.project
+  env     = var.env
+  vpc_id  = var.vpc_id
 }
