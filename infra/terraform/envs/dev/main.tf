@@ -112,3 +112,25 @@ module "iam_stages" {
     }
   }
 }
+
+# ========================================
+# ECR Repositories
+# ========================================
+
+module "ecr" {
+  source = "../../modules/ecr_repositories"
+
+  project = var.project
+  env     = var.env
+  
+  repositories = [
+    "base",
+    "prepare",
+    "train",
+    "track",
+    "select",
+    "airflow",
+    "mlflow",
+    "serve"
+  ]
+}
