@@ -1,9 +1,14 @@
 variable "project" {
-    type = "string"
+    type = string
     default = "nowcasting"
 }
 
 variable "env" {
-    type = "string"
+    type = string
     default = "dev"
+}
+
+variable "aws_region" {
+    type = string
+    default = "us-east-1"
 }

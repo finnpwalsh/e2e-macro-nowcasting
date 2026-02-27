@@ -5,9 +5,9 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-locals = {
+locals {
   ssm_config_prefix = "/${var.project}/${var.env}/config/"
-  ssm_champion_param_arn = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${trimprefix(local.ssm_config_prefix, "/)}champion"
+  ssm_champion_param_arn = "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter${trimprefix(local.ssm_config_prefix, "/")}champion"
 }
 
 # ========================================
@@ -79,8 +79,8 @@ module "iam_prepare" {
   ssm_read_path_prefix = local.ssm_config_prefix
 
   secrets_read_secret_arns = [
-    module.secrets.secret_arns["FRED_API_KEY"],
-    module.secrets.secret_arns["TIINGO_API_KEY"],
+    module.secrets.arns["FRED_API_KEY"],
+    module.secrets.arns["TIINGO_API_KEY"],
   ]
 }
 
@@ -109,7 +109,7 @@ module "iam_track" {
   ssm_read_path_prefix = local.ssm_config_prefix
 
   secrets_read_secret_arns = [
-    module.secrets.secret_arns["MLFLOW_BACKEND_STORE_URI"],
+    module.secrets.arns["MLFLOW_BACKEND_STORE_URI"],
   ]
 }
 
@@ -124,6 +124,6 @@ module "iam_select" {
   ssm_write_parameter_arns = [local.ssm_champion_param_arn]
 
   secrets_read_secret_arns = [
-    module.secrets.secret_arns["MLFLOW_BACKEND_STORE_URI"],
+    module.secrets.arns["MLFLOW_BACKEND_STORE_URI"],
   ]
 }
