@@ -41,6 +41,7 @@ Production-flavored infra hardening.
 **DONE**
 
 - refactor IAM stages to a single module with a stage map
+- add ECR Repositories + tag Docker images
 
 **NEXT**
 
