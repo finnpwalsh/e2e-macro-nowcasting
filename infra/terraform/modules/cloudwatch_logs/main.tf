@@ -1,14 +1,14 @@
-resource "aws_cloudwatch_log_group" "airflow" {
-    name = "/${var.project}/${var.env}/airflow"
-    retention_in_days = var.retention_in_days
+locals {
+  log_groups = {
+    airflow = "/${var.project}/${var.env}/airflow"
+    mlflow  = "/${var.project}/${var.env}/mlflow"
+    stages  = "/${var.project}/${var.env}/stages"
+  }
 }
 
-resource "aws_cloudwatch_log_group" "mlflow" {
-    name = "/${var.project}/${var.env}/mlflow"
-    retention_in_days = var.retention_in_days
-}
+resource "aws_cloudwatch_log_group" "this" {
+  for_each = local.log_groups
 
-resource "aws_cloudwatch_log_group" "stages" {
-    name = "/${var.project}/${var.env}/stages"
-    retention_in_days = var.retention_in_days
+  name              = each.value
+  retention_in_days = var.retention_in_days
 }

@@ -1,3 +1,7 @@
-output "airflow_log_group_name" { value = aws_cloudwatch_log_group.airflow.name }
-output "mlflow_log_group_name"  { value = aws_cloudwatch_log_group.mlflow.name }
-output "stages_log_group_name"  { value = aws_cloudwatch_log_group.stages.name }
+output "log_group_names" {
+  value = { for k, lg in aws_cloudwatch_log_group.this : k => lg.name }
+}
+
+output "log_group_arns" {
+  value = { for k, lg in aws_cloudwatch_log_group.this : k => lg.arn }
+}

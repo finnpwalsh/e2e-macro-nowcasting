@@ -28,7 +28,8 @@ locals {
     }]
   })
 
-  ssm_path_arn = "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter${trimprefix(var.ssm_read_path_prefix, "/")}/*"
+  ssm_read_prefix_norm = "/${trim(var.ssm_read_path_prefix, "/")}"
+  ssm_path_arn = "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter${local.ssm_read_prefix_norm}/*"
 }
 
 # ----------------------------------------------------------

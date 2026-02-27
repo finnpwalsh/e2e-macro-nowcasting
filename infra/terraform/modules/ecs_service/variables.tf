@@ -1,8 +1,8 @@
 variable "name"               { type = string }
 
 variable "cluster_arn"        { type = string }
-variable "subnet_ids"         { type = string }
-variable "security_group_ids" { type = string }
+variable "subnet_ids"         { type = list(string) }
+variable "security_group_ids" { type = list(string) }
 
 variable "execution_role_arn" { type = string }
 variable "task_role_arn"      { type = string }
@@ -15,7 +15,7 @@ variable "command" {
     default = null
 }
 
-variable "env" {
+variable "environment" {
     type = map(string)
     default = {}
 }
@@ -33,5 +33,17 @@ variable "assign_public_ip" {
     default = true
 }
 
-variable "cpu" { type = number, default = 512 }
-variable "memory" { type = number, default = 1024 }
+variable "cpu" {
+    type = number
+    default = 512
+}
+
+variable "memory" {
+    type = number
+    default = 1024
+}
+
+variable "desired_count" {
+    type = number
+    default = 1 
+}
