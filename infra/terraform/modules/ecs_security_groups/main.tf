@@ -3,7 +3,7 @@
 # ========================================
 
 resource "aws_security_group" "svc" {
-    name = "${var.project}-{var.env}-svc-sg"
+    name = "${var.project}-${var.env}-svc-sg"
     vpc_id = var.vpc_id
 
     egress {
