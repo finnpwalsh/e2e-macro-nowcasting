@@ -15,7 +15,7 @@ This repository demonstrates how to design, version, evaluate and operate a macr
 ## Status
 
 - **Latest release**: v1.4.0 – S3-backed storage
-- **In progress**: v1.4.1 – operational baseline
+- **In progress**: v1.5.0 – execution & contract hardening
 
 ---
 

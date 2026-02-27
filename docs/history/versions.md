@@ -11,7 +11,7 @@ Historical version scopes.
 Production ML platform.
 
 Versions:
-- v1.4.1 (current): Baseline operations
+- v1.5.0 (current): Execution & Contract Hardening
 - v1.4.0: Full S3-backed storage integration
 - v1.3.0: yfinance integration
 - v1.2.0: MLflow tracking

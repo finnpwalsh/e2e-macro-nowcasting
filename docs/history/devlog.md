@@ -42,13 +42,14 @@ Production-flavored infra hardening.
 
 - refactor IAM stages to a single module with a stage map
 - add ECR Repositories + tag Docker images
-- add CloudWatch logs
 - add ECS
     - Execution Role, Security Groups, Cluster, Service (Fargate)
+- add
+    - CloudWatch logs, RDS Postgres, MLflow service
 
 **NEXT**
 
-- 
+- Airflow Webserver, Scheduler deployed on ECS
 
 ---
 
