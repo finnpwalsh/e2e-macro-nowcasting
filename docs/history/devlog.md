@@ -32,6 +32,38 @@ Production-flavored infra hardening.
 
 ---
 
+### February 27, 2026
+
+**CONTEXT**
+
+- v1.4.1 – ops baseline: AWS via `terraform`
+
+**DONE**
+
+- refactor IAM stages to a single module with a stage map
+
+**NEXT**
+
+- 
+
+---
+
+### February 26, 2026
+
+**CONTEXT**
+
+- v1.4.1 – ops baseline: AWS via `terraform`
+
+**DONE**
+
+- wire IAM runtime policy
+
+**NEXT**
+
+- ECR module
+
+---
+
 ### February 23, 2026
 
 **CONTEXT**
