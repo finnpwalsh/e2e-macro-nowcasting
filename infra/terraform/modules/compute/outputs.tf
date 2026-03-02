@@ -7,9 +7,9 @@ output "ecs_cluster_name" {
 }
 
 output "execution_role_arn" {
-    value = aws_ecs_cluster.arn
+    value = aws_iam_role.execution.arn
 }
 
 output "execution_role_name" {
-    value = aws_ecs_cluster.name
+    value = aws_iam_role.execution.name
 }

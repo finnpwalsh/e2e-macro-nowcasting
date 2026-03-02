@@ -12,8 +12,8 @@ locals {
     }]
   })
 
-  tasks_norm = {
-    for k, v in var.tasks : k => merge(v, {
+  runtimes_norm = {
+    for k, v in var.runtimes : k => merge(v, {
       ssm_path_arn = "arn:aws:ssm:${var.aws_region}:${var.aws_account_id}:parameter/${trim(v.ssm_read_path_prefix, "/")}/*"
     })
   }
@@ -23,8 +23,8 @@ locals {
 # ECR Repos
 # ----------------------------------------------------------
 
-resource "aws_ecr_repository" "task" {
-  for_each = local.tasks_norm
+resource "aws_ecr_repository" "runtime" {
+  for_each = local.runtimes_norm
   name                 = "${local.name_prefix}-${each.key}"
   image_tag_mutability = "MUTABLE"
 
@@ -37,8 +37,8 @@ resource "aws_ecr_repository" "task" {
 # CloudWatch Log Groups
 # ----------------------------------------------------------
 
-resource "aws_cloudwatch_log_group" "task" {
-  for_each = local.tasks_norm
+resource "aws_cloudwatch_log_group" "runtime" {
+  for_each = local.runtimes_norm
 
   name              = "/ecs/${local.name_prefix}/${each.key}"
   retention_in_days = var.log_retention_days
@@ -48,8 +48,8 @@ resource "aws_cloudwatch_log_group" "task" {
 # Policy Document
 # ----------------------------------------------------------
 
-data "aws_iam_policy_document" "task" {
-  for_each = local.tasks_norm
+data "aws_iam_policy_document" "runtime" {
+  for_each = local.runtimes_norm
 
   # --------------------------
   # S3 Read
@@ -109,6 +109,7 @@ data "aws_iam_policy_document" "task" {
   # --------------------------
   dynamic "statement" {
     for_each = length(each.value.ssm_write_parameter_arns) > 0 ? [1] : []
+    
     content {
       sid     = "SSMWriteParameters"
       effect  = "Allow"
@@ -122,6 +123,7 @@ data "aws_iam_policy_document" "task" {
   # --------------------------
   dynamic "statement" {
     for_each = length(each.value.secrets_read_secret_arns) > 0 ? [1] : []
+    
     content {
       sid     = "SecretsRead"
       effect  = "Allow"
@@ -137,18 +139,19 @@ data "aws_iam_policy_document" "task" {
 # IAM Policy
 # ----------------------------------------------------------
 
-resource "aws_iam_policy" "task" {
-  for_each = local.tasks_norm
+resource "aws_iam_policy" "runtime" {
+  for_each = local.runtimes_norm
+  
   name   = "${local.name_prefix}-${each.key}-policy"
-  policy = data.aws_iam_policy_document.task[each.key].json
+  policy = data.aws_iam_policy_document.runtime[each.key].json
 }
 
 # ----------------------------------------------------------
 # IAM Role
 # ----------------------------------------------------------
 
-resource "aws_iam_role" "task" {
-  for_each = local.tasks_norm
+resource "aws_iam_role" "runtime" {
+  for_each = local.runtime_norm
   name               = "${local.name_prefix}-${each.key}"
   assume_role_policy = local.assume_role_policy
 }
@@ -158,7 +161,7 @@ resource "aws_iam_role" "task" {
 # ----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "attach" {
-  for_each   = local.tasks_norm
-  role       = aws_iam_role.task[each.key].name
-  policy_arn = aws_iam_policy.task[each.key].arn
+  for_each   = local.runtimes_norm
+  role       = aws_iam_role.runtime[each.key].name
+  policy_arn = aws_iam_policy.runtime[each.key].arn
 }

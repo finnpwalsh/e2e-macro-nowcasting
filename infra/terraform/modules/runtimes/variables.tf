@@ -9,7 +9,7 @@ variable "log_retention_days" {
     default = 14
 }
 
-variable "tasks" {
+variable "runtimes" {
     type = map(object({
         s3_read_bucket_arns      = list(string)
         s3_write_bucket_arns     = list(string)

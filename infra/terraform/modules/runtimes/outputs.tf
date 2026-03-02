@@ -1,8 +1,8 @@
-output "task_role_arns" {
+output "runtime_role_arns" {
     value = { for k, r in aws_iam_role.task : k => r.arn }
 }
 
-output "task_role_names" {
+output "runtime_role_names" {
     value = { for k, r in aws_iam_role.task : k => r.name }
 }
 
