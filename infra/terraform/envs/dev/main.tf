@@ -11,11 +11,11 @@ locals {
 }
 
 # ========================================
-# S3 Buckets
+# Storage
 # ========================================
 
 module "s3_buckets" {
-  source = "../../modules/s3_buckets"
+  source = "../../modules/storage"
 
   project    = var.project
   env        = var.env
@@ -23,15 +23,15 @@ module "s3_buckets" {
 }
 
 # ========================================
-# SSM Parameters
+# Config
 # ========================================
 
-module "ssm_config" {
-  source  = "../../modules/ssm_parameters"
+module "config" {
+  source  = "../../modules/config"
   project = var.project
   env     = var.env
 
-  values = {
+  ssm_parameters = {
     MLFLOW_TRACKING_URI    = "http://localhost:5000"
     MLFLOW_EXPERIMENT_NAME = "nowcasting"
     NOWCAST_REGISTRY_NAME  = "nowcasting-models"
@@ -40,18 +40,8 @@ module "ssm_config" {
     AIRFLOW_ADMIN_USERNAME = "admin"
     AIRFLOW_ADMIN_EMAIL    = "admin@example.com"
   }
-}
 
-# ========================================
-# Secrets Manager
-# ========================================
-
-module "secrets" {
-  source  = "../../modules/secrets"
-  project = var.project
-  env     = var.env
-
-  keys = [
+  secrets = [
     "FRED_API_KEY",
     "TIINGO_API_KEY",
     "AIRFLOW__WEBSERVER__SECRET_KEY",
