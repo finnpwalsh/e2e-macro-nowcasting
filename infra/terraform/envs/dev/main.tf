@@ -15,10 +15,10 @@ locals {
 # ========================================
 
 module "s3_buckets" {
-  source = "../../modules/storage"
+  source  = "../../modules/storage"
+  project = var.project
+  env     = var.env
 
-  project    = var.project
-  env        = var.env
   aws_region = var.aws_region
 }
 
@@ -48,4 +48,57 @@ module "config" {
     "AIRFLOW__CORE__FERNET_KEY",
     "AIRFLOW_ADMIN_PASSWORD",
   ]
+}
+
+# ========================================
+# Runtimes
+# ========================================
+
+module "runtimes" {
+  source = "../../modules/runtimes"
+
+  project = var.project
+  env     = var.env
+
+  aws_region     = data.aws_region.current.id
+  aws_account_id = data.aws_caller_identity.current.account_id
+
+  log_retention_days = 14
+
+  runtimes = {
+    prepare = {
+      s3_read_bucket_arns      = [module.s3_buckets.data_bucket_arn]
+      s3_write_bucket_arns     = [module.s3_buckets.data_bucket_arn]
+      ssm_read_path_prefix     = local.ssm_config_prefix
+      ssm_write_parameter_arns = []
+    }
+
+    train = {
+      s3_read_bucket_arns      = [module.s3_buckets.data_bucket_arn]
+      s3_write_bucket_arns     = [module.s3_buckets.artifacts_bucket_arn]
+      ssm_read_path_prefix     = local.ssm_config_prefix
+      ssm_write_parameter_arns = []
+    }
+
+    track = {
+      s3_read_bucket_arns      = [module.s3_buckets.artifacts_bucket_arn]
+      s3_write_bucket_arns     = []
+      ssm_read_path_prefix     = local.ssm_config_prefix
+      ssm_write_parameter_arns = []
+    }
+
+    select = {
+      s3_read_bucket_arns      = [module.s3_buckets.artifacts_bucket_arn]
+      s3_write_bucket_arns     = []
+      ssm_read_path_prefix     = local.ssm_config_prefix
+      ssm_write_parameter_arns = [local.ssm_champion_param_arn]
+    }
+
+    serve = {
+      s3_read_bucket_arns      = [module.s3_buckets.artifacts_bucket_arn]
+      s3_write_bucket_arns     = []
+      ssm_read_path_prefix     = local.ssm_config_prefix
+      ssm_write_parameter_arns = []
+    }
+  }
 }
