@@ -151,7 +151,7 @@ resource "aws_iam_policy" "runtime" {
 # ----------------------------------------------------------
 
 resource "aws_iam_role" "runtime" {
-  for_each = local.runtime_norm
+  for_each = local.runtimes_norm
   name               = "${local.name_prefix}-${each.key}"
   assume_role_policy = local.assume_role_policy
 }
