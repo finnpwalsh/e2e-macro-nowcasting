@@ -8,3 +8,7 @@ output "public_subnet_ids" {
         aws_subnet.public_b.id
     ]
 }
+
+output "svc_security_group_id" {
+    value = aws_security_group.svc.id
+}

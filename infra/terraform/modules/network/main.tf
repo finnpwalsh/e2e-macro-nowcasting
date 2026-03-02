@@ -11,20 +11,20 @@ resource "aws_internet_gateway" "this" {
 }
 
 # ------------------------------------------
-# Subnets
+# Public Subnets
 # ------------------------------------------
 
 resource "aws_subnet" "public_a" {
     vpc_id                  = aws_vpc.this.id
     availability_zone       = data.aws_availability_zones.available.names[0]
-    cidr_block              = "10.20.0.0/20"
+    cidr_block              = cidrsubnet(var.vpc_cidr, 4, 0)
     map_public_ip_on_launch = true
 }
 
 resource "aws_subnet" "public_b" {
     vpc_id                  = aws_vpc.this.id
     availability_zone       = data.aws_availability_zones.available.names[1]
-    cidr_block              = "10.20.16.0/20"
+    cidr_block              = cidrsubnet(var.vpc_cidr, 4, 1)
     map_public_ip_on_launch = true
 }
 
@@ -50,4 +50,31 @@ resource "aws_route_table_association" "public_a" {
 resource "aws_route_table_association" "public_b" {
     subnet_id      = aws_subnet.public_b.id
     route_table_id = aws_route_table.public.id
+}
+
+# ------------------------------------------
+# SVC Security Group
+# ------------------------------------------
+
+resource "aws_security_group" "svc" {
+    name   = "${var.project}-${var.env}-svc-sg"
+    vpc_id = aws_vpc.this.id
+    
+    ingress {
+        from_port   = var.svc_port
+        to_port     = var.svc_port
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    egress {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+}
+
+output "svc_security_group_id" {
+    value = aws_security_group.svc.id
 }
