@@ -10,7 +10,7 @@ resource "aws_ssm_parameter" "config" {
     for_each = var.ssm_parameters
 
     name = "${local.base}/${each.key}"
-    type = string
+    type = "String"
     value = each.value
 }
 
