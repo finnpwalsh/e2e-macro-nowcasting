@@ -117,22 +117,6 @@ data "aws_iam_policy_document" "runtime" {
       resources = each.value.ssm_write_parameter_arns
     }
   }
-
-  # --------------------------
-  # Secrets Read
-  # --------------------------
-  dynamic "statement" {
-    for_each = length(each.value.secrets_read_secret_arns) > 0 ? [1] : []
-    
-    content {
-      sid     = "SecretsRead"
-      effect  = "Allow"
-      actions = [
-        "secretsmanager:GetSecretValue",
-      ]
-      resources = each.value.secrets_read_secret_arns
-    }
-  }
 }
 
 # ----------------------------------------------------------
