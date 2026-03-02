@@ -1,19 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = ">= 5.0"
-    }
-  }
-}
-
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
-
-# ----------------------------------------------------------
-# Locals
-# ----------------------------------------------------------
-
 locals {
   name_prefix = "${var.project}-${var.env}"
 
@@ -28,37 +12,66 @@ locals {
     }]
   })
 
-  ssm_read_prefix_norm = "/${trim(var.ssm_read_path_prefix, "/")}"
-  ssm_path_arn = "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter${local.ssm_read_prefix_norm}/*"
+  tasks_norm = {
+    for k, v in var.tasks : k => merge(v, {
+      ssm_path_arn = "arn:aws:ssm:${var.aws_region}:${var.aws_account_id}:parameter/${trim(v.ssm_read_path_prefix, "/")}/*"
+    })
+  }
+}
+
+# ----------------------------------------------------------
+# ECR Repos
+# ----------------------------------------------------------
+
+resource "aws_ecr_repository" "task" {
+  for_each = local.tasks_norm
+  name                 = "${local.name_prefix}-${each.key}"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+# ----------------------------------------------------------
+# CloudWatch Log Groups
+# ----------------------------------------------------------
+
+resource "aws_cloudwatch_log_group" "task" {
+  for_each = local.tasks_norm
+
+  name              = "/ecs/${local.name_prefix}/${each.key}"
+  retention_in_days = var.log_retention_days
 }
 
 # ----------------------------------------------------------
 # Policy Document
 # ----------------------------------------------------------
 
-data "aws_iam_policy_document" "stage" {
+data "aws_iam_policy_document" "task" {
+  for_each = local.tasks_norm
 
   # --------------------------
   # S3 Read
   # --------------------------
   dynamic "statement" {
-    for_each = length(var.s3_read_bucket_arns) > 0 ? [1] : []
+    for_each = length(each.value.s3_read_bucket_arns) > 0 ? [1] : []
     content {
       sid     = "S3ListBuckets"
       effect  = "Allow"
       actions = ["s3:ListBucket"]
-      resources = var.s3_read_bucket_arns
+      resources = each.value.s3_read_bucket_arns
     }
   }
 
   dynamic "statement" {
-    for_each = length(var.s3_read_bucket_arns) > 0 ? [1] : []
+    for_each = length(each.value.s3_read_bucket_arns) > 0 ? [1] : []
     content {
       sid     = "S3GetObjects"
       effect  = "Allow"
       actions = ["s3:GetObject"]
       resources = [
-        for b in var.s3_read_bucket_arns : "${b}/*"
+        for b in each.value.s3_read_bucket_arns : "${b}/*"
       ]
     }
   }
@@ -67,13 +80,13 @@ data "aws_iam_policy_document" "stage" {
   # S3 Write
   # --------------------------
   dynamic "statement" {
-    for_each = length(var.s3_write_bucket_arns) > 0 ? [1] : []
+    for_each = length(each.value.s3_write_bucket_arns) > 0 ? [1] : []
     content {
       sid     = "S3WriteObjects"
       effect  = "Allow"
       actions = ["s3:PutObject"]
       resources = [
-        for b in var.s3_write_bucket_arns : "${b}/*"
+        for b in each.value.s3_write_bucket_arns : "${b}/*"
       ]
     }
   }
@@ -86,22 +99,21 @@ data "aws_iam_policy_document" "stage" {
     effect  = "Allow"
     actions = [
       "ssm:GetParameter",
-      "ssm:GetParameters",
       "ssm:GetParametersByPath"
     ]
-    resources = [local.ssm_path_arn]
+    resources = [each.value.ssm_path_arn]
   }
 
   # --------------------------
   # SSM Write
   # --------------------------
   dynamic "statement" {
-    for_each = length(var.ssm_write_parameter_arns) > 0 ? [1] : []
+    for_each = length(each.value.ssm_write_parameter_arns) > 0 ? [1] : []
     content {
       sid     = "SSMWriteParameters"
       effect  = "Allow"
       actions = ["ssm:PutParameter"]
-      resources = var.ssm_write_parameter_arns
+      resources = each.value.ssm_write_parameter_arns
     }
   }
 
@@ -109,15 +121,14 @@ data "aws_iam_policy_document" "stage" {
   # Secrets Read
   # --------------------------
   dynamic "statement" {
-    for_each = length(var.secrets_read_secret_arns) > 0 ? [1] : []
+    for_each = length(each.value.secrets_read_secret_arns) > 0 ? [1] : []
     content {
       sid     = "SecretsRead"
       effect  = "Allow"
       actions = [
         "secretsmanager:GetSecretValue",
-        "secretsmanager:DescribeSecret"
       ]
-      resources = var.secrets_read_secret_arns
+      resources = each.value.secrets_read_secret_arns
     }
   }
 }
@@ -126,9 +137,10 @@ data "aws_iam_policy_document" "stage" {
 # IAM Policy
 # ----------------------------------------------------------
 
-resource "aws_iam_policy" "stage" {
-  name   = "${local.name_prefix}-${var.role_name}-policy"
-  policy = data.aws_iam_policy_document.stage.json
+resource "aws_iam_policy" "task" {
+  for_each = local.tasks_norm
+  name   = "${local.name_prefix}-${each.key}-policy"
+  policy = data.aws_iam_policy_document.task[each.key].json
 }
 
 # ----------------------------------------------------------
@@ -136,7 +148,8 @@ resource "aws_iam_policy" "stage" {
 # ----------------------------------------------------------
 
 resource "aws_iam_role" "task" {
-  name               = "${local.name_prefix}-${var.role_name}"
+  for_each = local.tasks_norm
+  name               = "${local.name_prefix}-${each.key}"
   assume_role_policy = local.assume_role_policy
 }
 
@@ -145,6 +158,7 @@ resource "aws_iam_role" "task" {
 # ----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "attach" {
-  role       = aws_iam_role.task.name
-  policy_arn = aws_iam_policy.stage.arn
+  for_each   = local.tasks_norm
+  role       = aws_iam_role.task[each.key].name
+  policy_arn = aws_iam_policy.task[each.key].arn
 }

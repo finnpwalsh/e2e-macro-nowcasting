@@ -1,8 +1,15 @@
 variable "project" { type = string }
 variable "env"     { type = string }
 
-variable "stages"  {
-    description = "Map of stage role configurations"
+variable "aws_region"     { type = string }
+variable "aws_account_id" { type = string }
+
+variable "log_retention_days" {
+    type    = number
+    default = 14
+}
+
+variable "tasks" {
     type = map(object({
         s3_read_bucket_arns      = list(string)
         s3_write_bucket_arns     = list(string)
