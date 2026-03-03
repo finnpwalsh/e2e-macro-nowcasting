@@ -10,7 +10,7 @@ Doc for keeping track of development activity. Split by major version + day.
 
 For easy copy/paste logging:
 
-### February XX, 2026
+### March XX, 2026
 
 **CONTEXT**
 
@@ -29,6 +29,23 @@ For easy copy/paste logging:
 ## V1
 
 Production-flavored infra hardening.
+
+---
+
+### March 2, 2026
+
+**CONTEXT**
+
+- v1.5.0 – execution + contract hardening: AWS via `terraform`
+
+**DONE**
+
+- refactor terraform modules:
+    `compute | config | network | runtimes | services | storage | tasks`
+
+**NEXT**
+
+- init `tasks`, `network`, `compute`, `services`
 
 ---
 
