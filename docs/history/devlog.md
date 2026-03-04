@@ -32,6 +32,26 @@ Production-flavored infra hardening.
 
 ---
 
+### March 4, 2026
+
+**CONTEXT**
+
+- v1.5.0 – execution + contract hardening: AWS via `terraform`
+
+**DONE**
+
+- init `tasks`, `compute`
+- add `orchestration`, `scheduler`
+
+**NEXT**
+
+- remove `airflow`, `mlflow`
+- remove `Track`
+- refactor `Train`, `Select` (S3 + SSM)
+- init `orchestration`, `scheduler`
+
+---
+
 ### March 2, 2026
 
 **CONTEXT**
