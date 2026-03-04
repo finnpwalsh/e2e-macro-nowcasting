@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "this" {
 
     container_definitions = jsonencode([
         {
-            name      = each.value.family.name
+            name      = each.value.family
             image     = each.value.container_image
             essential = true
 

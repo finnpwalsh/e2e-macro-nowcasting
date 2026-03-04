@@ -3,5 +3,5 @@ output "task_definition_arns" {
 }
 
 output "task_definition_families" {
-    value = { for k, v in aws_ecs_task_definition.this : k =? v.family }
+    value = { for k, v in aws_ecs_task_definition.this : k => v.family }
 }
