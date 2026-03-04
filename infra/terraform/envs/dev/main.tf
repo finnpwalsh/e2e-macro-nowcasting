@@ -10,6 +10,19 @@ locals {
   ssm_champion_param_arn = "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter${local.ssm_config_prefix}/champion"
 }
 
+data "aws_ssm_parameter" "image_tag" {
+  name       = "${local.ssm_config_prefix}/IMAGE_TAG"
+  depends_on = [module.config]
+}
+
+locals {
+  images = {
+    prepare = "${module.runtimes.ecr_repo_urls["prepare"]}:${data.aws_ssm_parameter.image_tag.value}"
+    train   = "${module.runtimes.ecr_repo_urls["train"]}:${data.aws_ssm_parameter.image_tag.value}"
+    select  = "${module.runtimes.ecr_repo_urls["select"]}:${data.aws_ssm_parameter.image_tag.value}"
+  }
+}
+
 # ========================================
 # Storage
 # ========================================
@@ -32,22 +45,24 @@ module "config" {
   env     = var.env
 
   ssm_parameters = {
-    MLFLOW_TRACKING_URI    = "http://localhost:5000"
-    MLFLOW_EXPERIMENT_NAME = "nowcasting"
-    NOWCAST_REGISTRY_NAME  = "nowcasting-models"
-    NOWCAST_MODEL_ALIAS    = "champion"
-    STORAGE_BACKEND        = "S3"
-    AIRFLOW_ADMIN_USERNAME = "admin"
-    AIRFLOW_ADMIN_EMAIL    = "admin@example.com"
+    STORAGE_BACKEND = "S3"
+    IMAGE_TAG       = "v1.5.0"
   }
 
   secrets = [
     "FRED_API_KEY",
     "TIINGO_API_KEY",
-    "AIRFLOW__WEBSERVER__SECRET_KEY",
-    "AIRFLOW__CORE__FERNET_KEY",
-    "AIRFLOW_ADMIN_PASSWORD",
   ]
+}
+
+# ========================================
+# Compute
+# ========================================
+
+module "compute" {
+  source  = "../../modules/compute"
+  project = var.project
+  env     = var.env
 }
 
 # ========================================
@@ -80,25 +95,80 @@ module "runtimes" {
       ssm_write_parameter_arns = []
     }
 
-    track = {
-      s3_read_bucket_arns      = [module.s3_buckets.artifacts_bucket_arn]
-      s3_write_bucket_arns     = []
-      ssm_read_path_prefix     = local.ssm_config_prefix
-      ssm_write_parameter_arns = []
-    }
-
     select = {
       s3_read_bucket_arns      = [module.s3_buckets.artifacts_bucket_arn]
       s3_write_bucket_arns     = []
       ssm_read_path_prefix     = local.ssm_config_prefix
       ssm_write_parameter_arns = [local.ssm_champion_param_arn]
     }
+  }
+}
 
-    serve = {
-      s3_read_bucket_arns      = [module.s3_buckets.artifacts_bucket_arn]
-      s3_write_bucket_arns     = []
-      ssm_read_path_prefix     = local.ssm_config_prefix
-      ssm_write_parameter_arns = []
+# ========================================
+# Tasks
+# ========================================
+
+module "tasks" {
+  source = "../../modules/tasks"
+
+  aws_region         = data.aws_region.current.id
+  execution_role_arn = module.compute.execution_role_arn
+  task_role_arns     = module.runtimes.runtime_role_arns
+  log_group_names    = module.runtimes.log_group_names
+
+  tasks = {
+    prepare = {
+      family          = "${var.project}-${var.env}-prepare"
+      cpu             = 512
+      memory          = 1024
+      container_image = local.images["prepare"]
+      command         = ["python", "-m", "jobs.prepare.run"]
+
+      environment = {
+        PROJECT           = var.project
+        ENV               = var.env
+        SSM_CONFIG_PREFIX = local.ssm_config_prefix
+        STAGE             = "prepare"
+      }
+
+      secrets = {
+        FRED_API_KEY   = module.config.secret_arns["FRED_API_KEY"]
+        TIINGO_API_KEY = module.config.secret_arns["TIINGO_API_KEY"]
+      }
+    }
+
+    train = {
+      family          = "${var.project}-${var.env}-train"
+      cpu             = 512
+      memory          = 1024
+      container_image = local.images["train"]
+      command         = ["python", "-m", "jobs.train.run"]
+
+      environment = {
+        PROJECT           = var.project
+        ENV               = var.env
+        SSM_CONFIG_PREFIX = local.ssm_config_prefix
+        STAGE             = "train"
+      }
+
+      secrets = {}
+    }
+
+    select = {
+      family          = "${var.project}-${var.env}-select"
+      cpu             = 512
+      memory          = 1024
+      container_image = local.images["select"]
+      command         = ["python", "-m", "jobs.select.run"]
+
+      environment = {
+        PROJECT           = var.project
+        ENV               = var.env
+        SSM_CONFIG_PREFIX = local.ssm_config_prefix
+        STAGE             = "select"
+      }
+
+      secrets = {}
     }
   }
 }
