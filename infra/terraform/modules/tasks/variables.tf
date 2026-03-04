@@ -1,36 +1,19 @@
-variable "name" { type = string }
-
-variable "cpu"    { type = number }
-variable "memory" { type = number }
+variable "aws_region" { type = string }
 
 variable "execution_role_arn" { type = string }
-variable "task_role_arn"      { type = string }
-variable "container_image"    { type = string }
+variable "task_role_arns"     { type = map(string) }
+variable "log_group_names"    { type = map(string) }
 
-variable "command" {
-  type    = list(string)
-  default = null
-}
+variable "tasks" {
+  type = map(object({
+    family          = string
+    cpu             = number
+    memory          = number
+    container_image = string
+    container_port  = optional(number)
+    command         = list(string)
 
-variable "environment" {
-  type    = map(string)
-  default = {}
-}
-
-variable "secrets" {
-  type    = map(string)
-  default = {}
-}
-
-variable "container_port" {
-  type    = number
-  default = null
-}
-
-variable "log_group_name" { type = string }
-variable "aws_region"     { type = string }
-
-variable "log_stream_prefix" {
-  type    = string
-  default = "ecs"
+    environment = map(string)
+    secrets     = map(string)
+  }))
 }
