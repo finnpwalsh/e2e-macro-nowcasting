@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import pandas as pd
 from sklearn.pipeline import Pipeline
@@ -16,7 +17,7 @@ class BaselineCandidateOutputs:
     model: Pipeline
     metrics: dict[str, float]
     predictions: pd.DataFrame
-    summary: dict[str, ModelSpec]
+    summary: dict[str, Any]
 
 
 @dataclass(frozen=True)
@@ -60,7 +61,7 @@ class BaselineCandidateGenerator:
         )
 
         # 5) summary
-        feature_cols = [c for c in df.columns if c not in {self.target_col}]
+        feature_cols = [c for c in df.columns if c not in {self.target_col, self.time_col}]
 
         summary = {
             "model_name": self.model_name,
