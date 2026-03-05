@@ -32,6 +32,25 @@ Production-flavored infra hardening.
 
 ---
 
+### March 5, 2026
+
+**CONTEXT**
+
+- v1.5.0 – execution + contract hardening: tracking
+
+**DONE**
+
+- remove `Track`
+- remove `mlflow`, `airflow`, `orchestration/`
+- refactor storage keys, add runs directory
+
+**NEXT**
+
+- add `tracker`, `write_plan`, `selection` to `mlplatform/runs`
+- fix dockerfile deps after `dependencies` rename
+
+---
+
 ### March 4, 2026
 
 **CONTEXT**
