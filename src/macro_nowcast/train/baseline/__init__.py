@@ -1,6 +1,6 @@
 from .trainer import BaselineTrainer
 from .residuals import BaselineResiduals
-from .candidate import BaselineCandidateGenerator
+from .runner import BaselineRunBuilder
 
 __all__ = [
     "BaselineTrainer", 

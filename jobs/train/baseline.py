@@ -8,7 +8,7 @@ from ml_platform.runs.context import RunContext
 from ml_platform.runs.tracker import RunTracker
 from ml_platform.runs.write_plan import JsonWrite, JoblibWrite, ParquetWrite
 
-from macro_nowcast.train.baseline import BaselineCandidateGenerator
+from macro_nowcast.train.baseline import BaselineRunBuilder
 from macro_nowcast.train.models import MODELS
 
 
@@ -26,14 +26,14 @@ def run(storage: Storage) -> None:
     # Generate Candidate
     # -----------------------------------------------------
 
-    gen = BaselineCandidateGenerator(
+    gen = BaselineRunBuilder(
         model_name="baseline",
         time_col="ds",
         target_col="cpi_all_items",
         split_date="2020-01-01",
     )
 
-    out = gen.generate(df=df, spec=MODELS["ridge"].spec)
+    out = gen.run(df=df, spec=MODELS["ridge"].spec)
     
     # -----------------------------------------------------
     # Write artifacts
