@@ -3,70 +3,71 @@ from __future__ import annotations
 from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage, write_joblib, write_json
-from ml_platform.artifacts import TrainArtifacts, EvalArtifacts, ModelPointers, new_run_id
 from macro_nowcast.storage.datasets import DATASETS
+from ml_platform.runs.context import RunContext
+from ml_platform.runs.tracker import RunTracker
+from ml_platform.runs.write_plan import JsonWrite, JoblibWrite, ParquetWrite
 
 from macro_nowcast.train.baseline import BaselineCandidateGenerator
 from macro_nowcast.train.models import MODELS
 
-MODEL_NAME = "baseline"
-TARGET_COL = "cpi_all_items"
-TIME_COL = "ds"
-
-SPLIT_DATE = "2020-01-01"
-ALPHA = 1.0
-
 
 def run(storage: Storage) -> None:
-    run_id = new_run_id()
+    ctx = RunContext(model_name="baseline")
 
-    tr = TrainArtifacts(model_name=MODEL_NAME, run_id=run_id)
-    ev = EvalArtifacts(model_name=MODEL_NAME, run_id=run_id)
-    ptr = ModelPointers(model_name=MODEL_NAME)
+    # -----------------------------------------------------
+    # Load dataset
+    # -----------------------------------------------------
+    
+    input_key = DATASETS.model_ready.anchors
+    df = storage.read_parquet(key=input_key)
 
-    in_key = DATASETS.model_ready.anchors
-    df = storage.read_parquet(key=in_key)
+    # -----------------------------------------------------
+    # Generate Candidate
+    # -----------------------------------------------------
 
     gen = BaselineCandidateGenerator(
-        model_name=MODEL_NAME,
-        time_col=TIME_COL,
-        target_col=TARGET_COL,
-        split_date=SPLIT_DATE,
+        model_name="baseline",
+        time_col="ds",
+        target_col="cpi_all_items",
+        split_date="2020-01-01",
     )
 
     out = gen.generate(df=df, spec=MODELS["ridge"].spec)
     
-    write_joblib(storage, key=tr.model, obj=out.model)
-    write_json(storage, key=tr.metrics, payload=out.metrics)
-    storage.write_parquet(key=ev.predictions, df=out.predictions)
-    write_json(storage, key=ev.summary, payload=out.summary)
+    # -----------------------------------------------------
+    # Write artifacts
+    # -----------------------------------------------------
 
-    # pointer
-    write_json(
-        storage,
-        key=ptr.latest,
-        payload={
-            "model_name": MODEL_NAME,
-            "run_id": run_id,
-            "input_key": in_key,
-            "model_key": tr.model,
-            "metrics_key": tr.metrics,
-            "predictions_key": ev.predictions,
-            "summary_key": ev.summary,
-        },
+    write_joblib(storage, key=ctx.keys.artifacts.model, obj=out.model)
+    storage.write_parquet(storage, key=ctx.keys.artifacts.predictions, df=out.predictions)
+
+    # -----------------------------------------------------
+    # Track run
+    # -----------------------------------------------------
+
+    tracker = RunTracker()
+
+    result = tracker.track(
+        ctx=ctx,
+        input_key=input_key,
+        split_date=gen.split_date,
+        spec=out.spec,
+        provenance=out.provenance,
+        metrics=out.metrics,
+        data_signature=out.data_signature,
+        feature_signature=out.feature_signature,
+        model_obj=out.model,
+        predictions_df=out.predictions,
     )
-    
 
-    INDENT = "    "
-    SUB = INDENT * 2
-    print("\n[Train][BASELINE] Complete")
-    print(f"{INDENT}model:       {MODEL_NAME}")
-    print(f"{INDENT}run id:      {run_id}")
-    print(f"{INDENT}input:       {in_key}")
-    print(f"{INDENT}latest:      {ptr.latest}")
-    print(f"{INDENT}metrics:")
-    for k, v in out.metrics.items():
-        print(f"{SUB}{k}: {v:.6f}" if isinstance(v, float) else f"{SUB}{k}: {v}")
+    for write in result.write_plan.writes:
+        if isinstance(write, JsonWrite):
+            write_json(storage, key=write.key, payload=write.payload)
+        elif isinstance(write, JoblibWrite):
+            write_joblib(storage, key=write.key, obh=write.obj)
+        elif isinstance(write, ParquetWrite):
+            storage.write_parquet(key=write.key, df=write.df)
 
 
 def main() -> None:
