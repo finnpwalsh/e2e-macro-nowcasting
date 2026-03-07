@@ -14,7 +14,7 @@ For easy copy/paste logging:
 
 **CONTEXT**
 
-- 
+- v1.5.0 – execution + contract hardening:
 
 **DONE**
 
@@ -29,6 +29,24 @@ For easy copy/paste logging:
 ## V1
 
 Production-flavored infra hardening.
+
+---
+
+### March XX, 2026
+
+**CONTEXT**
+
+- v1.5.0 – execution + contract hardening: training
+
+**DONE**
+
+- add `tracker`, `write_plan`
+- update baseline run builder class + outputs
+- update baseline train job accordingly
+
+**NEXT**
+
+- `select` refactor
 
 ---
 
