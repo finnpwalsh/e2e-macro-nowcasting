@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping, Optional
-from datetime import datetime, timezone
-
-import pandas as pd
+from typing import Any, Mapping
 
 
 @dataclass(frozen=True)
@@ -36,4 +33,12 @@ class RunSummary:
     split_date: str
 
     primary_metric: Mapping[str, float]
+    model_artifact_key: str
+
+
+@dataclass(frozen=True)
+class LatestPointer:
+    model_name: str
+    run_id: str
+    manifest_key: str
     model_artifact_key: str
