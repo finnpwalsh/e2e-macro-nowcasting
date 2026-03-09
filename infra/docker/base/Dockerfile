@@ -7,9 +7,9 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /opt/project
 
 # dependencies
-COPY requirements/ /opt/project/requirements/
+COPY dependencies/ /opt/project/dependencies/
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements/base.txt
+    && pip install --no-cache-dir -r dependencies/base.txt
 
 # runtime behavior
 CMD ["bash"]

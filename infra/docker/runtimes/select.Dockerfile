@@ -4,8 +4,8 @@ FROM ${BASE_IMAGE}
 WORKDIR /opt/project
 
 # stage-specific deps
-COPY requirements/ /opt/project/requirements/
-RUN pip install --no-cache-dir -r requirements/runtimes/select.txt
+COPY dependencies/ /opt/project/dependencies/
+RUN pip install --no-cache-dir -r dependencies/runtimes/select.txt
 
 # install repo
 COPY . /opt/project
