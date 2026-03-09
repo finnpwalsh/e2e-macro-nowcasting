@@ -1,15 +1,3 @@
-locals {
-    name_prefix = "${var.project}-${var.env}"
-
-    network_configuration = {
-        AWSvpcConfiguration = {
-            Subnets = var.subnet_ids
-            SecurityGroups = var.security_group_ids
-            AssignPublicIp = var.assign_public_ip ? "ENABLED" : "DISABLED"
-        }
-    }
-}
-
 # ------------------------------------------
 # Trust policy
 # ------------------------------------------
@@ -44,9 +32,10 @@ data "aws_iam_policy_document" "policy" {
         actions = [
             "ecs:RunTask",
             "ecs:DescribeTasks",
+            "ecs:StopTask",
         ]
 
-        resources = [*]
+        resources = ["*"]
     }
 
     statement {
@@ -62,6 +51,19 @@ data "aws_iam_policy_document" "policy" {
             values(var.task_role_arns)
         )
     }
+
+    statement {
+        sid    = "ManagedRuleForEcsSync"
+        effect = "Allow"
+
+        actions = [
+            "events:PutRule",
+            "events:PutTargets",
+            "events:DescribeRule",
+        ]
+
+        resources = ["*"]
+    }
 }
 
 resource "aws_iam_policy" "this" {
@@ -75,106 +77,12 @@ resource "aws_iam_role_policy_attachment" "this" {
 }
 
 # ------------------------------------------
-# Anchors State Machine
-# ------------------------------------------
-locals {
-        anchors_definiton = jsonencode({
-        StartAt = "AnchorsIngestFred"
-        States  = {
-            AnchorsIngestFred = {
-                Type = "Task"
-                Resource = "arn:aws:states:::ecs:runTask.sync"
-                Parameters = {
-                    Cluster = var.ecs_cluster_arn
-                    LaunchType = "FARGATE"
-                    TaskDefinition = var.task_definition_arns["prepare"]
-                    Overrides = {
-                        ContainerOverrides = [{
-                            Name    = "${local.name_prefix}-prepare"
-                            Command = ["python", "-m", "prepare.anchors.sources.fred"]
-                        }]
-                    }
-                }
-                Next = "AnchorsAssemble"
-            }
-
-            AnchorsAssemble = {
-                Type = "Task"
-                Resource = "arn:aws:states:::ecs:runTask.sync"
-                Parameters = {
-                    Cluster = var.ecs_cluster_arn
-                    LaunchType = "FARGATE"
-                    TaskDefinition = var.task_definition_arns["prepare"]
-                    Overrides = {
-                        ContainerOverrides = [{
-                            Name    = "${local.name_prefix}-prepare"
-                            Command = ["python", "-m", "jobs.prepare.anchors.assemble"]
-                        }]
-                    }
-                }
-                Next = "AnchorsBuildFeatures"
-            }
-
-            AnchorsBuildFeatures = {
-                Type = "Task"
-                Resource = "arn:aws:states:::ecs:runTask.sync"
-                Parameters = {
-                    Cluster = var.ecs_cluster_arn
-                    LaunchType = "FARGATE"
-                    TaskDefinition = var.task_definition_arns["prepare"]
-                    Overrides = {
-                        ContainerOverrides = [{
-                            Name    = "${local.name_prefix}-prepare"
-                            Command = ["python", "-m", "jobs.prepare.anchors.build_features"]
-                        }]
-                    }
-                }
-                Next = "TrainBaseline"
-            }
-
-            TrainBaseline = {
-                Type = "Task"
-                Resource = "arn:aws:states:::ecs:runTask.sync"
-                Parameters = {
-                    Cluster = var.ecs_cluster_arn
-                    LaunchType = "FARGATE"
-                    TaskDefinition = var.task_definition_arns["train"]
-                    Overrides = {
-                        ContainerOverrides = [{
-                            Name    = "${local.name_prefix}-train"
-                            Command = ["python", "-m", "jobs.train.baseline"]
-                        }]
-                    }
-                }
-                Next = "PromoteChampion"
-            }
-
-            PromoteChampion = {
-                Type = "Task"
-                Resource = "arn:aws:states:::ecs:runTask.sync"
-                Parameters = {
-                    Cluster = var.ecs_cluster_arn
-                    LaunchType = "FARGATE"
-                    TaskDefinition = var.task_definition_arns["select"]
-                    Overrides = {
-                        ContainerOverrides = [{
-                            Name    = "${local.name_prefix}-select"
-                            Command = ["python", "-m", "jobs.select.promote"]
-                        }]
-                    }
-                }
-                End = true
-            }
-        }
-    })
-}
-
-# ------------------------------------------
-# Step Functions definition
+# State machines
 # ------------------------------------------
 
-resource "aws_sfn_state_machine" "anchors" {
-    name       = "${local.name_prefix}-anchors"
+resource "aws_sfn_state_machine" "this" {
+    for_each   = var.machines
+    name       = "${var.project}-${var.env}-${each.key}"
     role_arn   = aws_iam_role.this.arn
-    definition = local.anchors_definition
+    definition = each.value.definition
 }
