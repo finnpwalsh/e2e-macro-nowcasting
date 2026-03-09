@@ -25,20 +25,3 @@ Jobs are not responsible for:
 - maintaining state across runs (stages only communicate via persisted artifacts)
 
 Jobs define how the logic runs, not what the logic is. Each job is independently executable and produces outputs consumed only via persisted artifacts.
-
----
-
-## Layout
-
-```
-jobs/
-  prepare/
-  train/
-  track/
-  select/
-```
-
-- **[Prepare](./prepare/README.md)** – batch ingestion, cleaning, and feature construction
-- **[Train](./train/README.md)** – model fitting and candidate artifact generation
-- **[Track](./track/README.md)** – experiment tracking and model registration
-- **[Select](./select/README.md)** – controlled promotion of registered model versions via deployment pointers
