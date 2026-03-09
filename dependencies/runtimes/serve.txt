@@ -1,7 +1,0 @@
-# serving
-fastapi
-uvicorn[standard]
-
-# model loading (inference only)
-scikit-learn==1.5.2
-joblib==1.4.2
