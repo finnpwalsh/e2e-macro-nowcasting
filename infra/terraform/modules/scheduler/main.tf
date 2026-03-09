@@ -16,7 +16,7 @@ data "aws_iam_policy_document" "assume" {
 }
 
 resource "aws_iam_role" "this" {
-    name = "${var.project}-{var.env}-scheduler"
+    name = "${var.project}-${var.env}-scheduler"
     assume_role_policy = data.aws_iam_policy_document.assume.json
 }
 
@@ -38,7 +38,7 @@ data "aws_iam_policy_document" "policy" {
 }
 
 resource "aws_iam_policy" "this" {
-    name   = "${var.project}-{var.env}-scheduler"
+    name   = "${var.project}-${var.env}-scheduler"
     policy = data.aws_iam_policy_document.policy.json
 }
 
