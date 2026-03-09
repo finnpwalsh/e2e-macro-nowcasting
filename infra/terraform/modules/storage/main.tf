@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "this" {
   for_each = var.buckets
-  bucket   = each.value
+  bucket   = "${var.project}-${var.env}-${each.key}-${var.aws_region}"
 }
 
 resource "aws_s3_bucket_public_access_block" "this" {
