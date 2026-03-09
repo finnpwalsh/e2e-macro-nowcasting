@@ -37,8 +37,10 @@ class RunSummary:
 
 
 @dataclass(frozen=True)
-class LatestPointer:
+class Pointer:
     model_name: str
     run_id: str
+    
     manifest_key: str
+    summary_key: str
     model_artifact_key: str

@@ -6,7 +6,7 @@ from typing import Any, Mapping
 import pandas as pd
 
 from .context import RunContext
-from .manifests import RunManifest, RunSummary, LatestPointer
+from .manifests import RunManifest, RunSummary, Pointer
 from .write_plan import WritePlan, JsonWrite, JoblibWrite, ParquetWrite
 
 @dataclass(frozen=True)
@@ -35,12 +35,16 @@ class RunTracker:
             model_name=ctx.model_name,
             run_id=ctx.run_id,
             created_at_utc=ctx.created_at_utc,
+            
             input_key=input_key,
             split_date=split_date,
+            
             spec=spec,
             provenance=provenance,
+            
             data_signature=data_signature,
             feature_signature=feature_signature,
+            
             artifacts={
                 "model": ctx.keys.artifacts.model,
                 "predictions": ctx.keys.artifacts.predictions,
@@ -52,7 +56,10 @@ class RunTracker:
             model_name=ctx.model_name,
             run_id=ctx.run_id,
             created_at_utc=ctx.created_at_utc,
+            
             input_key=input_key,
+            split_date=split_date,
+            
             primary_metric={
                 "rmse": metrics.get("rmse"),
                 "mae": metrics.get("mae"),
@@ -60,14 +67,16 @@ class RunTracker:
             model_artifact_key=ctx.keys.artifacts.model,
         )
 
-        latest = LatestPointer(
+        latest = Pointer(
             model_name=ctx.model_name,
             run_id=ctx.run_id,
+            
             manifest_key=ctx.keys.run.manifest,
+            summary_key=ctx.keys.run.summary,
             model_artifact_key=ctx.keys.artifacts.model,
         )
 
-        writes: list[JsonWrite | JoblibWrite | ParquetWrite] [ParquetWrite] = [
+        writes: list[JsonWrite | JoblibWrite | ParquetWrite] = [
             JoblibWrite(key=ctx.keys.artifacts.model, obj=model_obj),
             ParquetWrite(key=ctx.keys.artifacts.predictions, df=predictions_df),
             JsonWrite(key=ctx.keys.run.manifest, payload=manifest),
