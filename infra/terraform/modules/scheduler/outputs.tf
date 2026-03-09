@@ -4,7 +4,6 @@ output "scheduler_role_arn" {
 
 output "schedule_arns" {
     value = {
-        anchors = aws_scheduler_schedule.anchors.arn
-        shocks  = aws_scheduler_schedule.shocks.arn
+        for k, v in aws_scheduler_schedule.this : k => v.name
     }
 }

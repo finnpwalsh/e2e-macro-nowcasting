@@ -1,7 +1,3 @@
-locals {
-    name_prefix = "${var.project}-${var.env}"
-}
-
 # ------------------------------------------
 # Trust policy
 # ------------------------------------------
@@ -12,7 +8,7 @@ data "aws_iam_policy_document" "assume" {
 
         principals {
             type = "Service"
-            identifiers = ["schedulers.amazonaws.com"]
+            identifiers = ["scheduler.amazonaws.com"]
         }
 
         actions = ["sts:AssumeRole"]
@@ -20,7 +16,7 @@ data "aws_iam_policy_document" "assume" {
 }
 
 resource "aws_iam_role" "this" {
-    name = "${local.name_prefix}-scheduler"
+    name = "${var.project}-{var.env}-scheduler"
     assume_role_policy = data.aws_iam_policy_document.assume.json
 }
 
@@ -37,14 +33,12 @@ data "aws_iam_policy_document" "policy" {
             "states:StartExecution",
         ]
 
-        resources = [
-            var.state_machine_arns["anchors"],
-        ]
+        resources = values(var.state_machine_arns)
     }
 }
 
 resource "aws_iam_policy" "this" {
-    name   = "${local.name_prefix}-scheduler"
+    name   = "${var.project}-{var.env}-scheduler"
     policy = data.aws_iam_policy_document.policy.json
 }
 
@@ -52,16 +46,18 @@ resource "aws_iam_policy" "this" {
 # Schedules
 # ------------------------------------------
 
-resource "aws_scheduler_schedule" "anchors" {
-    name = "${local.name_prefix}-anchors"
+resource "aws_scheduler_schedule" "this" {
+    for_each = var.schedules
+
+    name       = "${var.project}-${var.env}-${each.key}"
     group_name = "default"
 
-    schedule_expression = var.schedule_expressions["anchors"]
+    schedule_expression = each.value.schedule_expression
 
     flexible_time_window { mode = "OFF" }
 
     target {
-        arn = var.state_machine_arns["anchors"]
+        arn = var.state_machine_arns[each.value.machine]
         role_arn = aws_iam_role.this.arn
     }
 }
