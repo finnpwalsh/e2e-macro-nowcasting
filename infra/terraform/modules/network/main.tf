@@ -74,7 +74,3 @@ resource "aws_security_group" "svc" {
         cidr_blocks = ["0.0.0.0/0"]
     }
 }
-
-output "svc_security_group_id" {
-    value = aws_security_group.svc.id
-}
