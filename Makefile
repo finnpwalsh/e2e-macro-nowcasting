@@ -1,11 +1,9 @@
 # --------------------------------------------------------
-# Compose Layering
+# Compose
 # --------------------------------------------------------
-DC := docker compose -f docker-compose.yml -f docker-compose.dev.yml
+DC := docker compose -f docker-compose.yml
 
 PROJECT_DIR := /opt/project
-AIRFLOW_SERVICE := airflow-scheduler
-DAG_ID := price_nowcasting
 
 # --------------------------------------------------------
 # Helpers
@@ -14,45 +12,18 @@ define RUN_STAGE
 	$(DC) run --rm --entrypoint bash $(1) -lc "$(2)"
 endef
 
-define EXEC_AIRFLOW
-	$(DC) exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && $(1)"
-endef
-
 # --------------------------------------------------------
 # Build
 # --------------------------------------------------------
 .PHONY: build build-base build-runtimes
 
 build-base:
-	$(DC) build nowcasting-base
+	$(DC) build nowcasting-dev-base
 
 build-runtimes:
-	$(DC) build runtime-prepare runtime-train runtime-track runtime-select
+	$(DC) build nowcasting-dev-prepare nowcasting-dev-train nowcasting-dev-select nowcasting-dev-workspace
 
 build: build-base build-runtimes
-
-# --------------------------------------------------------
-# Infra
-# --------------------------------------------------------
-.PHONY: up down init logs ps shell
-
-up: 
-	$(DC) up -d
-
-down:
-	$(DC) down
-
-init:
-	$(DC) run --rm airflow-init
-
-logs:
-	$(DC) logs -f
-
-ps:
-	$(DC) ps
-
-shell:
-	$(DC) exec $(AIRFLOW_SERVICE) bash
 
 # --------------------------------------------------------
 # Data Plane
@@ -70,26 +41,26 @@ prepare: prepare-anchors prepare-shocks
 prepare-anchors: prepare-anchors-fred prepare-anchors-assemble prepare-anchors-features
 	
 prepare-anchors-fred:
-	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.anchors.sources.fred)
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.anchors.sources.fred)
 	
 prepare-anchors-assemble:
-	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.anchors.assemble)
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.anchors.assemble)
 
 prepare-anchors-features:
-	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.anchors.build_features)
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.anchors.build_features)
 
 
 # Shocks
 prepare-shocks: prepare-shocks-tiingo prepare-shocks-assemble prepare-shocks-features
 
 prepare-shocks-tiingo:
-	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.shocks.sources.tiingo)
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.shocks.sources.tiingo)
 
 prepare-shocks-assemble:
-	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.shocks.assemble)
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.shocks.assemble)
 
 prepare-shocks-features:
-	$(call RUN_STAGE,runtime-prepare,python -m jobs.prepare.shocks.build_features)
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.shocks.build_features)
 
 
 # ===== Train =====
@@ -97,37 +68,20 @@ prepare-shocks-features:
 train: train-baseline
 
 train-baseline:
-	$(call RUN_STAGE,runtime-train,python -m jobs.train.baseline)
+	$(call RUN_STAGE,nowcasting-dev-train,python -m jobs.train.run)
 
 # --------------------------------------------------------
 # Control Plane
 # --------------------------------------------------------
-.PHONY: track select
-
-track:
-	$(call RUN_STAGE,runtime-track,python -m jobs.track.publish)
+.PHONY: select
 
 select:
-	$(call RUN_STAGE,runtime-select,python -m jobs.select.promote)
+	$(call RUN_STAGE,nowcasting-dev-select,python -m jobs.select.run)
 
 # --------------------------------------------------------
 # Testing
 # --------------------------------------------------------
-.PHONY: test test-airflow
+.PHONY: test
 
 test:
-	pytest -q
-
-test-airflow:
-	$(call RUN_STAGE,runtime-train,pytest -q)
-
-# --------------------------------------------------------
-# Orchestrated Run
-# --------------------------------------------------------
-.PHONY: trigger run
-
-trigger:
-	$(call EXEC_AIRFLOW,airflow dags trigger $(DAG_ID))
-
-run: trigger
-	@echo "Triggered DAG: $(DAG_ID)"
+	$(call RUN_STAGE,nowcasting-dev-workspace)

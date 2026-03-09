@@ -1,9 +1,24 @@
 services:
-  runtime-prepare:
+  nowcasting-dev-base:
+    build:
+      context: .
+      dockerfile: infra/docker/base/Dockerfile
+    image: nowcasting-dev-base:latest
+    env_file: .env
+    working_dir: /opt/project
+    volumes:
+      - .:/opt/project
+      - ~/.aws:/root/.aws:ro
+    environment:
+      PYTHONPATH: /opt/project/src
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+    networks: [appnet]
+  
+  nowcasting-dev-prepare:
     build:
       context: .
       dockerfile: infra/docker/runtimes/prepare.Dockerfile
-    image: nowcasting-prepare:latest
+    image: nowcasting-dev-prepare:latest
     env_file: .env
     working_dir: /opt/project
     volumes:
@@ -14,11 +29,11 @@ services:
       AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
     networks: [appnet]
 
-  runtime-train:
+  nowcasting-dev-train:
     build:
       context: .
       dockerfile: infra/docker/runtimes/train.Dockerfile
-    image: nowcasting-train:latest
+    image: nowcasting-dev-train:latest
     env_file: .env
     working_dir: /opt/project
     volumes:
@@ -29,11 +44,26 @@ services:
       AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
     networks: [appnet]
 
-  runtime-select:
+  nowcasting-dev-select:
     build:
       context: .
       dockerfile: infra/docker/runtimes/select.Dockerfile
-    image: nowcasting-select:latest
+    image: nowcasting-dev-select:latest
+    env_file: .env
+    working_dir: /opt/project
+    volumes:
+      - .:/opt/project
+      - ~/.aws:/root/.aws:ro
+    environment:
+      PYTHONPATH: /opt/project/src
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+    networks: [appnet]
+
+  nowcasting-dev-workspace:
+    build:
+      context: .
+      dockerfile: infra/docker/runtimes/workspace.Dockerfile
+    image: nowcasting-dev-workspace:latest
     env_file: .env
     working_dir: /opt/project
     volumes:
