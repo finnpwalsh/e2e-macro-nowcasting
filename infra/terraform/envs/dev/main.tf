@@ -331,3 +331,23 @@ module "orchestration" {
     }
   }
 }
+
+# ========================================
+# Scheduler
+# ========================================
+
+module "scheduler" {
+  source = "../../modules/scheduler"
+
+  project = var.project
+  env     = var.env
+
+  state_machine_arns = module.orchestration.state_machine_arns
+
+  schedules = {
+    anchors = {
+      machine = "anchors"
+      schedule_expression = "cron(0 12 2 * ? *)"
+    }
+  }
+}

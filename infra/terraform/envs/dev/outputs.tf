@@ -63,3 +63,10 @@ output "svc_security_group_id" { value = module.network.svc_security_group_id }
 # -----------------------------------------------------
 
 output "state_machine_arns" { value = module.orchestration.state_machine_arns }
+
+# -----------------------------------------------------
+# Scheduler
+# -----------------------------------------------------
+
+output "scheduler_role_arn" { value = module.scheduler.scheduler_role_arn }
+output "schedule_names" { value = module.scheduler.schedule_names }
