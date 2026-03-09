@@ -32,7 +32,26 @@ Production-flavored infra hardening.
 
 ---
 
-### March XX, 2026
+### March 9, 2026
+
+**CONTEXT**
+
+- v1.5.0 – execution + contract hardening: `select` orchestration
+
+**DONE**
+
+- `select` refactor
+- terraform: add `network`, `orchestration`, `scheduler`
+
+**NEXT**
+
+- final `jobs` tests
+- docs audit
+- PR!!
+
+---
+
+### March 8, 2026
 
 **CONTEXT**
 
