@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=nowcasting-base:latest
+ARG BASE_IMAGE=nowcasting-dev-base:latest
 FROM ${BASE_IMAGE}
 
 WORKDIR /opt/project
