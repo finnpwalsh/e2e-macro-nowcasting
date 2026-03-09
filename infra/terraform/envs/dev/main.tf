@@ -15,10 +15,11 @@ data "aws_ssm_parameter" "image_tag" {
 }
 
 locals {
+  image_tag = data.aws_ssm_parameter.image_tag.value
   images = {
-    prepare = "${module.runtimes.ecr_repo_urls["prepare"]}:${data.aws_ssm_parameter.image_tag.value}"
-    train   = "${module.runtimes.ecr_repo_urls["train"]}:${data.aws_ssm_parameter.image_tag.value}"
-    select  = "${module.runtimes.ecr_repo_urls["select"]}:${data.aws_ssm_parameter.image_tag.value}"
+    prepare = "${module.runtimes.ecr_repo_urls["prepare"]}:${local.image_tag}"
+    train   = "${module.runtimes.ecr_repo_urls["train"]}:${local.image_tag}"
+    select  = "${module.runtimes.ecr_repo_urls["select"]}:${local.image_tag}"
   }
 }
 
@@ -169,6 +170,164 @@ module "tasks" {
       }
 
       secrets = {}
+    }
+  }
+}
+
+# ========================================
+# Network
+# ========================================
+
+module "network" {
+  source = "../../modules/network"
+
+  project = var.project
+  env     = var.env
+
+  vpc_cidr = "10.0.0.0/16"
+  svc_port = 8000
+}
+
+# ========================================
+# Orchestration
+# ========================================
+
+locals {
+  sfn_network_configuration = {
+    AwsvpcConfiguration = {
+      Subnets        = module.network.public_subnet_ids
+      SecurityGroups = [module.network.svc_security_group_id]
+      AssignPublicIp = "ENABLED"
+    }
+  }
+}
+
+module "orchestration" {
+  source = "../../modules/orchestration"
+
+  project = var.project
+  env     = var.env
+
+  execution_role_arn   = module.compute.execution_role_arn
+  task_role_arns       = module.runtimes.runtime_role_arns
+
+  machines = {
+
+    # -----------------------------------------
+    # Anchors
+    # -----------------------------------------
+
+    anchors = {
+      definition = jsonencode({
+        StartAt = "PrepareAnchorsFred"
+        States  = {
+
+          # ---------------------------------
+          # [ANCHORS][PREPARE][FRED]
+          # ---------------------------------
+
+          PrepareAnchorsFred = {
+            Type = "Task"
+            Resource = "arn:aws:states:::ecs:runTask.sync"
+            Parameters = {
+                Cluster = module.compute.ecs_cluster_arn
+                LaunchType = "FARGATE"
+                TaskDefinition = module.tasks.task_definition_arns["prepare"]
+                Overrides = {
+                    ContainerOverrides = [{
+                        Name    = "${var.project}-${var.env}-prepare"
+                        Command = ["python", "-m", "prepare.anchors.sources.fred"]
+                    }]
+                }
+            }
+            Next = "AnchorsAssemble"
+          }
+
+          # ---------------------------------
+          # [ANCHORS][PREPARE][ASSEMBLE]
+          # ---------------------------------
+
+          AnchorsAssemble = {
+            Type = "Task"
+            Resource = "arn:aws:states:::ecs:runTask.sync"
+            Parameters = {
+                Cluster = module.compute.ecs_cluster_arn
+                LaunchType = "FARGATE"
+                TaskDefinition = module.tasks.task_definition_arns["prepare"]
+                Overrides = {
+                    ContainerOverrides = [{
+                        Name    = "${var.project}-${var.env}-prepare"
+                        Command = ["python", "-m", "jobs.prepare.anchors.assemble"]
+                    }]
+                }
+            }
+            Next = "AnchorsBuildFeatures"
+          }
+
+          # ---------------------------------
+          # [ANCHORS][PREPARE][FEATURES]
+          # ---------------------------------
+
+          AnchorsBuildFeatures = {
+            Type = "Task"
+            Resource = "arn:aws:states:::ecs:runTask.sync"
+            Parameters = {
+                Cluster = module.compute.ecs_cluster_arn
+                LaunchType = "FARGATE"
+                TaskDefinition = module.tasks.task_definition_arns["prepare"]
+                Overrides = {
+                    ContainerOverrides = [{
+                        Name    = "${var.project}-${var.env}-prepare"
+                        Command = ["python", "-m", "jobs.prepare.anchors.build_features"]
+                    }]
+                }
+            }
+            Next = "TrainBaseline"
+          }
+
+          # ---------------------------------
+          # [ANCHORS][TRAIN][BASELINE]
+          # ---------------------------------
+
+          TrainBaseline = {
+            Type = "Task"
+            Resource = "arn:aws:states:::ecs:runTask.sync"
+            Parameters = {
+                Cluster = module.compute.ecs_cluster_arn
+                LaunchType = "FARGATE"
+                TaskDefinition = module.tasks.task_definition_arns["train"]
+                Overrides = {
+                    ContainerOverrides = [{
+                        Name    = "${var.project}-${var.env}-train"
+                        Command = ["python", "-m", "jobs.train.run"]
+                    }]
+                }
+            }
+            Next = "SelectChampion"
+          }
+
+          # ---------------------------------
+          # [ANCHORS][SELECT][BASELINE]
+          # ---------------------------------
+
+          SelectChampion = {
+            Type = "Task"
+            Resource = "arn:aws:states:::ecs:runTask.sync"
+            Parameters = {
+                Cluster = module.compute.ecs_cluster_arn
+                LaunchType = "FARGATE"
+                TaskDefinition = module.tasks.task_definition_arns["select"]
+                Overrides = {
+                    ContainerOverrides = [{
+                        Name    = "${var.project}-${var.env}-select"
+                        Command = ["python", "-m", "jobs.select.run"]
+                    }]
+                }
+            }
+            End = true
+          }
+        }
+      })
     }
   }
 }

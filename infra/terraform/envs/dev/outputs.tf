@@ -49,3 +49,17 @@ output "execution_role_arn" { value = module.compute.execution_role_arn }
 # -----------------------------------------------------
 
 output "task_definition_arns" { value = module.tasks.task_definition_arns }
+
+# -----------------------------------------------------
+# Network
+# -----------------------------------------------------
+
+output "vpc_id"                { value = module.network.vpc_id }
+output "public_subnets"        { value = module.network.public_subnet_ids }
+output "svc_security_group_id" { value = module.network.svc_security_group_id }
+
+# -----------------------------------------------------
+# Orchestration
+# -----------------------------------------------------
+
+output "state_machine_arns" { value = module.orchestration.state_machine_arns }
