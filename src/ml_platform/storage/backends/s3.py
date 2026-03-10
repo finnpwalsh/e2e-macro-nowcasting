@@ -26,6 +26,10 @@ def _s3() -> Any:
     region = os.getenv("AWS_S3_REGION", "us-east-1")
     return boto3.client("s3", region_name=region)
 
+def _is_not_found_error(exc: ClientError) -> bool:
+    code = exc.response.get("Error", {}).get("Code")
+    return code in {"NoSuchKey", "404", "NotFound"}
+
 
 class S3Storage:
     """
@@ -33,9 +37,8 @@ class S3Storage:
     """
 
     def read_parquet(self, key: str) -> pd.DataFrame:
-        bucket = _bucket(key)
-        resp = _s3().get_object(Bucket=bucket, Key=key)
-        buf = io.BytesIO(resp["Body"].read())
+        data = self.read_bytes(key)
+        buf = io.BytesIO(data)
         return pd.read_parquet(buf)
     
     def write_parquet(self, df: pd.DataFrame, key: str, **kwargs) -> None:
@@ -47,7 +50,12 @@ class S3Storage:
     
     def read_bytes(self, key: str) -> bytes:
         bucket = _bucket(key)
-        resp = _s3().get_object(Bucket=bucket, Key=key)
+        try:
+            resp = _s3().get_object(Bucket=bucket, Key=key)
+        except ClientError as e:
+            if _is_not_found_error(e):
+                raise FileNotFoundError(f"s3://{bucket}/{key}") from e
+            raise
         return resp["Body"].read()
     
     def write_bytes(self, data: bytes, key: str) -> None:
@@ -60,4 +68,6 @@ class S3Storage:
             _s3().head_object(Bucket=bucket, Key=key)
             return True
         except ClientError as e:
-            return False
+            if _is_not_found_error(e):
+                return False
+            raise

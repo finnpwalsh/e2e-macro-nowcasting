@@ -6,7 +6,7 @@ from dataclasses import dataclass
 class RunKeys:
     model_name: str
     run_id: str
-    root: str = "runs"
+    root: str = "artifacts/runs"
 
     @property
     def dir(self) -> str:
@@ -22,10 +22,25 @@ class RunKeys:
 
 
 @dataclass(frozen=True)
-class ArtifactKeys:
+class ModelKeys:
     model_name: str
     run_id: str
-    root: str = "artifacts"
+    root: str = "artifacts/models"
+
+    @property
+    def dir(self) -> str:
+        return f"{self.root}/{self.model_name}/{self.run_id}"
+    
+    @property
+    def model(self) -> str:
+        return f"{self.dir}/model.joblib"
+    
+
+@dataclass(frozen=True)
+class DatasetKeys:
+    model_name: str
+    run_id: str
+    root: str = "artifacts/datasets"
 
     @property
     def dir(self) -> str:
@@ -34,16 +49,12 @@ class ArtifactKeys:
     @property
     def predictions(self) -> str:
         return f"{self.dir}/predictions.parquet"
-    
-    @property
-    def model(self) -> str:
-        return f"{self.dir}/summary.json"
 
 
 @dataclass(frozen=True)
 class PointerKeys:
     model_name: str
-    root: str = "pointers"
+    root: str = "artifacts/pointers"
 
     @property
     def latest(self) -> str:
@@ -68,8 +79,12 @@ class Keys:
         return RunKeys(self.model_name, self.run_id)
     
     @property
-    def artifacts(self) -> ArtifactKeys:
-        return ArtifactKeys(self.model_name, self.run_id)
+    def models(self) -> ModelKeys:
+        return ModelKeys(self.model_name, self.run_id)
+    
+    @property
+    def datasets(self) -> DatasetKeys:
+        return DatasetKeys(self.model_name, self.run_id)
     
     @property
     def pointers(self) -> PointerKeys:

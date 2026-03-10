@@ -7,13 +7,13 @@ import pandas as pd
 
 from .context import RunContext
 from .manifests import RunManifest, RunSummary, Pointer
-from .write_plan import WritePlan, JsonWrite, JoblibWrite, ParquetWrite
+from .persistence import PersistencePlan, JsonArtifact, JoblibArtifact, ParquetArtifact
 
 @dataclass(frozen=True)
 class TrackerResult:
     manifest: RunManifest
     summary: RunSummary
-    write_plan: WritePlan
+    persistence_plan: PersistencePlan
 
 
 class RunTracker:
@@ -46,8 +46,8 @@ class RunTracker:
             feature_signature=feature_signature,
             
             artifacts={
-                "model": ctx.keys.artifacts.model,
-                "predictions": ctx.keys.artifacts.predictions,
+                "model": ctx.keys.models.model,
+                "predictions": ctx.keys.datasets.predictions,
             },
             metrics=metrics,
         )
@@ -64,7 +64,7 @@ class RunTracker:
                 "rmse": metrics.get("rmse"),
                 "mae": metrics.get("mae"),
             },
-            model_artifact_key=ctx.keys.artifacts.model,
+            model_artifact_key=ctx.keys.models.model,
         )
 
         latest = Pointer(
@@ -73,19 +73,19 @@ class RunTracker:
             
             manifest_key=ctx.keys.run.manifest,
             summary_key=ctx.keys.run.summary,
-            model_artifact_key=ctx.keys.artifacts.model,
+            model_artifact_key=ctx.keys.models.model,
         )
 
-        writes: list[JsonWrite | JoblibWrite | ParquetWrite] = [
-            JoblibWrite(key=ctx.keys.artifacts.model, obj=model_obj),
-            ParquetWrite(key=ctx.keys.artifacts.predictions, df=predictions_df),
-            JsonWrite(key=ctx.keys.run.manifest, payload=manifest),
-            JsonWrite(key=ctx.keys.run.summary, payload=summary),
-            JsonWrite(key=ctx.keys.pointers.latest, payload=latest),  
+        artifacts: list[JsonArtifact | JoblibArtifact | ParquetArtifact] = [
+            JoblibArtifact(key=ctx.keys.models.model, obj=model_obj),
+            ParquetArtifact(key=ctx.keys.datasets.predictions, df=predictions_df),
+            JsonArtifact(key=ctx.keys.run.manifest, payload=manifest),
+            JsonArtifact(key=ctx.keys.run.summary, payload=summary),
+            JsonArtifact(key=ctx.keys.pointers.latest, payload=latest),  
         ]
 
         return TrackerResult(
             manifest=manifest,
             summary=summary,
-            write_plan=WritePlan(writes=writes),
+            persistence_plan=PersistencePlan(artifacts=artifacts),
         )

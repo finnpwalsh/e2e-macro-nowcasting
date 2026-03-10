@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ml_platform.runs.write_plan import JsonWrite, WritePlan
+from ml_platform.runs.persistence import PersistencePlan, JsonArtifact
 from ml_platform.storage import Storage
 from ml_platform.storage.keys import PointerKeys
 
@@ -16,7 +16,7 @@ class ChampionSelector:
     model_name: str
 
     def select(self, *, storage: Storage) -> SelectorResult:
-        resolved: ResolvedSelectionInputs = SelectionResolver(
+        resolved: ResolvedSelectionInputs = SelectionResolver().resolve(
             storage=storage,
             model_name=self.model_name,
         )
@@ -31,20 +31,20 @@ class ChampionSelector:
 
         if decision.selected == "challenger":
             champion_after = challenger.pointer
-            writes = [
-                JsonWrite(
+            artifacts = [
+                JsonArtifact(
                     key=PointerKeys(model_name=self.model_name).champion,
                     payload=champion_after,
                 )
             ]
         else:
             champion_after = champion.pointer
-            writes = []
+            artifacts = []
 
         return SelectorResult(
             challenger=challenger.pointer,
             champion_before=None if champion is None else champion.pointer,
             champion_after=champion_after,
             decision=decision,
-            write_plan=WritePlan(writes=writes)
+            persistence_plan=PersistencePlan(artifacts=artifacts)
         )

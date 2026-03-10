@@ -22,8 +22,8 @@ class ChampionDecider:
         if champion_metrics is None:
             return SelectionDecision(
                 selected="challenger",
-                challenger_metrics=challenger_metrics,
-                champion_metrics=None,
+                challenger_rmse=challenger_rmse,
+                champion_rmse=None,
             )
         
         champion_rmse = float(champion_metrics["rmse"])

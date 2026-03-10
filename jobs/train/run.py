@@ -3,11 +3,10 @@ from __future__ import annotations
 from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage
-from ml_platform.storage.serde import write_joblib, write_json
 from macro_nowcast.storage.datasets import DATASETS
+
 from ml_platform.runs.context import RunContext
 from ml_platform.runs.tracker import RunTracker
-from ml_platform.runs.write_plan import JsonWrite, JoblibWrite, ParquetWrite
 
 from macro_nowcast.train.baseline import BaselineRunBuilder
 from macro_nowcast.train.models import MODELS
@@ -24,24 +23,17 @@ def run(storage: Storage) -> None:
     df = storage.read_parquet(key=input_key)
 
     # -----------------------------------------------------
-    # Generate Candidate
+    # Build candidate
     # -----------------------------------------------------
 
-    gen = BaselineRunBuilder(
+    builder = BaselineRunBuilder(
         model_name="baseline",
         time_col="ds",
         target_col="cpi_all_items",
         split_date="2020-01-01",
     )
 
-    out = gen.run(df=df, spec=MODELS["ridge"].spec)
-    
-    # -----------------------------------------------------
-    # Write artifacts
-    # -----------------------------------------------------
-
-    write_joblib(storage, key=ctx.keys.artifacts.model, obj=out.model)
-    storage.write_parquet(storage, key=ctx.keys.artifacts.predictions, df=out.predictions)
+    out = builder.run(df=df, spec=MODELS["ridge"].spec)
 
     # -----------------------------------------------------
     # Track run
@@ -52,7 +44,7 @@ def run(storage: Storage) -> None:
     result = tracker.track(
         ctx=ctx,
         input_key=input_key,
-        split_date=gen.split_date,
+        split_date=builder.split_date,
         spec=out.spec,
         provenance=out.provenance,
         metrics=out.metrics,
@@ -62,13 +54,11 @@ def run(storage: Storage) -> None:
         predictions_df=out.predictions,
     )
 
-    for write in result.write_plan.writes:
-        if isinstance(write, JsonWrite):
-            write_json(storage, key=write.key, payload=write.payload)
-        elif isinstance(write, JoblibWrite):
-            write_joblib(storage, key=write.key, obh=write.obj)
-        elif isinstance(write, ParquetWrite):
-            storage.write_parquet(key=write.key, df=write.df)
+    # -----------------------------------------------------
+    # Persist
+    # -----------------------------------------------------
+
+    result.persistence_plan.persist(storage=storage)
 
 
 def main() -> None:

@@ -122,7 +122,7 @@ class BaselineRunBuilder:
         )
 
         return BaselineRunOutputs(
-            spec=spec,
+            spec=spec_payload,
             provenance=provenance,
             metrics=metrics,
             data_signature=data_signature,
@@ -167,7 +167,7 @@ class BaselineRunBuilder:
             "n_features": len(feature_cols),
             "features": feature_cols,
             "feature_dtypes": {c: str(df[c].dtype) for c in feature_cols},
-            "null_counts": {c: int(df[c].isna().sum) for c in feature_cols},
+            "null_counts": df[feature_cols].isna().sum().to_dict(),
             "feature_fingerprint": self._hash_frame(feature_df),
         }
     

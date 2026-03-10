@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ml_platform.runs.manifests import Pointer, RunSummary
-from ml_platform.runs.write_plan import WritePlan
+from ml_platform.runs.persistence import PersistencePlan
 
 
 @dataclass(frozen=True)
@@ -31,4 +31,4 @@ class SelectorResult:
     champion_before: Pointer | None
     champion_after: Pointer
     decision: SelectionDecision
-    write_plan: WritePlan
+    persistence_plan: PersistencePlan

@@ -20,21 +20,21 @@ class SelectionResolver:
         # Pointers
         # -----------------------------------------------
 
-        pointers = PointerKeys(model_name="baseline")
+        pointers = PointerKeys(model_name=model_name)
         
         # -----------------------------------------------
         # Challenger
         # -----------------------------------------------
 
-        challenger_pointer: Pointer = read_json(
+        challenger_pointer = Pointer(**read_json(
             storage=storage,
             key=pointers.latest,
-        )
+        ))
 
-        challenger_summary: RunSummary = read_json(
+        challenger_summary = RunSummary(**read_json(
             storage=storage,
             key=challenger_pointer.summary_key,
-        )
+        ))
 
         challenger = ResolvedRun(
             pointer=challenger_pointer,
@@ -46,20 +46,20 @@ class SelectionResolver:
         # -----------------------------------------------
 
         try:
-            champion_pointer: Pointer = read_json(
+            champion_pointer = Pointer(**read_json(
                 storage=storage,
                 key=pointers.champion,
-            )
+            ))
         except FileNotFoundError:
             return ResolvedSelectionInputs(
                 challenger=challenger,
                 champion=None,
             )
         
-        champion_summary: RunSummary = read_json(
+        champion_summary = RunSummary(**read_json(
             storage=storage,
             key=champion_pointer.summary_key,
-        )
+        ))
 
         champion = ResolvedRun(
             pointer=champion_pointer,
