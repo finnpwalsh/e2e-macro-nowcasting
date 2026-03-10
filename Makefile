@@ -13,17 +13,62 @@ define RUN_STAGE
 endef
 
 # --------------------------------------------------------
-# Build
+# Docker
 # --------------------------------------------------------
-.PHONY: build build-base build-runtimes
+AWS_REGION ?= us-east-1
+PROFILE ?= nowcasting-dev
 
-build-base:
-	$(DC) build nowcasting-dev-base
+ACCOUNT_ID := $(shell aws sts get-caller-identity \
+	--profile $(PROFILE) \
+	--query Account \
+	--output text)
+
+ECR := $(ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+
+IMAGE ?= prepare
+IMAGE_TAG ?= v1.5.0
+
+# ===== Login =====
+.PHONY: docker-login
+
+docker-login:
+	aws ecr get-login-password \
+		--region $(AWS_REGION) \
+		--profile $(PROFILE) \
+	| docker login \
+		--username AWS \
+		--password-stdin $(ECR)
+
+# ===== Build =====
+.PHONY: build-image build-runtimes
+
+build-image:
+	$(DC) build nowcasting-dev-${IMAGE}
 
 build-runtimes:
-	$(DC) build nowcasting-dev-prepare nowcasting-dev-train nowcasting-dev-select nowcasting-dev-workspace
+	$(MAKE) build-image IMAGE=prepare
+	$(MAKE) build-image IMAGE=train
+	$(MAKE) build-image IMAGE=select
 
-build: build-base build-runtimes
+# ===== Push =====
+.PHONY: push-image push-runtimes
+
+push-image:
+	docker tag nowcasting-dev-$(IMAGE) $(ECR)/nowcasting-dev-$(IMAGE):$(IMAGE_TAG)
+	docker push $(ECR)/nowcasting-dev-$(IMAGE):$(IMAGE_TAG)
+
+push-runtimes:
+	$(MAKE) push-image IMAGE=select
+	$(MAKE) push-image IMAGE=train
+	$(MAKE) push-image IMAGE=select
+
+# ===== Build & Push =====
+.PHONY: build-push-image
+
+build-push-image:
+	$(MAKE) build-image
+	$(MAKE) push-image
+
 
 # --------------------------------------------------------
 # Data Plane
