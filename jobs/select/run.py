@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from dotenv import load_dotenv
 
-from ml_platform.storage import Storage, get_storage, write_json
+from ml_platform.storage import Storage, get_storage
+from ml_platform.storage.serde import write_json
 from ml_platform.runs.write_plan import JsonWrite
 from macro_nowcast.select.selector import ChampionSelector
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from ml_platform.storage import Storage, read_json
+from ml_platform.storage import Storage
+from ml_platform.storage.serde import read_json
 from ml_platform.storage.keys import PointerKeys
 from ml_platform.runs.manifests import Pointer, RunSummary
 

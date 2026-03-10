@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from dotenv import load_dotenv
 
-from ml_platform.storage import Storage, get_storage, write_joblib, write_json
+from ml_platform.storage import Storage, get_storage
+from ml_platform.storage.serde import write_joblib, write_json
 from macro_nowcast.storage.datasets import DATASETS
 from ml_platform.runs.context import RunContext
 from ml_platform.runs.tracker import RunTracker

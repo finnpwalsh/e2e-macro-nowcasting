@@ -4,8 +4,6 @@ import json
 from typing import Any
 from io import BytesIO
 
-import joblib
-
 from .base import Storage
 
 
@@ -18,12 +16,14 @@ def read_json(storage: Storage, key: str) -> dict:
     return json.loads(data.decode("utf-8"))
 
 def write_joblib(storage: Storage, key: str, obj: Any) -> None:
+    import joblib
     buffer = BytesIO()
     joblib.dump(obj, buffer)
     buffer.seek(0)
     storage.write_bytes(buffer.read(), key)
 
 def read_joblib(storage: Storage, key: str) -> Any:
+    import joblib
     data = storage.read_bytes(key)
     buffer = BytesIO(data)
     return joblib.load(buffer)

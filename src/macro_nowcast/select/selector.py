@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ml_platform.runs.manifests import Pointer
 from ml_platform.runs.write_plan import JsonWrite, WritePlan
 from ml_platform.storage import Storage
 from ml_platform.storage.keys import PointerKeys
