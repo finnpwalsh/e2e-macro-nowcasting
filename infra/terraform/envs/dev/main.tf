@@ -232,11 +232,13 @@ module "orchestration" {
             Parameters = {
                 Cluster = module.compute.ecs_cluster_arn
                 LaunchType = "FARGATE"
+                NetworkConfiguration = local.sfn_network_configuration
+                
                 TaskDefinition = module.tasks.task_definition_arns["prepare"]
                 Overrides = {
                     ContainerOverrides = [{
                         Name    = "${var.project}-${var.env}-prepare"
-                        Command = ["python", "-m", "prepare.anchors.sources.fred"]
+                        Command = ["python", "-m", "jobs.prepare.anchors.sources.fred"]
                     }]
                 }
             }
@@ -254,6 +256,8 @@ module "orchestration" {
                 Cluster = module.compute.ecs_cluster_arn
                 LaunchType = "FARGATE"
                 TaskDefinition = module.tasks.task_definition_arns["prepare"]
+                NetworkConfiguration = local.sfn_network_configuration
+                
                 Overrides = {
                     ContainerOverrides = [{
                         Name    = "${var.project}-${var.env}-prepare"
@@ -275,6 +279,8 @@ module "orchestration" {
                 Cluster = module.compute.ecs_cluster_arn
                 LaunchType = "FARGATE"
                 TaskDefinition = module.tasks.task_definition_arns["prepare"]
+                NetworkConfiguration = local.sfn_network_configuration
+
                 Overrides = {
                     ContainerOverrides = [{
                         Name    = "${var.project}-${var.env}-prepare"
@@ -296,6 +302,8 @@ module "orchestration" {
                 Cluster = module.compute.ecs_cluster_arn
                 LaunchType = "FARGATE"
                 TaskDefinition = module.tasks.task_definition_arns["train"]
+                NetworkConfiguration = local.sfn_network_configuration
+
                 Overrides = {
                     ContainerOverrides = [{
                         Name    = "${var.project}-${var.env}-train"
@@ -317,6 +325,8 @@ module "orchestration" {
                 Cluster = module.compute.ecs_cluster_arn
                 LaunchType = "FARGATE"
                 TaskDefinition = module.tasks.task_definition_arns["select"]
+                NetworkConfiguration = local.sfn_network_configuration
+
                 Overrides = {
                     ContainerOverrides = [{
                         Name    = "${var.project}-${var.env}-select"
