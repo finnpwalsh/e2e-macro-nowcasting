@@ -32,6 +32,26 @@ Production-flavored infra hardening.
 
 ---
 
+### March 10, 2026
+
+**CONTEXT**
+
+- v1.5.0 – execution + contract hardening: anchor State Machine audit
+
+**DONE**
+
+- bug fixes
+- full successful Step Functions run!
+
+**NEXT**
+
+- docs audit
+- build+push all runtime images
+- final Step Functions test
+- PR + tag/release v1.5.0
+
+---
+
 ### March 9, 2026
 
 **CONTEXT**
