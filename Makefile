@@ -1,63 +1,132 @@
-# config
-APP_NAME    := e2e-macro-nowcasting
-IMAGE       := $(APP_NAME):dev
+# --------------------------------------------------------
+# Compose
+# --------------------------------------------------------
+DC := docker compose -f docker-compose.yml
+
 PROJECT_DIR := /opt/project
 
-# local python dev
-PYTHON := .venv/bin/python
+# --------------------------------------------------------
+# Helpers
+# --------------------------------------------------------
+define RUN_STAGE
+	$(DC) run --rm --entrypoint bash $(1) -lc "$(2)"
+endef
 
-# Airflow service to run CLI commands
-AIRFLOW_SERVICE := airflow-scheduler
-DAG_ID := price_nowcasting
+# --------------------------------------------------------
+# Docker
+# --------------------------------------------------------
+AWS_REGION ?= us-east-1
+PROFILE ?= nowcasting-dev
 
-.PHONY: build up init down logs ps shell \
-		ingest clean merge train test \
-		trigger run
+ACCOUNT_ID := $(shell aws sts get-caller-identity \
+	--profile $(PROFILE) \
+	--query Account \
+	--output text)
 
-# build
-build:
-	docker build -t $(IMAGE) .
+ECR := $(ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 
-# infra
-up:
-	docker compose up -d
+IMAGE ?= prepare
+IMAGE_TAG ?= v1.5.0
 
-init:
-	docker compose run --rm airflow-init
+# ===== Login =====
+.PHONY: docker-login
 
-down:
-	docker compose down
+docker-login:
+	aws ecr get-login-password \
+		--region $(AWS_REGION) \
+		--profile $(PROFILE) \
+	| docker login \
+		--username AWS \
+		--password-stdin $(ECR)
 
-logs:
-	docker compose logs -f
+# ===== Build =====
+.PHONY: build-image build-runtimes
 
-ps:
-	docker compose ps
+build-image:
+	$(DC) build nowcasting-dev-${IMAGE}
 
-shell:
-	docker compose exec $(AIRFLOW_SERVICE) bash
+build-runtimes:
+	$(MAKE) build-image IMAGE=prepare
+	$(MAKE) build-image IMAGE=train
+	$(MAKE) build-image IMAGE=select
 
-# dev utilities (manual)
-ingest:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/ingest_fred.py"
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/ingest_yfinance.py"
+# ===== Push =====
+.PHONY: push-image push-runtimes
 
-clean:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/clean_fred.py"
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/clean_yfinance.py"
+push-image:
+	docker tag nowcasting-dev-$(IMAGE) $(ECR)/nowcasting-dev-$(IMAGE):$(IMAGE_TAG)
+	docker push $(ECR)/nowcasting-dev-$(IMAGE):$(IMAGE_TAG)
 
-merge:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/merge.py"
+push-runtimes:
+	$(MAKE) push-image IMAGE=prepare
+	$(MAKE) push-image IMAGE=train
+	$(MAKE) push-image IMAGE=select
 
-train:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && python scripts/train_ridge.py"
+# ===== Build & Push =====
+.PHONY: build-push-image
+
+build-push-image:
+	$(MAKE) build-image
+	$(MAKE) push-image
+
+
+# --------------------------------------------------------
+# Data Plane
+# --------------------------------------------------------
+.PHONY: prepare 
+.PHONY: prepare-anchors prepare-anchors-fred prepare-anchors-assemble prepare-anchors-features
+.PHONY: prepare-shocks-tiingo prepare-shocks-assemble prepare-shocks-features
+.PHONY: train train-baseline
+
+
+# ===== Prepare =====
+prepare: prepare-anchors prepare-shocks
+
+# Anchors
+prepare-anchors: prepare-anchors-fred prepare-anchors-assemble prepare-anchors-features
+	
+prepare-anchors-fred:
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.anchors.sources.fred)
+	
+prepare-anchors-assemble:
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.anchors.assemble)
+
+prepare-anchors-features:
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.anchors.build_features)
+
+
+# Shocks
+prepare-shocks: prepare-shocks-tiingo prepare-shocks-assemble prepare-shocks-features
+
+prepare-shocks-tiingo:
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.shocks.sources.tiingo)
+
+prepare-shocks-assemble:
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.shocks.assemble)
+
+prepare-shocks-features:
+	$(call RUN_STAGE,nowcasting-dev-prepare,python -m jobs.prepare.shocks.build_features)
+
+
+# ===== Train =====
+
+train: train-baseline
+
+train-baseline:
+	$(call RUN_STAGE,nowcasting-dev-train,python -m jobs.train.run)
+
+# --------------------------------------------------------
+# Control Plane
+# --------------------------------------------------------
+.PHONY: select
+
+select:
+	$(call RUN_STAGE,nowcasting-dev-select,python -m jobs.select.run)
+
+# --------------------------------------------------------
+# Testing
+# --------------------------------------------------------
+.PHONY: test
 
 test:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && pytest -q"
-
-# orchestrated run 
-trigger:
-	docker compose exec $(AIRFLOW_SERVICE) bash -lc "cd $(PROJECT_DIR) && airflow dags trigger $(DAG_ID)"
-
-run: trigger
-	@echo "Triggered DAG: $(DAG_ID)"
+	$(call RUN_STAGE,nowcasting-dev-workspace)

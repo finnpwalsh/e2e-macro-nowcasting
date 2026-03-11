@@ -4,11 +4,12 @@
 
 # Pipeline outputs
 data/
-artifacts/
+/artifacts/
 mlruns/
+/airflow/
 
 # Airflow generated files
-airflow/logs/**
+orchestration/airflow/logs/**
 airflow/*.db
 airflow/*.pid
 airflow/airflow.cfg
@@ -18,6 +19,7 @@ airflow/webserver_config.py
 .terraform/
 *.tfstate
 *.tfstate.*
+**/terraform.tfstate*
 
 # macOS
 .DS_Store
