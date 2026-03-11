@@ -58,7 +58,7 @@ push-image:
 	docker push $(ECR)/nowcasting-dev-$(IMAGE):$(IMAGE_TAG)
 
 push-runtimes:
-	$(MAKE) push-image IMAGE=select
+	$(MAKE) push-image IMAGE=prepare
 	$(MAKE) push-image IMAGE=train
 	$(MAKE) push-image IMAGE=select
 
