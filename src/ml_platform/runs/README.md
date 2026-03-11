@@ -8,8 +8,8 @@ Run-scoped metadata and artifact management.
 
 ## Components
 
-| **Component** | **Definition** |
-| ------------- | -------------- |
+| **Component** | **Description** |
+| ------------- | --------------- |
 | **context** | run context utilities (run ID, keys) |
 | **manifests** | metadata schema (manifest, summary, pointer) |
 | **persistence** | persistence plan + artifact dtypes |

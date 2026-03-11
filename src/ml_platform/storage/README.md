@@ -6,7 +6,7 @@ Storage backends and artifact key definitions.
 
 ---
 
-| **Component** | **Definition** |
+| **Component** | **Description** |
 | ------------- | -------------- |
 | **base** | storage interface definitions |
 | **backends** | storage backends implementing **base** |
