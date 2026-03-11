@@ -10,22 +10,24 @@ Planned evolution.
 
 Production ML platform
 
-### v1.5.0 — Serving
+---
+
+### v1.5.1 – Shocks corrector
+- Train high-frequency shocks on baseline training residuals
+- Produce nowcast inference
+
+---
+
+### v1.6.0 — Serving
 - Implement FastAPI service for inference
 - Deploy via ECS Fargate
-- Load champion model via registry / pointer
+- Load champion model via pointer
 
 ---
 
-### v1.6.0 — CI/CD
-- Terraform infra modules
+### v1.7.0 — CI/CD
 - Automated build and deploy pipeline
 - Smoke tests post-deploy
-
----
-
-### v1.7.0 – Promotion & rollback primitive
-- Introduce a minimal, explicit mechanism to promote a trained model to "champion" and revert to a previous version, without policy or automation
 
 ---
 
