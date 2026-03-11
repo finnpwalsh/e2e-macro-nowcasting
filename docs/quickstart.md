@@ -89,6 +89,7 @@ TIINGO_API_TOKEN=<your-token>
 ## 5. Build and push runtime images
 
 ```bash
+make docker-login
 make build-runtimes
 make push-runtimes
 ```
