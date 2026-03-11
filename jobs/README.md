@@ -2,26 +2,28 @@
 
 # Jobs
 
-Pipeline entrypoints that orchestrate logic from `src` and perform all I/O. 
-
-- `jobs/` = execution & orchestration
-- `src/` = library code
-
-> Jobs are executed via CLI locally and containerized execution under orchestration.
+Executable pipeline entrypoints.
 
 ---
 
 ## Contract
 
-Jobs are executable entrypoints that:
+Jobs do:
 - handle runtime setup and configuration
-- perform all external I/O
-- delegate core logic to `src/`
+- orchestrate logic from `src`
 - produce versioned outputs
+- communicate via persisted outputs
 
-Jobs are not responsible for:
-- implementing business / modeling logic (lives in `src/`)
-- sharing logic across jobs
-- maintaining state across runs (stages only communicate via persisted artifacts)
+Jobs do not:
+- share logic across jobs
+- maintain state across runs
 
-Jobs define how the logic runs, not what the logic is. Each job is independently executable and produces outputs consumed only via persisted artifacts.
+---
+
+## Components
+
+| Component | Description | Reads from | Writes to |
+| --------- | ----------- | ---------- | --------- |
+| **prepare** | data preparation & feature generation | data | data |
+| **train** | model training & artifact tracking | data | artifacts |
+| **select** | model selection & champion promotion | artifacts | artifacts |
