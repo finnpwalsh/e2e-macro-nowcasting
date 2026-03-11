@@ -37,8 +37,8 @@ artifacts + run manifest
 
 ## release status
 
-- **latest release:** v1.4.0 – S3-backed storage
-- **in progress:** v1.5.0 – contract & execution hardening
+- **latest release:** v1.5.0 – contract & execution hardening
+- **in progress:** v1.5.1 – two-stage nowcasting
 
 ---
 
