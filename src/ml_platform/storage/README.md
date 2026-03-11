@@ -2,28 +2,14 @@
 
 # Storage
 
-Shared storage abstractions for ML datasets and artifacts.
+Storage backends and artifact key definitions.
 
 ---
 
-## Responsibilities
-
-- `base.py` defines the storage interface
-- `backends/` contains concrete storage implementations
-- `factory.py` selects the active backend at runtime
-- `io.py` and `paths.py` provide shared helpers
-
----
-
-## Layout
-
-```
-storage/
-  base.py
-  factory.py
-  io.py
-  paths.py
-  backends/
-    local.py
-    s3.py
-```
+| **Component** | **Definition** |
+| ------------- | -------------- |
+| **base** | storage interface definitions |
+| **backends** | storage backends implementing **base** |
+| **factory** | backend store resolver (local or S3) |
+| **keys** | artifact key definitions |
+| **serde** | ser/de utilities for persisted artifacts |
