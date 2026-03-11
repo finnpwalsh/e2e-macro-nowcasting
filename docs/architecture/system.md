@@ -4,32 +4,27 @@
 
 This document defines the structural architecture of the macro nowcasting platform.
 
-It describes system components, boundaries, and data movement.
+---
 
-> For stage sequencing, see [`architecture/lifecycle.md`](./lifecycle.md)
-> For behavioral boundaries, see [`contracts/`]
+## Separation of concerns
+
+The system is designed around separation of concerns:
+- prepare, train, select, and serve are distinct
+- domain logic and platform infrastructure are distinct
+- library code, execution, and orchestration are distinct
+- anchors and shocks are distinct
 
 ---
 
-## 1. Design Principles
-
-The system is designed around the following principles:
-
-- **Stage isolation** – Prepare, Train, Track, Select, and Serve are independent
-- **Separation of concerns**
-    - Domain logic and platform infrastructure are distinct
-    - Library code, execution, and orchestration are distinct
-    - Anchors and Shocks are kept separate in logic, execution, orchestration, and storage
-
----
-
-## 2. Package Structure
+## Package structure
 
 The repository is divided into two primary packages:
 
-### `macro_nowcast/`
+---
 
-Domain layer. Contains:
+`macro_nowcast/` – domain layer
+
+Contains:
 - Anchor and shock ingestion logic
 - Canonicalization and validation
 - Model-ready dataset assembly
@@ -38,9 +33,9 @@ Domain layer. Contains:
 
 ---
 
-### `ml_platform/`
+`ml_platform/` – platform layer
 
-Platform layer. Contains:
+Contains:
 - Storage abstraction
 - Artifact path definitions
 - MLflow tracking utilities
@@ -50,7 +45,7 @@ This package is domain-agnostic and reusable.
 
 ---
 
-## 3. Modeling Architecture
+## Modeling Architecture
 
 Two-model system:
 
@@ -62,6 +57,8 @@ Two-model system:
 2. Shock Corrector
 - Trained on residual signal
 - Produces correction term
+
+---
 
 Final nowcast:
 ```

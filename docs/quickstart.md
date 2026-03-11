@@ -2,27 +2,49 @@
 
 # Quickstart
 
-This guide explains how to run the full pipeline locally using Docker, Airflow, and S3-backed storage.
+This guide explains how to run the full nowcasting pipeline via AWS.
 
-The pipeline executes:
+---
+
+## System Boot Flow
+
+Booting the platform follows these steps:
+
 ```
-Prepare → Train → Track → Select
+Clone repository
+      ↓
+Authenticate with AWS
+      ↓
+Deploy infrastructure
+      ↓
+Configure API tokens
+      ↓
+Build and push runtime images
+      ↓
+Verify system execution
 ```
 
-## 0. Prerequisites
+---
 
-Required: 
-- Docker + Docker Compose
-- Make
-- FRED API key ([get one here](https://fred.stlouisfed.org/docs/api/api_key.html))
-- Tiingo API token ([get one here](https://www.tiingo.com/account/api/token))
-- AWS CLI installed
-- AWS credentials configured locally (e.g., `aws configure`)
-- Terraform installed
+## Prerequisites
 
-Docker is the source of truth for runtime behavior. All stages execute inside containers.
+| Tool | Purpose |
+| ---- | ------- |
+| **Git** | Clone the repository |
+| **Docker + Docker Compose** | Build and push container images |
+| **Make** | Convenience commands for common workflows |
+| **Terraform** | Provision cloud infrastructure |
+| **AWS CLI v2** | Authenticate and interact with AWS |
+| **AWS account access** | Permissions to deploy infrastructure |
 
-Containers rely on standard AWS credential resolution. If AWS is not configured, S3 read/writes will fail.
+---
+
+## API Tokens 
+
+| Token | Purpose | Get one |
+| ----- | ------- | ------- |
+| **FRED API key** | Access FRED macroeconomic data | [here](https://fred.stlouisfed.org/docs/api/api_key.html) |
+| **Tiingo API token** | Access Tiingo market data | [here](https://www.tiingo.com/account/api/token) |
 
 ---
 
@@ -35,99 +57,52 @@ cd e2e-macro-nowcasting
 
 ---
 
-## 2. AWS + Terraform setup
+## 2. Authenticate with AWS
 
-This project uses AWS S3 for dataset and artifact storage. AWS resources are provisioned and managed via Terraform.
-
-From the Terraform directory:
 ```bash
-terraform init
-terraform apply
+aws sso login --profile <your-profile>
 ```
 
 ---
 
-## 3. Configure environment
-
-Copy the example file:
+## 3. Deploy infrastructure
 
 ```bash
-cp .env.example .env
+cd infra/terraform/envs/dev
+AWS_PROFILE=<your-profile> terraform init
+AWS_PROFILE=<your-profile> terraform apply
 ```
-
-Populate required values:
-- FRED_API_KEY
-- TIINGO_API_KEY
-- AIRFLOW__WEBSERVER__SECRET_KEY
-    - Replace with a random string of 32+ characters
-- AIRFLOW__CORE__FERNET_KEY
-    - Replace with a random string of 32+ characters
 
 ---
 
-4. Build Containers
+## 4. Configure API tokens
 
-```bash
-make build
+Set tokens in `.env`:
+
 ```
-
-Builds all lifecycle runtime images.
+FRED_API_KEY=<your-key>
+TIINGO_API_TOKEN=<your-token>
+```
 
 ---
 
-5. Start Infrastructure
+## 5. Build and push runtime images
 
-``` bash
-make up
+```bash
+make build-runtimes
+make push-runtimes
 ```
-
-Services started:
-- Airflow: http://localhost:8080
-    - Login: admin / admin
-- MLflow: http://localhost:5000
-
-Storage is backed by the configured S3-compatible backend
 
 ---
 
-6. Execute full pipeline
+## 6. Verify system execution
 
-```bash
-make run
-```
+The scheduler automatically trigges the pipeline via EventBridge.
 
-Triggers the full DAG:
-- Anchor ingestion
-- Dataset assembly
-- Baseline training
-- Metric logging
-- Model version registration
-- Model selection
+You can monitor execution in:
 
-Artifacts and datasets are persisted to the configured storage backend.
+- **Step Functions** – workflow executions
+- **CloudWatch** – ECS task logs
+- **S3** – datasets and artifacts
 
----
-
-## 7. Run individal stages
-
-These commands execute the full lifecycle stages without running the full DAG:
-
-```bash
-make prepare
-make train
-make track
-make select
-make test
-```
-
-Useful for debugging and iteration
-
----
-
-## 8. Shut down
-
-```bash
-make down
-```
-
-Stops containers. Persistent volumes are preserved unless explicitly removed.
+> You can manually trigger state machines inside AWS Console via Step Functions.
