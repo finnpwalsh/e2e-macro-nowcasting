@@ -1,46 +1,54 @@
-# End-to-End Macro Nowcasting
+# macroeconomic nowcasting platform
 
-End-to-end inflation nowcasting system built as a production-grade ML platform emphasizing reproducibility and governed model lifecycle management.
+Cloud-native inflation nowcasting system built as a production-grade ML platform.
 
-This repository demonstrates how to design, version, evaluate and operate a macroeconomic ML system end-to-end, with explicit separation between infrastructure, modeling, and serving responsibilities. 
-
-> **Getting started**
-> - See [`docs/README.md`](docs/README.md) for detailed project documentation
-> - New here? See [Quickstart](docs/quickstart.md) to run the system locally
-
-**Design Note:** Several components of the system are deliberately more elaborate than required for the current model in order to practice production-grade data, ML, and systems design patterns.
+Includes structured pipelines for data preparation, model training & artifact tracking, and champion promotion. Built with modular architecture separating infrastructure, platform primitives, and domain logic.
 
 ---
 
-## Status
+## system architecture
 
-- **Latest release**: v1.4.0 – S3-backed storage
-- **In progress**: v1.5.0 – execution & contract hardening
+```
+      data sources
+           ↓
+        prepare
+           ↓
+  model-ready datasets
+           ↓
+         train
+           ↓
+artifacts + run manifest
+           ↓
+         select
+           ↓
+    champion pointer
+           ↓
+         serve
+     (coming soon)
+```
+---
+
+ ## getting started
+
+- See [`docs/README.md`](docs/README.md) for detailed project documentation
+- New here? See [quickstart](docs/quickstart.md) to run the system locally
 
 ---
 
-## Layout
+## release status
 
-```
-├── docs/
-├── infra/
-├── jobs/
-├── orchestration/
-├── requirements/
-├── src/
-│   ├── ml_platform/
-│   └── macro_nowcast/
-└── tests/
-```
+- **latest release:** v1.4.0 – S3-backed storage
+- **in progress:** v1.5.0 – contract & execution hardening
 
-**Components**
+---
 
-- **[Docs](docs/README.md)** – design and reference documents
-- **[Infra](infra/docker/README.md)** – Docker and cloud infrastructure
-- **[Jobs](jobs/README.md)** – Executable pipeline entrypoints
-- **[Orchestration](orchestration/README.md)** – Airflow DAGs
-- **[Requirements](requirements/README.md)** – dependency specs
-- **[Source](src/README.md)** – Reusable library code
-- **Tests** – Automated checks
+## components
 
-> `ml_platform` contains reusable ML lifecycle and infrastructure, while `macro_nowcast` contains domain-specific inflation modeling code.
+| Component | Description |
+| --------- | ----------- |
+| **[dependencies](dependencies/README.md)** | dependency specifications |
+| **[docs](docs/README.md)** | design and reference documents |
+| **[infra](infra/docker/README.md)** | container management and cloud infrastructure |
+| **[jobs](jobs/README.md)** | executable pipeline entrypoints |
+| **[src](src/README.md)** | reusable library code |
+| **tests** | automated checks |
