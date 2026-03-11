@@ -6,8 +6,8 @@ Storage backends and artifact key definitions.
 
 ---
 
-| **Component** | **Description** |
-| ------------- | -------------- |
+| Component | Description |
+| --------- | ----------- |
 | **base** | storage interface definitions |
 | **backends** | storage backends implementing **base** |
 | **factory** | backend store resolver (local or S3) |
