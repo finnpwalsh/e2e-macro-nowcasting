@@ -14,7 +14,7 @@ For easy copy/paste logging:
 
 **CONTEXT**
 
-- v1.5.0 – execution + contract hardening:
+- v1.5.1 – shock corrector:
 
 **DONE**
 
