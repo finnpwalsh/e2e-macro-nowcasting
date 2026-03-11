@@ -36,19 +36,20 @@ Production-flavored infra hardening.
 
 **CONTEXT**
 
-- v1.5.0 – execution + contract hardening: anchor State Machine audit
+- v1.5.0 – execution + contract hardening: finalization
 
 **DONE**
 
 - bug fixes
 - full successful Step Functions run!
+- docs audit
+- build+push all runtime images
+- final StepFunctions test
+- PR + tag/release v1.5.0
 
 **NEXT**
 
-- docs audit
-- build+push all runtime images
-- final Step Functions test
-- PR + tag/release v1.5.0
+- v1.5.1 – shock corrector
 
 ---
 
