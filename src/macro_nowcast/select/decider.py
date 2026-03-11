@@ -38,3 +38,9 @@ class ChampionDecider:
                 challenger_rmse=challenger_rmse,
                 champion_rmse=champion_rmse,
             )
+        else:
+            return SelectionDecision(
+                selected="champion",
+                challenger_rmse=challenger_rmse,
+                champion_rmse=champion_rmse,
+            )
