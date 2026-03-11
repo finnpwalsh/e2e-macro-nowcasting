@@ -6,31 +6,19 @@ Docs directory.
 
 ---
 
-## 1. Architecture
+## Architecture
 
 Architectural structure and system organizaton.
 
 Docs:
+- [Infrastructure](./architecture/infrastructure.md)
 - [Lifecycle](./architecture/lifecycle.md)
 - [Storage](./architecture/storage.md)
 - [System](./architecture/system.md)
 
 ---
 
-## 2. Contracts
-
-Guarantees and definitons of lifecycle stages.
-
-Docs:
-- [Prepare](./contracts/prepare.md)
-- [Train](./contracts/train.md)
-- [Track](./contracts/track.md)
-- [Select](./contracts/select.md)
-- [Serve](./contracts/serve.md)
-
----
-
-## 3. History
+## History
 
 Version history and planning.
 
@@ -41,7 +29,7 @@ Docs:
 
 ---
 
-## 4. Quickstart
+## Quickstart
 
 System boot-up.
 
