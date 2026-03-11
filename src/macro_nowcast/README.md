@@ -4,38 +4,21 @@
 
 Domain-specific logic for the macro nowcasting system.
 
-This package contains modeling semantics and economic logic. It defines what is being modeled, not how infrastructure operates.
-
 ---
 
-## Responsibilities
+## Components
 
-This package contains semantics only:
+Components are divided into lifecycle stages + cross-stage utilities.
 
-- Define domain concepts (anchors vs. shocks, features vs. targets)
-- Define datase meaning (raw → canonical → training)
-- Implement feature construction and model training logic
-- Define evaluation metrics and model quality criteria
-- Compose final nowcast outputs
+| Lifecycle stage | Description |
+| --------------- | ----------- |
+| **[prepare](./prepare/README.md)** | ETL pipelines for anchors and shocks datasets |
+| **[train](./train/README.md)** | model training and candidate generation |
+| **[select](./select/README.md)** | champion model selection and promotion logic |
 
-It does not contain:
 
-- Storage backends or artifact layout mechanics
-- Run ID or pointer management
-- Experiment tracking infrastructure
-- Model registry logic
-- Workflow orchestration or job entrypoints
-- Container or deployment configuration
-
----
-
-## Layout
-
-```
-macro_nowcast/
-    storage/
-    evaluate/
-    prepare/
-    train/
-    serve/ (future)
-```
+| Utility | Description |
+| ------- | ----------- |
+| **[externals](./externals/README.md)** | interfaces for external data sources |
+| **storage** | Dataset key definitions for the S3 data lake |
+| **eval** | model evaluation utilities (regression diagnostics) |

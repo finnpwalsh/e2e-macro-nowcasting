@@ -6,22 +6,10 @@ Domain-specific data ingestion, transformation, and feature construction logic f
 
 ---
 
-## Responsibilities
-
-- Ingest and normalize raw external data sources
-- Apply domain-specific transformations and feature construction
-
----
-
 ## Layout
 
-```
-prepare/
-  anchors/
-  assemble/
-  shocks/
-```
-
-- `anchors/` – slow-moving macro sources
-- `assemble/` – combining anchor and shock datasets
-- `shocks/` – fast-moving financial market sources
+| Component | Description |
+| ------------- | --------------- |
+ | **anchors** | ETL logic for slow-moving macro sources |
+ | **shocks** | ETL logic for fast-moving financial market sources |
+| **_interfaces** | interfaces implemented by anchors + shocks |

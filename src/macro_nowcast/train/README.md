@@ -6,17 +6,9 @@ Domain-specific model training logic for macro nowcasting.
 
 ---
 
-## Responsibilities
-
-- Train models on prepared datasets
-- Compute training-time metrics and summaries
-- Produce reusable training outputs
-
----
-
-## Layout
-
-```
-train/
-  baseline/
-```
+| **Component** | **Description** |
+| ------------- | --------------- |
+| **baseline/** | model training + candidate generation for baseline anchor model |
+| **models/** | model specs (e.g. ridge) |
+| **splitter** | train-test splitter |
+| **trainer** | model training interface |
