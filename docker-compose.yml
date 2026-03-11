@@ -1,134 +1,78 @@
-x-airflow-env: &airflow_env
-  AIRFLOW__CORE__EXECUTOR: LocalExecutor
-  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW_DB_URI}
-  AIRFLOW__CORE__LOAD_EXAMPLES: "False"
-  AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
-  AIRFLOW__CORE__STORE_SERIALIZED_DAGS: "True"
-  AIRFLOW__CORE__MIN_SERIALIZED_DAG_UPDATE_INTERVAL: "30"
-
-  AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
-
-  # project
-  PYTHONPATH: /opt/project
-  FRED_API_KEY: ${FRED_API_KEY}
-
-  # MLflow (client)
-  MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
-  MLFLOW_EXPERIMENT_NAME: ${MLFLOW_EXPERIMENT_NAME:-nowcasting}
-  MLFLOW_REGISTRY_MODEL_NAME: ${MLFLOW_REGISTRY_MODEL_NAME:-nowcasting-models}
-  MLFLOW_MODEL_ALIAS: ${MLFLOW_MODEL_ALIAS:-champion}
-
-  # AWS (keep one region var)
-  AWS_PROFILE: ${AWS_PROFILE:-nowcasting-dev}
-  AWS_REGION: ${AWS_S3_REGION:-us-east-1}
-
-x-airflow-volumes: &airflow_vols
-  - ./:/opt/project
-  - ./airflow/dags:/root/airflow/dags
-  - ./airflow/logs:/root/airflow/logs
-  - ~/.aws:/root/.aws:ro
-
 services:
-  postgres:
-    image: postgres:16
-    environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
-    volumes:
-      - postgres-db-volume:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U airflow -d airflow"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    restart: unless-stopped
-    networks: [appnet]
-
-  airflow-init:
-    image: e2e-macro-nowcasting:dev
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment: *airflow_env
-    volumes: *airflow_vols
-    working_dir: /opt/project
-    command:
-      - bash
-      - -lc
-      - |
-        airflow db migrate && \
-        airflow users create \
-          --username admin \
-          --password admin \
-          --firstname Admin \
-          --lastname User \
-          --role Admin \
-          --email admin@example.com || true
-    networks: [appnet]
-
-  airflow-webserver:
-    image: e2e-macro-nowcasting:dev
-    depends_on:
-      postgres:
-        condition: service_healthy
-      airflow-init:
-        condition: service_completed_successfully
-    environment: *airflow_env
-    volumes: *airflow_vols
-    working_dir: /opt/project
-    ports:
-      - "8080:8080"
-    command: bash -lc "airflow webserver"
-    restart: unless-stopped
-    networks: [appnet]
-
-  airflow-scheduler:
-    image: e2e-macro-nowcasting:dev
-    depends_on:
-      postgres:
-        condition: service_healthy
-      airflow-init:
-        condition: service_completed_successfully
-    environment: *airflow_env
-    volumes: *airflow_vols
-    working_dir: /opt/project
-    command: bash -lc "airflow scheduler"
-    restart: unless-stopped
-    networks: [appnet]
-
-  mlflow:
+  nowcasting-dev-base:
     build:
       context: .
-      dockerfile: infra/mlflow/Dockerfile
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      AWS_PROFILE: ${AWS_PROFILE:-nowcasting-dev}
-      AWS_REGION: ${AWS_S3_REGION:-us-east-1}
-      AWS_S3_BUCKET_ARTIFACTS: ${AWS_S3_BUCKET_ARTIFACTS}
-      MLFLOW_BACKEND_STORE_URI: ${MLFLOW_BACKEND_STORE_URI}
+      dockerfile: infra/docker/base/Dockerfile
+    image: nowcasting-dev-base:latest
+    env_file: .env
+    working_dir: /opt/project
     volumes:
+      - .:/opt/project
       - ~/.aws:/root/.aws:ro
-    ports:
-      - "5001:5000"
-    command:
-      - bash
-      - -lc
-      - |
-        mlflow server \
-        --host 0.0.0.0 \
-        --port 5000 \
-        --backend-store-uri ${MLFLOW_BACKEND_STORE_URI} \
-        --default-artifact-root s3://${AWS_S3_BUCKET_ARTIFACTS}/mlflow \
-        --allowed-hosts mlflow:5000,mlflow,localhost:*,127.0.0.1:* \
-        --cors-allowed-origins http://localhost:*
-    restart: unless-stopped
+    environment:
+      PYTHONPATH: /opt/project/src
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+    networks: [appnet]
+  
+  nowcasting-dev-prepare:
+    build:
+      context: .
+      dockerfile: infra/docker/runtimes/prepare.Dockerfile
+    image: nowcasting-dev-prepare:latest
+    env_file: .env
+    working_dir: /opt/project
+    volumes:
+      - .:/opt/project
+      - ~/.aws:/root/.aws:ro
+    environment:
+      PYTHONPATH: /opt/project/src
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
     networks: [appnet]
 
-volumes:
-  postgres-db-volume:
+  nowcasting-dev-train:
+    build:
+      context: .
+      dockerfile: infra/docker/runtimes/train.Dockerfile
+    image: nowcasting-dev-train:latest
+    env_file: .env
+    working_dir: /opt/project
+    volumes:
+      - .:/opt/project
+      - ~/.aws:/root/.aws:ro
+    environment:
+      PYTHONPATH: /opt/project/src
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+    networks: [appnet]
+
+  nowcasting-dev-select:
+    build:
+      context: .
+      dockerfile: infra/docker/runtimes/select.Dockerfile
+    image: nowcasting-dev-select:latest
+    env_file: .env
+    working_dir: /opt/project
+    volumes:
+      - .:/opt/project
+      - ~/.aws:/root/.aws:ro
+    environment:
+      PYTHONPATH: /opt/project/src
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+    networks: [appnet]
+
+  nowcasting-dev-workspace:
+    build:
+      context: .
+      dockerfile: infra/docker/runtimes/workspace.Dockerfile
+    image: nowcasting-dev-workspace:latest
+    env_file: .env
+    working_dir: /opt/project
+    volumes:
+      - .:/opt/project
+      - ~/.aws:/root/.aws:ro
+    environment:
+      PYTHONPATH: /opt/project/src
+      AWS_SHARED_CREDENTIALS_FILE: /root/.aws/credentials
+    networks: [appnet]
 
 networks:
   appnet:

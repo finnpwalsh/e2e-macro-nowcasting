@@ -1,0 +1,7 @@
+-r ../base.txt
+
+-r ../runtimes/prepare.txt
+-r ../runtimes/train.txt
+-r ../runtimes/select.txt
+
+pytest
