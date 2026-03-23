@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ml_platform.runs.manifests import Pointer, RunSummary
+from ml_platform.runs.schema import RunPointer, RunSummary
 from ml_platform.storage.persistence import PersistencePlan
 
 
 @dataclass(frozen=True)
 class ResolvedRun:
-    pointer: Pointer
+    pointer: RunPointer
     summary: RunSummary
 
 
@@ -27,8 +27,8 @@ class SelectionDecision:
 
 @dataclass(frozen=True)
 class SelectorResult:
-    challenger: Pointer
-    champion_before: Pointer | None
-    champion_after: Pointer
+    challenger: RunPointer
+    champion_before: RunPointer | None
+    champion_after: RunPointer
     decision: SelectionDecision
     persistence_plan: PersistencePlan
