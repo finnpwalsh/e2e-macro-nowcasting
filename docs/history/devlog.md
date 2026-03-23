@@ -32,6 +32,22 @@ Production-flavored infra hardening.
 
 ---
 
+### March 23, 2026
+
+**CONTEXT**
+
+- v1.5.1 – shock corrector: `artifact` contract hardening
+
+**DONE**
+
+- created `predictions` and `residuals` artifacts
+
+**NEXT**
+
+- implement `residuals`
+
+---
+
 ### March 10, 2026
 
 **CONTEXT**
