@@ -7,7 +7,8 @@ import pandas as pd
 
 from .context import RunContext
 from .manifests import RunManifest, RunSummary, Pointer
-from .persistence import PersistencePlan, JsonArtifact, JoblibArtifact, ParquetArtifact
+from ml_platform.storage.persistence import PersistencePlan, JsonWrite, JoblibWrite, ParquetWrite
+
 
 @dataclass(frozen=True)
 class TrackerResult:
@@ -76,16 +77,16 @@ class RunTracker:
             model_artifact_key=ctx.keys.models.model,
         )
 
-        artifacts: list[JsonArtifact | JoblibArtifact | ParquetArtifact] = [
-            JoblibArtifact(key=ctx.keys.models.model, obj=model_obj),
-            ParquetArtifact(key=ctx.keys.datasets.predictions, df=predictions_df),
-            JsonArtifact(key=ctx.keys.run.manifest, payload=manifest),
-            JsonArtifact(key=ctx.keys.run.summary, payload=summary),
-            JsonArtifact(key=ctx.keys.pointers.latest, payload=latest),  
+        writes = [
+            JoblibWrite(key=ctx.keys.models.model, obj=model_obj),
+            ParquetWrite(key=ctx.keys.datasets.predictions, df=predictions_df),
+            JsonWrite(key=ctx.keys.run.manifest, payload=manifest),
+            JsonWrite(key=ctx.keys.run.summary, payload=summary),
+            JsonWrite(key=ctx.keys.pointers.latest, payload=latest),  
         ]
 
         return TrackerResult(
             manifest=manifest,
             summary=summary,
-            persistence_plan=PersistencePlan(artifacts=artifacts),
+            persistence_plan=PersistencePlan(writes=writes),
         )

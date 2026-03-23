@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, asdict, is_dataclass
 from typing import Any, Mapping
 
@@ -7,47 +9,41 @@ from ml_platform.storage import Storage
 from ml_platform.storage.serde import write_joblib, write_json
 
 
-# -------------------------------------------
-# Artifact classes
-# -------------------------------------------
-
 @dataclass(frozen=True)
-class JsonArtifact:
+class JsonWrite:
     key: str
     payload: Any
 
 
 @dataclass(frozen=True)
-class JoblibArtifact:
+class JoblibWrite:
     key: str
     obj: Any
 
 @dataclass(frozen=True)
-class ParquetArtifact:
+class ParquetWrite:
     key: str
     df: pd.DataFrame
 
-# -------------------------------------------
-# Persistence plan
-# -------------------------------------------
 
-Artifact = JsonArtifact | JoblibArtifact | ParquetArtifact
+Write = JsonWrite | JoblibWrite | ParquetWrite
+
 
 @dataclass(frozen=True)
 class PersistencePlan:
-    artifacts: list[Artifact]
+    writes: list[Write]
 
     def persist(self, *, storage: Storage) -> None:
-        for artifact in self.artifacts:
-            if isinstance(artifact, ParquetArtifact):
-                storage.write_parquet(key=artifact.key, df=artifact.df)
-            elif isinstance(artifact, JoblibArtifact):
-                write_joblib(storage=storage, key=artifact.key, obj=artifact.obj)
-            elif isinstance(artifact, JsonArtifact):
+        for write in self.writes:
+            if isinstance(write, ParquetWrite):
+                storage.write_parquet(key=write.key, df=write.df)
+            elif isinstance(write, JoblibWrite):
+                write_joblib(storage=storage, key=write.key, obj=write.obj)
+            elif isinstance(write, JsonWrite):
                 write_json(
                     storage=storage,
-                    key=artifact.key,
-                    payload=self._resolve_json_payload(artifact.payload),
+                    key=write.key,
+                    payload=self._resolve_json_payload(write.payload),
                 )
         
     @staticmethod

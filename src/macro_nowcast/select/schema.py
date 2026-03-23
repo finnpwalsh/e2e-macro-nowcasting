@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ml_platform.runs.manifests import Pointer, RunSummary
-from ml_platform.runs.persistence import PersistencePlan
+from ml_platform.storage.persistence import PersistencePlan
 
 
 @dataclass(frozen=True)
