@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 import pandas as pd
@@ -10,25 +9,28 @@ from macro_nowcast.train.models.base import ModelSpec
 
 
 @dataclass(frozen=True)
-class Trainer(ABC):
-    """
-    Base trainer contract for train components.
-
-    Subclasses implement fit() and predict()
-    """
+class Trainer:
 
     spec: ModelSpec
     target_col: str
     time_col: str
 
-    @abstractmethod
-    def fit(self, df: pd.DataFrame):
-        ...
+    def fit(self, df: pd.DataFrame) -> Pipeline:
+        X, y = self._split_xy(df)
+
+        model = self.spec.make_pipeline()
+        model.fit(X, y)
+
+        return model
     
-    @abstractmethod
-    def predict(self, model: Pipeline, df: pd.DataFrame):
-        ...
+
+    def predict(self, *, model: Pipeline, df: pd.DataFrame) -> pd.Series:
+        X, _ = self._split_xy(df)
+        y_hat = model.predict(X)
+        
+        return pd.Series(y_hat, index=df.index)
     
+
     def _split_xy(self, df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
         y = df[self.target_col]
         X = df.drop(columns=[self.time_col, self.target_col])

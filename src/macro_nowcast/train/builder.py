@@ -7,25 +7,27 @@ from typing import Any
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from .trainer import BaselineTrainer
-from macro_nowcast.train import TimeSplitter
+from ml_platform.artifacts.predictions import Predictions, PredictionsBuilder
+
+from .trainer import Trainer
+from .splitter import TimeSplitter
 from macro_nowcast.train.models import ModelSpec
 from macro_nowcast.eval.regression import regression_metrics
 
 
 @dataclass(frozen=True)
-class BaselineRunOutputs:
+class TrainingOutputs:
     spec: dict[str, Any]
     provenance: dict[str, Any]
     model: Pipeline
     metrics: dict[str, float]
-    predictions: pd.DataFrame
+    predictions: Predictions
     data_signature: dict[str, Any]
     feature_signature: dict[str, Any]
 
 
 @dataclass(frozen=True)
-class BaselineRunBuilder:
+class TrainingBuilder:
     model_name: str
     time_col: str
     target_col: str
@@ -36,7 +38,7 @@ class BaselineRunBuilder:
             *,
             df: pd.DataFrame,
             spec: ModelSpec,
-    ) -> BaselineRunOutputs:
+    ) -> TrainingOutputs:
         # ---------------------------------------------------------------
         # Split
         # ---------------------------------------------------------------
@@ -60,7 +62,7 @@ class BaselineRunBuilder:
         # Fit + predict
         # ---------------------------------------------------------------
         
-        trainer = BaselineTrainer(
+        trainer = Trainer(
             spec=spec,
             target_col=self.target_col,
             time_col=self.time_col
@@ -73,8 +75,15 @@ class BaselineRunBuilder:
         # Predictions
         # ---------------------------------------------------------------
 
-        pred_df = valid_df[[self.time_col, self.target_col]].copy()
-        pred_df["y_hat"] = y_hat
+        predictions = PredictionsBuilder(
+            time_col=self.time_col,
+            target_col=self.target_col,
+        ).build(
+            df=valid_df,
+            y_hat=y_hat,
+        )
+
+        pred_df = predictions.df
 
         # ---------------------------------------------------------------
         # Metrics
@@ -121,7 +130,7 @@ class BaselineRunBuilder:
             feature_cols=feature_cols,
         )
 
-        return BaselineRunOutputs(
+        return TrainingOutputs(
             spec=spec_payload,
             provenance=provenance,
             metrics=metrics,

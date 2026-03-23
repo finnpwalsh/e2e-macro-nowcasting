@@ -8,7 +8,7 @@ from macro_nowcast.storage.datasets import DATASETS
 from ml_platform.runs.context import RunContext
 from ml_platform.runs.tracker import RunTracker
 
-from macro_nowcast.train.baseline import BaselineRunBuilder
+from macro_nowcast.train.builder import TrainingBuilder
 from macro_nowcast.train.models import MODELS
 
 
@@ -26,7 +26,7 @@ def run(storage: Storage) -> None:
     # Build candidate
     # -----------------------------------------------------
 
-    builder = BaselineRunBuilder(
+    builder = TrainingBuilder(
         model_name="baseline",
         time_col="ds",
         target_col="cpi_all_items",
