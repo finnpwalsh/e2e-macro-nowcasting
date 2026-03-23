@@ -6,7 +6,7 @@ from typing import Any, Mapping
 import pandas as pd
 
 from .context import RunContext
-from .manifests import RunManifest, RunSummary, Pointer
+from .schema import RunManifest, RunSummary, RunPointer
 from ml_platform.storage.persistence import PersistencePlan, JsonWrite, JoblibWrite, ParquetWrite
 
 
@@ -68,7 +68,7 @@ class RunTracker:
             model_artifact_key=ctx.keys.models.model,
         )
 
-        latest = Pointer(
+        latest = RunPointer(
             model_name=ctx.model_name,
             run_id=ctx.run_id,
             

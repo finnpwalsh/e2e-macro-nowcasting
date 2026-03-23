@@ -37,7 +37,7 @@ class RunSummary:
 
 
 @dataclass(frozen=True)
-class Pointer:
+class RunPointer:
     model_name: str
     run_id: str
     

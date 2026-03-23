@@ -3,7 +3,7 @@ from __future__ import annotations
 from ml_platform.storage import Storage
 from ml_platform.storage.serde import read_json
 from ml_platform.storage.keys import PointerKeys
-from ml_platform.runs.manifests import Pointer, RunSummary
+from ml_platform.runs.schema import RunPointer, RunSummary
 
 from .schema import ResolvedRun, ResolvedSelectionInputs
 
@@ -26,7 +26,7 @@ class SelectionResolver:
         # Challenger
         # -----------------------------------------------
 
-        challenger_pointer = Pointer(**read_json(
+        challenger_pointer = RunPointer(**read_json(
             storage=storage,
             key=pointers.latest,
         ))
@@ -46,7 +46,7 @@ class SelectionResolver:
         # -----------------------------------------------
 
         try:
-            champion_pointer = Pointer(**read_json(
+            champion_pointer = RunPointer(**read_json(
                 storage=storage,
                 key=pointers.champion,
             ))
