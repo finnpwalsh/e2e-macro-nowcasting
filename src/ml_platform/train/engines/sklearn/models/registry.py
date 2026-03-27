@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ml_platform.train.training import ModelSpec
+from ml_platform.train.components import ModelSpec
 from .ridge import SKRidgeModelSpec
 
 

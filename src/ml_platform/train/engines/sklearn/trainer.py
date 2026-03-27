@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 import pandas as pd
-
-from ml_platform.train.training import FitResult, Trainer
+ 
+from ml_platform.train.base import FitResult, Trainer
 
 
 @dataclass(frozen=True)
