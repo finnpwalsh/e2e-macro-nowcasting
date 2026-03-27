@@ -14,7 +14,8 @@ from ml_platform.train.builders import (
 )
 from .training import Trainer
 from .splitters import Splitter
-from ml_platform.evaluation.scorer import Scorer
+from ml_platform.evaluation.scorer import RegressionScorer
+from ml_platform.evaluation.schema import PredictionSet, RegressionMetrics
 
 
 @dataclass(frozen=True)
@@ -26,7 +27,7 @@ class TrainingBuilder:
 
     splitter: Splitter
     trainer: Trainer
-    scorer: Scorer
+    scorer: RegressionScorer
 
     def run(
         self,
@@ -81,12 +82,12 @@ class TrainingBuilder:
         # Metrics
         # ---------------------------
 
-        score_df = pred_df[[self.target_col, "y_hat"]].dropna()
-
-        metrics = self.scorer.score(
-            y=score_df[self.target_col],
-            y_hat=score_df["y_hat"].to_numpy(),
+        prediction_set = PredictionSet(
+            y_true=pred_df[[self.target_col]].dropna(),
+            y_hat=pred_df[["y_hat"]].dropna(),
         )
+
+        metrics = self.scorer.score(prediction_set=prediction_set)
 
         # ---------------------------
         # Metadata
@@ -119,7 +120,7 @@ class TrainingBuilder:
             spec=asdict(self.trainer.spec),
             provenance=provenance,
             model=model,
-            metrics=metrics,
+            metrics=asdict(metrics),
             predictions=predictions,
             data_signature=data_signature,
             feature_signature=feature_signature,
