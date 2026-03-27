@@ -1,36 +1,26 @@
 from __future__ import annotations
 
-from typing import Protocol
 from dataclasses import dataclass
 
 import numpy as np
-
 from sklearn.metrics import (
     mean_squared_error,
     mean_absolute_error,
     r2_score,
 )
 
-from .schema import PredictionSet, RegressionMetrics
-
-
-class RegressionScorer(Protocol):
-    def score(
-            self,
-            *,
-            prediction_set: PredictionSet,
-    ) -> RegressionMetrics: ...
+from .schema import RegressionEvaluationInput, RegressionMetrics
 
 
 @dataclass(frozen=True)
-class DefaultRegressionScorer:
+class RegressionScorer:
     def score(
             self,
             *,
-            prediction_set: PredictionSet,
+            evaluation_input: RegressionEvaluationInput,
     ) -> RegressionMetrics:
-        y_true = np.asarray(prediction_set.y_true)
-        y_hat = np.asarray(prediction_set.y_hat)
+        y_true = np.asarray(evaluation_input.y_true)
+        y_hat = np.asarray(evaluation_input.y_hat)
 
         rmse = float(np.sqrt(mean_squared_error(y_true, y_hat)))
         mae = float(mean_absolute_error(y_true, y_hat))
