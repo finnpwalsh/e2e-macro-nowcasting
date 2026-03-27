@@ -32,6 +32,24 @@ Production-flavored infra hardening.
 
 ---
 
+### March XX, 2026
+
+**CONTEXT**
+
+- v1.5.1 – shock corrector: train refactor
+
+**DONE**
+
+- `ml_platform/train/`
+
+**NEXT**
+
+- make all ml platform training domain-agnostic, that is: 
+    - remove all time col mentions from generic classes
+    - make agnostic of regression vs. classification
+
+---
+
 ### March 23, 2026
 
 **CONTEXT**
