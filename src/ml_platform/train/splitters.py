@@ -11,7 +11,6 @@ class Splitter(Protocol):
         self,
         *,
         df: pd.DataFrame,
-        split_date: str,
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
         ...
 
@@ -19,6 +18,7 @@ class Splitter(Protocol):
 @dataclass(frozen=True)
 class TimeSplitter:
     time_col: str
+    split_date: str
 
     def split(
         self,

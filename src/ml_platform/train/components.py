@@ -4,6 +4,7 @@ from typing import Any, Protocol
 
 import pandas as pd
 
+
 class ModelSpec(Protocol):
     def build(self) -> Any: ...
 
