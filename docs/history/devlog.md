@@ -41,12 +41,11 @@ Production-flavored infra hardening.
 **DONE**
 
 - `ml_platform/train/`
+- `ml_platform/evaluation/`
 
 **NEXT**
 
-- make all ml platform training domain-agnostic, that is: 
-    - remove all time col mentions from generic classes
-    - make agnostic of regression vs. classification
+- deal with training metadata (currently stored in `ml_platform/_deprecated/`)
 
 ---
 
