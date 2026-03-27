@@ -13,6 +13,6 @@ class RegressionMetrics:
 
 
 @dataclass(frozen=True)
-class PredictionSet:
+class PredictionsSet:
     y_true: pd.Series
     y_hat: pd.Series
