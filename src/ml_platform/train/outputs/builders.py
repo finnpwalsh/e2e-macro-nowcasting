@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from hashlib import sha256
 import pandas as pd
 
-from ml_platform.train.metadata import (
+from .metadata import (
     DataSignature,
     FeatureSignature,
     TrainingProvenance,

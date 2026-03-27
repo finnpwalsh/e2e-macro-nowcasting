@@ -7,12 +7,12 @@ import pandas as pd
 
 
 class Splitter(Protocol):
-    def split_mask(
+    def split(
         self,
         *,
         df: pd.DataFrame,
         split_date: str,
-    ) -> tuple[pd.Series, pd.Series]:
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
         ...
 
 
@@ -20,16 +20,19 @@ class Splitter(Protocol):
 class TimeSplitter:
     time_col: str
 
-    def split_mask(
+    def split(
         self,
         df: pd.DataFrame,
         *,
         split_date: str,
-    ) -> tuple[pd.Series, pd.Series]:
-        ts = pd.to_datetime(df[self.time_col])
-        cutoff = pd.to_datetime(split_date)
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
         
-        train_mask = ts < cutoff
-        valid_mask = ~train_mask
+        train_df = df[df[self.time_col] < split_date].copy()
+        valid_df = df[df[self.time_col] >= split_date].copy()
+        
+        if train_df.empty or valid_df.empty:
+            raise ValueError(
+                f"Empty split: train={len(train_df)}, valid={len(valid_df)}"
+            )
 
-        return train_mask, valid_mask
+        return train_df, valid_df

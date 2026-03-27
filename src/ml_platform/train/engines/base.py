@@ -2,17 +2,11 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Protocol
+from typing import Any
 
 import pandas as pd
 
-
-class ModelSpec(Protocol):
-    def build(self) -> Any: ...
-
-
-class FeatureResolver(Protocol):
-    def resolve(self, *, pd.DataFrame) -> list[str]: ...
+from .components import ModelSpec, FeatureResolver
 
 
 @dataclass(frozen=True)
