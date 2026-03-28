@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Protocol
 from dataclasses import dataclass
 
-from ml_platform.evaluation.base import Metrics
-from ml_platform.artifacts.predictions import Predictions
+import pandas as pd
 
 
 @dataclass(frozen=True)
@@ -15,7 +14,9 @@ class TrainedModel:
 
 @dataclass(frozen=True)
 class TrainingResult:
-    model: object
-    predictions: Predictions
-    metrics: Metrics
-    feature_cols: list[str]
+    trained_model: TrainedModel
+    y_hat: pd.Series
+
+
+class FeatureResolver(Protocol):
+    def resolve(self, *, df: pd.DataFrame) -> list[str]: ...

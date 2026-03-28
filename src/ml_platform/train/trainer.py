@@ -5,13 +5,11 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from .schema import TrainedModel
-from .components import ModelSpec, FeatureResolver
+from .schema import TrainedModel, FeatureResolver
 
 
 @dataclass(frozen=True)
 class Trainer(ABC):
-    spec: ModelSpec
     target_col: str
     feature_resolver: FeatureResolver
 
