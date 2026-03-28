@@ -31,8 +31,8 @@ class RunId:
 # -----------------------------
 
 class RunContext:
-    def __init__(self, model_name: str):
-        self.model_name = model_name
+    def __init__(self, run_family: str):
+        self.run_family = run_family
         self._run_id = RunId()
     
     @property
@@ -45,4 +45,4 @@ class RunContext:
     
     @property
     def keys(self) -> Keys:
-        return Keys(self.model_name, self.run_id)
+        return Keys(self.run_family, self.run_id)
