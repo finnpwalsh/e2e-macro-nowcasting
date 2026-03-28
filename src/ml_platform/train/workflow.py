@@ -43,5 +43,7 @@ class TrainingWorkflow:
 
         return TrainingResult(
             trained_model=trained_model,
+            train_df=train_df,
+            valid_df=valid_df,
             y_hat=y_hat,
         )

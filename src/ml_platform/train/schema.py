@@ -15,6 +15,8 @@ class TrainedModel:
 @dataclass(frozen=True)
 class TrainingResult:
     trained_model: TrainedModel
+    train_df: pd.DataFrame
+    valid_df: pd.DataFrame
     y_hat: pd.Series
 
 
