@@ -4,11 +4,14 @@ from dataclasses import dataclass
 import pandas as pd
 
 from ml_platform.train import Trainer, TrainedModel
+from .specs import SklearnModelSpec
+
 
 @dataclass(frozen=True)
 class SklearnTrainer(Trainer):
-
-    def fit(self, *, df: pd.DataFrame) -> TrainedModel:
+    spec: SklearnModelSpec
+    
+    def fit(self, *, df: pd.DataFrame, feature_cols: str) -> TrainedModel:
         feature_cols = self.feature_resolver.resolve(df=df)
         X, y = self._split_xy(df=df, feature_cols=feature_cols)
 

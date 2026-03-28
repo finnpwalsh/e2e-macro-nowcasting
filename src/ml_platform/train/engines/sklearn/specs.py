@@ -1,20 +1,25 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Protocol
 
-from sklearn.pipeline import Pipeline
+from sklearn.base import RegressorMixin
 from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+
 from sklearn.linear_model import Ridge
 
-from ml_platform.train.training import ModelSpec
+
+class SklearnModelSpec(Protocol):
+    def build(self) -> RegressorMixin: ...
 
 
 @dataclass(frozen=True)
-class SKRidgeModelSpec(ModelSpec):
+class RidgeSpec:
     alpha: float = 1.0
 
-    def build(self) -> Pipeline:
+    def build(self) -> RegressorMixin:
         return Pipeline(
             steps = [
                 ("imputer", SimpleImputer(strategy="median")),
