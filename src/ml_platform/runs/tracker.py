@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from typing import Any, Mapping
+from collections.abc import Sequence
 
 from .context import RunContext
-from .schema import RunManifest, RunSummary, RunPointer, TrackerResult
+from .schema import RunSpec, ArtifactKeys, RunManifest, RunSummary, RunPointer, TrackerResult
 
+from ml_platform.evaluation import Metric, Metrics
 from ml_platform.signatures import DataSignature, FeatureSignature
 from ml_platform.storage.persistence import (
     PersistencePlan,
     JsonWrite,
     WriteOp,
 )
-
 
 
 class RunTracker:
@@ -21,55 +21,40 @@ class RunTracker:
         *,
         input_key: str,
         
-        spec: Mapping[str, Any],
-        provenance: Mapping[str, Any],
+        spec: RunSpec,
         
-        metrics: Mapping[str, Any],
-        primary_metric: Mapping[str, Any] | None,
+        metrics: Metrics,
+        primary_metric: Metric | None,
         
-        artifact_keys: Mapping[str, Any],
-        primary_artifact_key: str | None,
-        artifact_writes: list[WriteOp],
+        artifact_keys: ArtifactKeys,
+        artifact_writes: Sequence[WriteOp],
         
         
         data_signature: DataSignature,
         feature_signature: FeatureSignature | None = None,
     ) -> TrackerResult:
         manifest = RunManifest(
-            run_family=ctx.run_family,
-            run_id=ctx.run_id,
-            created_at_utc=ctx.created_at_utc,
-            
+            run_identity=ctx.identity,
             input_key=input_key,
-            
-            spec=dict(spec),
-            provenance=dict(provenance),
-            
+            spec=spec,
+            artifact_keys=artifact_keys,
+            metrics=metrics,
             data_signature=data_signature,
-            feature_signature=None if feature_signature is None else feature_signature,
-            
-            artifact_keys=dict(artifact_keys),
-            metrics=dict(metrics),
+            feature_signature=feature_signature,
         )
 
         summary = RunSummary(
-            run_family=ctx.run_family,
-            run_id=ctx.run_id,
-            created_at_utc=ctx.created_at_utc,
-            
+            run_identity=ctx.identity,
             input_key=input_key,
-            
-            primary_metric=None if primary_metric is None else dict(primary_metric),
-            primary_artifact_key=primary_artifact_key,
+            primary_metric=primary_metric,
+            primary_artifact_key=artifact_keys.primary,
         )
 
         latest = RunPointer(
-            run_family=ctx.run_family,
-            run_id=ctx.run_id,
-            
+            run_identity=ctx.identity,
             manifest_key=ctx.keys.run.manifest,
             summary_key=ctx.keys.run.summary,
-            primary_artifact_key=primary_artifact_key,
+            primary_artifact_key=artifact_keys.primary,
         )
 
         writes = [
