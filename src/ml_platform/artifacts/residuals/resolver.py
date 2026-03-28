@@ -15,10 +15,5 @@ class ResidualsResolver:
             self,
             *,
             key: str,
-            time_col: str,
     ) -> Residuals:
-        df = self.storage.read_parquet(key=key)
-        return Residuals(
-            df=df,
-            time_col=time_col,
-        )
+        return Residuals(self.storage.read_parquet(key=key))

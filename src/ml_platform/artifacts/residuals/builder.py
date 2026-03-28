@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import pandas as pd
 
 from ml_platform.artifacts.predictions import Predictions
 
@@ -14,10 +15,13 @@ class ResidualsBuilder:
             *,
             predictions: Predictions,
     ) -> Residuals:
-        out = predictions.df[[predictions.time_col, predictions.target_col, "y_hat"]].copy()
-        out = out.rename(columns={predictions.target_col: "y"})
+        out = pd.DataFrame(index=predictions.df.index)
+        
+        out["y"] = predictions.y
+        out["y_hat"] = predictions.y_hat
+        out["residual"] = out["y"] - out["y_hat"]
 
-        return Residuals(
-            df=out,
-            time_col=predictions.time_col,
-        )
+        if predictions.row_id is not None:
+            out["row_id"] = predictions.row_id
+
+        return Residuals(df=out)

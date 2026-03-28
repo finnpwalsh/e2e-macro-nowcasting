@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 import pandas as pd
 
 from .schema import Predictions
@@ -8,24 +9,24 @@ from .schema import Predictions
 
 @dataclass(frozen=True)
 class PredictionsBuilder:
-    time_col: str
     target_col: str
+    row_id_col: str | None = None
 
     def build(
             self,
             *,
             df: pd.DataFrame,
-            y_hat,
+            y_hat: Any,
     ) -> Predictions:
         if len(df) != len(y_hat): raise ValueError(
             f"Length mismatch: df={len(df)}, y_hat={len(y_hat)}"
         )
 
-        out = df[[self.time_col, self.target_col]].copy()
-        out["y_hat"] = pd.Series(y_hat, index=out.index)
+        out = pd.DataFrame(index=df.index)
+        out["y"] = df[self.target_col].to_numpy()
+        out["y_hat"] = pd.Series(y_hat, index=df.index)
 
-        return Predictions(
-            df=out,
-            time_col=self.time_col,
-            target_col=self.target_col,
-        )
+        if self.row_id_col is not None:
+            out["row_id"] = df[self.row_id_col].to_numpy()
+
+        return Predictions(df=out)
