@@ -42,10 +42,12 @@ Production-flavored infra hardening.
 
 - created `ml_platform/signatures`
 - made `runs` model-agnostic
+- harden `runs` metadata contracts
 
 **NEXT**
 
-- harden `runs` metadata contracts
+- `macro_nowcast/train` adapters for `ml_platform` generics
+- move `macro_nowcast/select` generics to `ml_platform`
 
 ---
 
