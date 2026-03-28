@@ -26,7 +26,7 @@ class Storage(Protocol):
         """Read a parquet object from storage."""
         ...
     
-    def write_parquet(self, df: pd.DataFrame, key: str, **kwargs) -> None:
+    def write_parquet(self, key: str, df: pd.DataFrame, **kwargs) -> None:
         """Write a DataFrame to storage as parquet."""
         ...
     
@@ -34,7 +34,7 @@ class Storage(Protocol):
         """Read raw bytes from storage."""
         ...
     
-    def write_bytes(self, data: bytes, key: str) -> None:
+    def write_bytes(self, key: str, data: bytes) -> None:
         """Write raw bytes to storage."""
         ...
 

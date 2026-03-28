@@ -41,7 +41,7 @@ class S3Storage:
         buf = io.BytesIO(data)
         return pd.read_parquet(buf)
     
-    def write_parquet(self, df: pd.DataFrame, key: str, **kwargs) -> None:
+    def write_parquet(self, key: str, df: pd.DataFrame, **kwargs) -> None:
         bucket = _bucket(key)
         buf = io.BytesIO()
         df.to_parquet(buf, **kwargs)
@@ -58,7 +58,7 @@ class S3Storage:
             raise
         return resp["Body"].read()
     
-    def write_bytes(self, data: bytes, key: str) -> None:
+    def write_bytes(self, key: str, data: bytes) -> None:
         bucket = _bucket(key)
         _s3().put_object(Bucket=bucket, Key=key, Body=data)
     
