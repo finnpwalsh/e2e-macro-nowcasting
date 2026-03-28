@@ -32,7 +32,24 @@ Production-flavored infra hardening.
 
 ---
 
-### March XX, 2026
+### March 28, 2026
+
+**CONTEXT**
+
+- v1.5.1 – shock corrector: `runs` refactor
+
+**DONE**
+
+- created `ml_platform/signatures`
+- made `runs` model-agnostic
+
+**NEXT**
+
+- harden `runs` metadata contracts
+
+---
+
+### March 27, 2026
 
 **CONTEXT**
 
