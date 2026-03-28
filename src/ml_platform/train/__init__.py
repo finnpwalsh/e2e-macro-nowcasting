@@ -1,12 +1,12 @@
 from .trainer import Trainer
-from .orchestrator import TrainingOrchestrator
+from .workflow import TrainingWorkflow
 from .schema import TrainedModel, TrainingResult
 from .splitters import Splitter, TimeSplitter
 
 
 __all__ = [
     "Trainer",
-    "TrainingOrchestrator",
+    "TrainingWorkflow",
     "TrainedModel",
     "TrainingResult",
     "Splitter",
