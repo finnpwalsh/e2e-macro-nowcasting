@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict, is_dataclass
 from typing import Any, Mapping
+from collections.abc import Sequence
 
 import pandas as pd
 
@@ -34,7 +35,7 @@ class JsonWrite(WriteOp):
         if is_dataclass(payload): return asdict(payload)
         elif isinstance(payload, Mapping): return dict(payload)
         else: raise TypeError(
-                f"JsonArtifact payload must be a dataclass or mapping, got {type(payload).__name__}"
+                f"JsonWrite payload must be a dataclass or mapping, got {type(payload).__name__}"
             )
 
 
@@ -58,7 +59,7 @@ class ParquetWrite(WriteOp):
 
 @dataclass(frozen=True)
 class PersistencePlan:
-    writes: list[WriteOp]
+    writes: Sequence[WriteOp]
 
     def persist(self, *, storage: Storage) -> None:
         for write in self.writes:
