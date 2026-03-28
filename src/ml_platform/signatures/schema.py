@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
+from typing import Any
 
 @dataclass(frozen=True)
 class DataSignature:
@@ -9,6 +10,9 @@ class DataSignature:
     n_train: int | None = None
     n_valid: int | None = None
 
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
 
 @dataclass(frozen=True)
 class FeatureSignature:
@@ -16,3 +20,6 @@ class FeatureSignature:
     features: list[str]
     feature_dtypes: dict[str, str]
     feature_fingerprint: str
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
