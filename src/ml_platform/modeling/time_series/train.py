@@ -6,7 +6,7 @@ from ml_platform.modeling._core import FeatureResolver, Trainer, TrainingWorkflo
 from ml_platform.modeling.engines import ENGINES
 
 from .splitters import TimeSplitter
-from .config import TimeSeriesTrainingConfig
+from .schema import TimeSeriesTrainingConfig
 
 
 def run_time_series_training(
