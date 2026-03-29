@@ -1,4 +1,4 @@
-from .metrics import Metric, Metrics
+from .evaluation import Metric, Metrics
 from .training import TrainedModel, TrainingResult
 
 
