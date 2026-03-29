@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Protocol
+from typing import Any
 from dataclasses import dataclass
 
 import pandas as pd
@@ -18,7 +18,3 @@ class TrainingResult:
     train_df: pd.DataFrame
     valid_df: pd.DataFrame
     y_hat: pd.Series
-
-
-class FeatureResolver(Protocol):
-    def resolve(self, *, df: pd.DataFrame) -> list[str]: ...
