@@ -5,7 +5,8 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from .schema import TrainedModel, FeatureResolver
+from .schema import TrainedModel
+from .resolvers import FeatureResolver
 
 
 @dataclass(frozen=True)
