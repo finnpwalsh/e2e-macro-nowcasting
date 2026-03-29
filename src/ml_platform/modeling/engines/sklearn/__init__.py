@@ -1,5 +1,5 @@
-from .registry import SKLEARN_SPECS
+from .registry import SKLEARN
 
 __all__ = [
-    "SKLEARN_SPECS",
+    "SKLEARN",
 ]

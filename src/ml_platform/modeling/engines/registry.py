@@ -5,20 +5,20 @@ from typing import Mapping
 
 from ml_platform.modeling._core import ModelSpec
 
-from .sklearn import SKLEARN_SPECS
+from .sklearn import SKLEARN
 
 
 @dataclass(frozen=True)
 class SpecRegistry:
-    specs: dict[str, ModelSpec]
+    specs: Mapping[str, ModelSpec]
 
-    def get(self, name: str) -> ModelSpec:
+    def get_spec(self, model: str) -> ModelSpec:
         try:
-            return self.specs[name]
+            return self.specs[model]
         except KeyError as e:
             available = ", ".join(sorted(self.specs))
             raise ValueError(
-                f"Unknown model spec '{name}'. Available specs: {available}"
+                f"Unknown model spec '{model}'. Available specs: {available}"
             ) from e
 
 
@@ -26,17 +26,20 @@ class SpecRegistry:
 class EngineRegistry:
     engines: Mapping[str, SpecRegistry]
 
-    def get(self, name: str) -> SpecRegistry:
+    def get_spec(self, engine: str, model: str) -> SpecRegistry:
         try:
-            return self.engines[name]
+            spec_registry= self.engines[engine]
         except KeyError as e:
             available = ", ".join(sorted(self.engines))
             raise ValueError(
-                f"Unknown engine '{name}'. Available engines: {available}"
+                f"Unknown engine '{engine}'. Available engines: {available}"
             ) from e
+        
+        return spec_registry.get_spec(model)
+
 
 ENGINES = EngineRegistry(
     engines = {
-        "sklearn": SKLEARN_SPECS,
+        "sklearn": SKLEARN,
     }
 )

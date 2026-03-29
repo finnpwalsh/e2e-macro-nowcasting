@@ -1,7 +1,6 @@
-from .registry import SpecRegistry
-from .sklearn import SKLEARN_SPECS
+from .registry import SpecRegistry, ENGINES
 
 __all__ = [
-    "SklearnTrainer",
-    "SklearnSpecs",
+    "SpecRegistry",
+    "ENGINES",
 ]
