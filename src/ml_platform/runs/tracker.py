@@ -5,7 +5,7 @@ from collections.abc import Sequence
 from .context import RunContext
 from .schema import RunSpec, RunArtifacts, RunManifest, RunSummary, RunPointer, TrackerResult
 
-from ml_platform.evaluation import Metric, Metrics
+from ml_platform.modeling._core import Metric, Metrics
 from ml_platform.signatures import DataSignature, FeatureSignature
 from ml_platform.storage.persistence import (
     PersistencePlan,
