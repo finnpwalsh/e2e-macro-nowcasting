@@ -9,10 +9,13 @@ from sklearn.metrics import (
     r2_score,
 )
 
-from .schema import RegressionEvaluationInput, RegressionMetrics
+from ml_platform.modeling._core import Evaluator
 
-from ml_platform.evaluation import Evaluator
-from ml_platform.artifacts import Predictions
+from .schema import (
+    Predictions,
+    RegressionEvaluationInput,
+    RegressionMetrics,
+)
 
 
 @dataclass(frozen=True)

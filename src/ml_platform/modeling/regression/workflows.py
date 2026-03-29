@@ -4,12 +4,12 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from ml_platform.train import TrainingWorkflow
-from ml_platform.artifacts import PredictionsBuilder
+from ml_platform.modeling._core import TrainingWorkflow
 from ml_platform.runs import RunTracker
 
 from .schema import TrainEvaluateResult
-from .evaluator import RegressionEvaluator
+from .evaluators import RegressionEvaluator
+from .builders import PredictionsBuilder
 
 
 @dataclass(frozen=True)

@@ -1,10 +1,27 @@
-from .schema import RegressionEvaluationInput, RegressionMetrics
-from .scorer import RegressionScorer
-from .evaluator import RegressionEvaluator
+from .builders import PredictionsBuilder, ResidualsBuilder
+from .evaluators import RegressionScorer, RegressionEvaluator
+from .resolvers import PredictionsResolver, ResidualsResolver
+from .workflows import TrainEvaluateWorkflow
+from .schema import (
+    Predictions,
+    Residuals,
+    RegressionEvaluationInput,
+    RegressionMetrics,
+    TrainEvaluateResult,
+)
+
 
 __all__ = [
-    "RegressionEvaluationInput",
-    "RegressionMetrics",
+    "PredictionsBuilder",
+    "ResidualsBuilder",
     "RegressionScorer",
     "RegressionEvaluator",
+    "PredictionsResolver",
+    "ResidualsResolver",
+    "TrainEvaluateWorkflow",
+    "Predictions",
+    "Residuals",
+    "RegressionEvaluationInput",
+    "RegressionMetrics",
+    "TrainEvaluateResult",
 ]

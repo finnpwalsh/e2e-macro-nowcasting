@@ -4,9 +4,6 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from ml_platform.artifacts import Predictions
-from ml_platform.train import TrainedModel
-
 
 @dataclass(frozen=True)
 class RegressionEvaluationInput:
@@ -38,10 +35,3 @@ class RegressionMetrics:
             out["mape"] = self.mape
         
         return out
-
-
-@dataclass(frozen=True)
-class TrainEvaluateResult:
-    trained_model: TrainedModel
-    predictions: Predictions
-    metrics: RegressionMetrics
