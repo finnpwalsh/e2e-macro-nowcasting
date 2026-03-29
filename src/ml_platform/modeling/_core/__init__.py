@@ -1,5 +1,5 @@
 from .evaluators import Scorer
-from .splitters import Splitter, TimeSplitter
+from .splitters import Splitter
 from .trainer import Trainer
 from .workflows import TrainingWorkflow
 from .resolvers import FeatureResolver
@@ -14,7 +14,6 @@ from .schema import (
 __all__ = [
     "Scorer",
     "Splitter",
-    "TimeSplitter",
     "Trainer",
     "TrainingWorkflow",
     "FeatureResolver",
