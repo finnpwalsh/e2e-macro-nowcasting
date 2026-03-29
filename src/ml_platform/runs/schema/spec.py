@@ -6,6 +6,7 @@ from typing import Mapping, Any
 
 @dataclass(frozen=True)
 class RunSpec:
+    engine: str
     name: str
     params: Mapping[str, Any]
 
