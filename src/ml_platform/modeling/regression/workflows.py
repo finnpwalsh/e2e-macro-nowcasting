@@ -12,7 +12,7 @@ from .builders import PredictionsBuilder
 
 
 @dataclass(frozen=True)
-class TrainEvaluateWorkflow:
+class RegressionModelingWorkflow:
     training_workflow: TrainingWorkflow
     predictions_builder: PredictionsBuilder
     evaluator: RegressionEvaluator
