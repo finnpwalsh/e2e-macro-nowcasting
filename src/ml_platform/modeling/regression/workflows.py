@@ -5,7 +5,6 @@ from dataclasses import dataclass
 import pandas as pd
 
 from ml_platform.modeling._core import TrainingWorkflow
-from ml_platform.runs import RunTracker
 
 from .schema import TrainEvaluateResult
 from .evaluators import RegressionEvaluator
@@ -17,7 +16,6 @@ class TrainEvaluateWorkflow:
     training_workflow: TrainingWorkflow
     predictions_builder: PredictionsBuilder
     evaluator: RegressionEvaluator
-    tracker: RunTracker
     
     def run(self, *, df: pd.DataFrame) -> TrainEvaluateResult:
         training_result = self.training_workflow.run(df=df)
