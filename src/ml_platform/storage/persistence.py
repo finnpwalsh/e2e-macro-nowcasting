@@ -23,6 +23,9 @@ class JsonWrite(WriteOp):
     key: str
     payload: Any
 
+    def extend(self, more_writes: Sequence[WriteOp]) -> "PersistencePlan":
+        return PersistencePlan(writes=[*self.writes, *more_writes])
+
     def persist(self, *, storage: Storage) -> None:
         write_json(
             storage=storage,
