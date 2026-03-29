@@ -3,67 +3,94 @@ from __future__ import annotations
 from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage
-from macro_nowcast.storage.datasets import DATASETS
 
-from ml_platform.runs.context import RunContext
-from ml_platform.runs.tracker import RunTracker
+from ml_platform.runs import RunContext, RunPointer
+from ml_platform.storage.persistence import JsonWrite
 
-from macro_nowcast.train.builder import TrainingBuilder
-from macro_nowcast.train.models import MODELS
+from ml_platform.modeling.regression import RegressionScorer
+from ml_platform.modeling.time_series import run_time_series_training, TimeSeriesTrainingConfig, TimeSeriesEvaluator, TimeSeriesTrackingAdapter
+
+from .cli import parse_args
+from .config import TrainingRunConfig
 
 
-def run(storage: Storage) -> None:
-    ctx = RunContext(model_name="baseline")
+def run(
+    storage: Storage,
+    run_config: TrainingRunConfig,
+    training_config: TimeSeriesTrainingConfig,
+) -> None:
+    ctx = RunContext.create(run_family=run_config.run_family)
 
     # -----------------------------------------------------
     # Load dataset
     # -----------------------------------------------------
     
-    input_key = DATASETS.model_ready.anchors
-    df = storage.read_parquet(key=input_key)
+    df = storage.read_parquet(key=run_config.input_key)
 
     # -----------------------------------------------------
-    # Build candidate
+    # Train
     # -----------------------------------------------------
 
-    builder = TrainingBuilder(
-        model_name="baseline",
-        time_col="ds",
-        target_col="cpi_all_items",
-        split_date="2020-01-01",
+    training_result = run_time_series_training(
+        df = df,
+        config=training_config,
     )
 
-    out = builder.run(df=df, spec=MODELS["ridge"].spec)
+    # -----------------------------------------------------
+    # Evaluate
+    # -----------------------------------------------------
+
+    eval_result = TimeSeriesEvaluator(
+        training_result=training_result,
+        scorer=RegressionScorer(),
+    ).evaluate(
+        df=df,
+        target_col=training_config.target_col,
+        time_col=training_config.time_col,
+    )
 
     # -----------------------------------------------------
     # Track run
     # -----------------------------------------------------
-
-    tracker = RunTracker()
-
-    result = tracker.track(
+    
+    tracking_result = TimeSeriesTrackingAdapter().track(
         ctx=ctx,
-        input_key=input_key,
-        split_date=builder.split_date,
-        spec=out.spec,
-        provenance=out.provenance,
-        metrics=out.metrics,
-        data_signature=out.data_signature,
-        feature_signature=out.feature_signature,
-        model_obj=out.model,
-        predictions_df=out.predictions,
+        df=df,
+        input_key=run_config.input_key,
+        config=training_config,
+        result=eval_result,
+        primary_metric_name=training_config.primary_metric,
     )
+
+    # -----------------------------------------------------
+    # Update latest pointer
+    # -----------------------------------------------------
+
+    pointer = RunPointer(
+        run_identity=ctx.identity,
+        manifest_key=ctx.keys.run.manifest,
+        summary_key=ctx.keys.run.summary,
+        primary_artifact_key=ctx.keys.models.model,
+    )
+
+    pointer_write = JsonWrite(
+        key=ctx.keys.pointers.latest,
+        payload=pointer,
+    )
+
+    plan = tracking_result.persistence_plan.extend([pointer_write])
 
     # -----------------------------------------------------
     # Persist
     # -----------------------------------------------------
 
-    result.persistence_plan.persist(storage=storage)
+    plan.persist(storage=storage)
 
 
 def main() -> None:
     load_dotenv()
-    run(get_storage())
+    run_config, training_config = parse_args()
+    run(storage=get_storage(), run_config=run_config, training_config=training_config)
 
 
 if __name__ == "__main__":
