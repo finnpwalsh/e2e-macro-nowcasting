@@ -32,6 +32,29 @@ Production-flavored infra hardening.
 
 ---
 
+### March 29, 2026
+
+**CONTEXT**
+
+- v1.5.1 – shock corrector: `modeling` refactor
+
+**DONE**
+
+- consolidated evaluation, training into `modeling/_core`
+- consolidated `regression` modeling extensions
+- created `time_series` modeling extensions
+- decoupled `engines` from `regression`
+- created `engines` + `specs` nested registries for easy model spec querying
+- added `cli` for training job
+
+**NEXT**
+
+- confirm full train runthrough
+- residuals modeling
+- select move to ml_platform?
+
+---
+
 ### March 28, 2026
 
 **CONTEXT**
