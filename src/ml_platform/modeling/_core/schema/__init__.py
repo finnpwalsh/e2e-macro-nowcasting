@@ -1,5 +1,5 @@
 from .evaluation import Metric, Metrics
-from .training import TrainedModel, TrainingResult
+from .training import TrainedModel, TrainingResult, ModelSpec
 
 
 __all__ = [
@@ -7,4 +7,5 @@ __all__ = [
     "Metrics",
     "TrainedModel",
     "TrainingResult",
+    "ModelSpec",
 ]

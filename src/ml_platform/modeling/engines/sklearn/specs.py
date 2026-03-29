@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol
 
 from sklearn.base import RegressorMixin
 from sklearn.impute import SimpleImputer
@@ -9,10 +8,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 from sklearn.linear_model import Ridge
-
-
-class SklearnModelSpec(Protocol):
-    def build(self) -> RegressorMixin: ...
 
 
 @dataclass(frozen=True)

@@ -8,6 +8,7 @@ from .schema import (
     Metrics,
     TrainedModel,
     TrainingResult,
+    ModelSpec,
 )
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "Metrics",
     "TrainedModel",
     "TrainingResult",
+    "ModelSpec",
 ]
