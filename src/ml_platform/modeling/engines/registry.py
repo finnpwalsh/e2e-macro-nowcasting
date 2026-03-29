@@ -24,9 +24,9 @@ class SpecRegistry:
 
 @dataclass(frozen=True)
 class EngineRegistry:
-    engines: Mapping[str, SpecRegistry]
+    engines: Mapping[str, ModelSpec]
 
-    def get_spec(self, engine: str, model: str) -> SpecRegistry:
+    def get_spec(self, engine: str, model: str) -> ModelSpec:
         try:
             spec_registry= self.engines[engine]
         except KeyError as e:
@@ -35,7 +35,7 @@ class EngineRegistry:
                 f"Unknown engine '{engine}'. Available engines: {available}"
             ) from e
         
-        return spec_registry.get_spec(model)
+        return spec_registry.get_spec(model=model)
 
 
 ENGINES = EngineRegistry(
