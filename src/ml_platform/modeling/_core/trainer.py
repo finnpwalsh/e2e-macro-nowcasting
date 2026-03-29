@@ -14,12 +14,15 @@ class Trainer(ABC):
     target_col: str
     feature_resolver: FeatureResolver
     model_spec: ModelSpec
+    model_params: dict[str, object] | None = None
 
     def fit(self, *, df: pd.DataFrame) -> TrainedModel:
         feature_cols = self.feature_resolver.resolve(df=df)
         X, y = self._split_xy(df=df, feature_cols=feature_cols)
 
-        model = self.model_spec.build()
+        params = self.model_params or {}
+
+        model = self.model_spec.build(params=params)
         model.fit(X, y)
 
         return TrainedModel(
