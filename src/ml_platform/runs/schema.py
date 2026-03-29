@@ -54,7 +54,7 @@ class RunManifest:
     run_identity: RunIdentity
     input_key: str
     spec: RunSpec
-    artifact_keys: ArtifactKeys
+    artifacts: RunArtifacts
     metrics: Metrics
     data_signature: DataSignature
     feature_signature: FeatureSignature | None

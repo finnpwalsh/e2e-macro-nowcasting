@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from .context import RunContext
-from .schema import RunSpec, ArtifactKeys, RunManifest, RunSummary, RunPointer, TrackerResult
+from .schema import RunSpec, RunArtifacts, RunManifest, RunSummary, RunPointer, TrackerResult
 
 from ml_platform.evaluation import Metric, Metrics
 from ml_platform.signatures import DataSignature, FeatureSignature
@@ -26,9 +26,8 @@ class RunTracker:
         metrics: Metrics,
         primary_metric: Metric | None,
         
-        artifact_keys: ArtifactKeys,
-        artifact_writes: Sequence[WriteOp],
-        
+        run_artifact_keys: RunArtifacts,
+        run_artifact_writes: Sequence[WriteOp],
         
         data_signature: DataSignature,
         feature_signature: FeatureSignature | None = None,
@@ -37,7 +36,7 @@ class RunTracker:
             run_identity=ctx.identity,
             input_key=input_key,
             spec=spec,
-            artifact_keys=artifact_keys,
+            artifacts=run_artifact_keys,
             metrics=metrics,
             data_signature=data_signature,
             feature_signature=feature_signature,
@@ -47,21 +46,13 @@ class RunTracker:
             run_identity=ctx.identity,
             input_key=input_key,
             primary_metric=primary_metric,
-            primary_artifact_key=artifact_keys.primary,
-        )
-
-        latest = RunPointer(
-            run_identity=ctx.identity,
-            manifest_key=ctx.keys.run.manifest,
-            summary_key=ctx.keys.run.summary,
-            primary_artifact_key=artifact_keys.primary,
+            primary_artifact_key=run_artifact_keys.primary,
         )
 
         writes = [
-            *artifact_writes,
+            *run_artifact_writes,
             JsonWrite(key=ctx.keys.run.manifest, payload=manifest),
             JsonWrite(key=ctx.keys.run.summary, payload=summary),
-            JsonWrite(key=ctx.keys.pointers.latest, payload=latest),  
         ]
 
         return TrackerResult(
