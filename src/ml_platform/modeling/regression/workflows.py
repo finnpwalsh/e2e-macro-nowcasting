@@ -6,10 +6,10 @@ import pandas as pd
 
 from ml_platform.train import TrainingWorkflow
 from ml_platform.artifacts import PredictionsBuilder
-from ml_platform.evaluation.regression import RegressionEvaluator
 from ml_platform.runs import RunTracker
 
 from .schema import TrainEvaluateResult
+from .evaluator import RegressionEvaluator
 
 
 @dataclass(frozen=True)
