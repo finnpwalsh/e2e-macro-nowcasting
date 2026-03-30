@@ -32,6 +32,27 @@ Production-flavored infra hardening.
 
 ---
 
+### March 30, 2026
+
+**CONTEXT**
+
+- v1.5.1 – shock corrector: `modeling` audit
+
+**DONE**
+
+- confirm `_core` generics
+- slim `regression`, time_series
+- add tracking workflow to generic _core
+- finalize train CLI
+
+**NEXT**
+
+- confirm successful training run
+- `residuals`
+- `select` inside `ml_platform`
+
+---
+
 ### March 29, 2026
 
 **CONTEXT**
