@@ -5,6 +5,8 @@ from typing import Any
 
 import pandas as pd
 
+from ml_platform.storage import Storage
+
 
 @dataclass(frozen=True)
 class Predictions:
@@ -58,3 +60,15 @@ class PredictionsBuilder:
             out["row_id"] = df[self.row_id_col].to_numpy()
 
         return Predictions(df=out)
+
+
+@dataclass(frozen=True)
+class PredictionsResolver:
+    storage: Storage
+
+    def resolve(
+            self,
+            *,
+            key: str,
+    ) -> Predictions:
+        return Predictions(df=self.storage.read_parquet(key=key))
