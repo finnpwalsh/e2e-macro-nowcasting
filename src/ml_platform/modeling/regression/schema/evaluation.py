@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .artifacts import Predictions
+
 
 @dataclass(frozen=True)
 class RegressionMetrics:
@@ -20,3 +22,9 @@ class RegressionMetrics:
             out["mape"] = self.mape
         
         return out
+
+
+@dataclass(frozen=True)
+class RegressionEvaluationResult:
+    predictions: Predictions
+    metrics: RegressionMetrics

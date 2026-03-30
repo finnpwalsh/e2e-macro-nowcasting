@@ -1,11 +1,10 @@
 from .artifacts import Predictions, Residuals
-from .evaluation import RegressionEvaluationInput, RegressionMetrics
-from .training import TrainEvaluateResult
+from .evaluation import RegressionMetrics, RegressionEvaluationResult
+
 
 __all__ = [
     "Predictions",
     "Residuals",
-    "RegressionEvaluationInput",
     "RegressionMetrics",
-    "TrainEvaluateResult",
+    "RegressionEvaluationResult",
 ]

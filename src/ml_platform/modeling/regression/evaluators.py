@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import pandas as pd
 import numpy as np
 from sklearn.metrics import (
     mean_squared_error,
@@ -9,10 +10,8 @@ from sklearn.metrics import (
     r2_score,
 )
 
-from .schema import (
-    Predictions,
-    RegressionMetrics,
-)
+from .schema import Predictions, RegressionMetrics, RegressionEvaluationResult
+from .builders import PredictionsBuilder
 
 
 @dataclass(frozen=True)
@@ -37,4 +36,32 @@ class RegressionScorer:
                 mae=mae,
                 r2=r2,
                 mape=mape,
+        )
+
+
+@dataclass(frozen=True)
+class RegressionEvaluator:
+    scorer: RegressionScorer
+
+    def evaluate(
+        self,
+        *,
+        df: pd.DataFrame,
+        y_hat: np.ndarray,
+        target_col: str,
+        row_id_col: str | None = None,
+    ) -> RegressionEvaluationResult:
+        predictions = PredictionsBuilder(
+            target_col=target_col,
+            row_id_col=row_id_col,
+        ).build(
+            df=df,
+            y_hat=y_hat,
+        )
+
+        metrics = self.scorer.score(evaluation_input=predictions)
+
+        return RegressionEvaluationResult(
+            predictions=predictions,
+            metrics=metrics,
         )
