@@ -3,20 +3,14 @@ from __future__ import annotations
 from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage
-from ml_platform.storage.persistence import JsonWrite, JoblibWrite, ParquetWrite
+from ml_platform.storage.persistence import JsonWrite
 
-from ml_platform.runs import (
-    TrackingOrchestrator,
-    TrackingInput,
-    RunContext,
-    RunPointer,
-    RunArtifacts,
-)
+from ml_platform.runs import RunContext, RunPointer
 
 from ml_platform.modeling.engines import ENGINES
-from ml_platform.modeling._core import Trainer, TrainingWorkflow, FeatureResolver, PredictionsBuilder
+from ml_platform.modeling._core import Trainer, TrainingWorkflow, DefaultFeatureResolver, PredictionsBuilder, ModelDefinition, TrainingTrackingAdapter
 from ml_platform.modeling.regression import RegressionScorer
-from ml_platform.modeling.time_series import TimeSplitter, TimeSeriesTrainingConfig
+from ml_platform.modeling.time_series import TimeSplitter
 
 from .cli import parse_args
 from .config import TrainingRunConfig
@@ -25,7 +19,7 @@ from .config import TrainingRunConfig
 def run(
     storage: Storage,
     run_config: TrainingRunConfig,
-    training_config: TimeSeriesTrainingConfig,
+    model_definition: ModelDefinition,
 ) -> None:
     ctx = RunContext.create(run_family=run_config.run_family)
 
@@ -40,20 +34,20 @@ def run(
     # -----------------------------------------------------
 
     splitter = TimeSplitter(
-        time_col=training_config.time_col,
-        split_date=training_config.split_date,
+        time_col=run_config.row_id_col,
+        split_date=run_config.extras["split_date"],
     )
 
     model_spec = ENGINES.get_spec(
-        engine=training_config.spec.engine,
-        model=training_config.spec.name,
+        engine=model_definition.engine,
+        model=model_definition.name,
     )
 
     trainer = Trainer(
-        target_col=training_config.target_col,
-        feature_resolver=FeatureResolver(),
+        target_col=run_config.target_col,
+        feature_resolver=DefaultFeatureResolver(),
         model_spec=model_spec,
-        model_params=training_config.spec.params,
+        model_params=model_definition.params,
     )
 
     workflow = TrainingWorkflow(
@@ -68,8 +62,8 @@ def run(
     # -----------------------------------------------------
 
     predictions = PredictionsBuilder(
-        target_col=training_config.target_col,
-        row_id_col=training_config.time_col,
+        target_col=run_config.target_col,
+        row_id_col=run_config.row_id_col,
     ).build(df=training_result.valid_df, y_hat=training_result.y_hat)
 
     metrics = RegressionScorer().score(predictions=predictions)
@@ -77,41 +71,15 @@ def run(
     # -----------------------------------------------------
     # Track run
     # -----------------------------------------------------
-    
-    artifacts = RunArtifacts(
-        primary = ctx.keys.models.model,
-        extras={
-            "predictions": ctx.keys.datasets.predictions,
-        }
-    )
 
-    artifact_writes = [
-        JoblibWrite(
-            key=ctx.keys.models.model,
-            obj=training_result.trained_model.model,
-        ),
-        ParquetWrite(
-            key=ctx.keys.datasets.predictions,
-            df=predictions.to_frame(),
-        ),
-    ]
-
-    tracking_input = TrackingInput(
+    tracking_result = TrainingTrackingAdapter().track(
         ctx=ctx,
+        df=df,
         input_key=run_config.input_key,
-        spec=training_config.spec,
-        metrics = metrics,
-        full_df = df,
-        train_df=training_result.train_df,
-        valid_df=training_result.valid_df,
-        feature_cols=training_result.trained_model.feature_cols,
-        artifacts=artifacts,
-        artifact_writes=artifact_writes,
-        run_config=training_config,
-    )
-
-    tracking_result = TrackingOrchestrator().run(
-        tracking_input=tracking_input,
+        model_definition=model_definition,
+        predictions=predictions,
+        training_result=training_result,
+        metrics=metrics,
     )
 
     # -----------------------------------------------------
@@ -141,8 +109,8 @@ def run(
 
 def main() -> None:
     load_dotenv()
-    run_config, training_config = parse_args()
-    run(storage=get_storage(), run_config=run_config, training_config=training_config)
+    run_config, model_definition = parse_args()
+    run(storage=get_storage(), run_config=run_config, model_definition=model_definition)
 
 
 if __name__ == "__main__":
