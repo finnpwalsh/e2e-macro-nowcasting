@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from abc import ABC
 from dataclasses import dataclass
+from abc import ABC
 
 import pandas as pd
 
-from .schema import TrainedModel, ModelSpec
-from .resolvers import FeatureResolver
+from .schema import TrainedModel, TrainingResult
+from .protocols import Splitter, FeatureResolver, ModelSpec
 
 
 @dataclass(frozen=True)
@@ -50,3 +50,43 @@ class Trainer(ABC):
         y = df[self.target_col]
         X = df[feature_cols].copy()
         return X, y
+
+
+@dataclass(frozen=True)
+class TrainingWorkflow:
+    splitter: Splitter
+    trainer: Trainer
+
+    def run(
+        self,
+        *,
+        df: pd.DataFrame,
+    ) -> TrainingResult:
+
+        # -------------------------------
+        # split 
+        # -------------------------------
+
+        train_df, valid_df = self.splitter.split(df=df)
+
+        # -------------------------------
+        # train + predict 
+        # -------------------------------
+
+        trained_model = self.trainer.fit(df=train_df)
+
+        y_hat = self.trainer.predict(
+            trained_model=trained_model,
+            df=valid_df,
+        )
+
+        # -------------------------------
+        # result 
+        # -------------------------------
+
+        return TrainingResult(
+            trained_model=trained_model,
+            train_df=train_df,
+            valid_df=valid_df,
+            y_hat=y_hat,
+        )

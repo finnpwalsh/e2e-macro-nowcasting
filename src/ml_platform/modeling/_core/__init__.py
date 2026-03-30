@@ -1,25 +1,24 @@
-from .evaluators import Scorer
-from .splitters import Splitter
-from .trainer import Trainer
-from .workflows import TrainingWorkflow
-from .resolvers import FeatureResolver
+from .defaults import DefaultFeatureResolver, RandomSplitter
+from .evaluate import Metrics, Scorer, EvaluationWorkflow
+from .protocols import Splitter, FeatureResolver, FitPredictModel, ModelSpec
+from .train import Trainer, TrainingWorkflow
 from .schema import (
-    Metric,
-    Metrics,
     TrainedModel,
     TrainingResult,
-    ModelSpec,
 )
 
 __all__ = [
+    "DefaultFeatureResolver",
+    "RandomSplitter",
+    "Metrics",
     "Scorer",
+    "EvaluationWorkflow",
     "Splitter",
+    "FeatureResolver",
+    "FitPredictModel",
+    "ModelSpec",
     "Trainer",
     "TrainingWorkflow",
-    "FeatureResolver",
-    "Metric",
-    "Metrics",
     "TrainedModel",
     "TrainingResult",
-    "ModelSpec",
 ]
