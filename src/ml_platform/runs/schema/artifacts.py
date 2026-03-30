@@ -9,11 +9,12 @@ class RunArtifacts:
     primary: str | None = None
     extras: Mapping[str, str] = field(default_factory=dict)
 
-    def to_dict(self) -> dict[str, str]:
-        out: dict[str, str] = {}
-
-        if self.primary is not None:
-            out["primary"] = self.primary
+    def __post_init__(self) -> None:
+        if "primary" in self.extras:
+            raise ValueError("'extras' may not contain reserved key 'primary'.")
         
-        out.update(dict(self.extras))
-        return out
+    def to_dict(self) -> dict[str, str]:
+        return {
+            "primary": self.primary,
+            "extras": dict(self.extras),
+        }

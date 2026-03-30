@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Mapping, Any
 
 from ml_platform.signatures import DataSignature, FeatureSignature
 from ml_platform.modeling._core import Metrics
@@ -15,6 +16,7 @@ class RunManifest:
     run_identity: RunIdentity
     input_key: str
     spec: RunSpec
+    run_config: Mapping[str, Any]
     artifacts: RunArtifacts
     metrics: Metrics
     data_signature: DataSignature
