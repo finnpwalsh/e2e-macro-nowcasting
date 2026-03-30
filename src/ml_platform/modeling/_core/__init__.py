@@ -1,5 +1,6 @@
 from .defaults import DefaultFeatureResolver, RandomSplitter
-from .evaluate import Metrics, Scorer, EvaluationWorkflow
+from .evaluate import Metrics, Scorer
+from .predictions import Predictions, PredictionsBuilder
 from .protocols import Splitter, FeatureResolver, FitPredictModel, ModelSpec
 from .train import Trainer, TrainingWorkflow
 from .schema import (
@@ -12,7 +13,8 @@ __all__ = [
     "RandomSplitter",
     "Metrics",
     "Scorer",
-    "EvaluationWorkflow",
+    "Predictions",
+    "PredictionsBuilder",
     "Splitter",
     "FeatureResolver",
     "FitPredictModel",

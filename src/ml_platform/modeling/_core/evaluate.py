@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from typing import Generic, TypeVar, Protocol
+from typing import TypeVar, Protocol, Generic
 from abc import ABC, abstractmethod
+
+from .predictions import Predictions
 
 
 class Metrics(Protocol):
@@ -18,22 +20,10 @@ class Metrics(Protocol):
             ) from e
         
 
-EvaluationInputT = TypeVar("EvaluationInputT")
-EvaluationResultT = TypeVar("EvaluationResultT")
 MetricsT = TypeVar("MetricsT", bound=Metrics)
 
 
-class Scorer(ABC, Generic[EvaluationInputT, MetricsT]):
+class Scorer(ABC, Generic[MetricsT]):
     @abstractmethod
-    def score(self, *, evaluation_input: EvaluationInputT) -> MetricsT:
+    def score(self, *, predictions: Predictions) -> MetricsT:
         raise NotImplementedError
-
-
-class EvaluationWorkflow(Protocol, Generic[EvaluationInputT, EvaluationResultT]):
-    scorer: Scorer
-
-    def evaluate(
-        self,
-        *,
-        evaluation_input: EvaluationInputT,
-    ) -> EvaluationResultT: ...
