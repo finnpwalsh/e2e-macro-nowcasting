@@ -6,12 +6,20 @@ from ml_platform.storage import Storage, get_storage, JsonWrite
 from ml_platform.runs import RunContext, RunPointer
 
 from ml_platform.modeling.engines import ENGINES
-from ml_platform.modeling._core import Trainer, TrainingWorkflow, DefaultFeatureResolver, PredictionsBuilder, ModelDefinition, TrainingTrackingAdapter
+from ml_platform.modeling._core import (
+    TrainingRunConfig,
+    ModelDefinition,
+    DefaultFeatureResolver,
+    PredictionsBuilder,
+    Trainer,
+    TrainingWorkflow,
+    TrainingTrackingAdapter
+)
+
 from ml_platform.modeling.regression import RegressionScorer
 from ml_platform.modeling.time_series import TimeSplitter
 
 from .cli import parse_args
-from .config import TrainingRunConfig
 
 
 def run(

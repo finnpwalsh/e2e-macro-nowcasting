@@ -1,5 +1,6 @@
+from .config import TrainingRunConfig, parse_training_run_config
 from .defaults import DefaultFeatureResolver, RandomSplitter
-from .definitions import ModelDefinition
+from .definitions import ModelDefinition, parse_model_definition
 from .evaluate import Metrics, Scorer
 from .predictions import Predictions, PredictionsBuilder, PredictionsResolver
 from .protocols import Splitter, FeatureResolver, FitPredictModel, ModelSpec
@@ -8,9 +9,12 @@ from .track import TrainingTrackingAdapter
 from .train import Trainer, TrainingWorkflow
 
 __all__ = [
+    "TrainingRunConfig",
+    "parse_training_run_config",
     "DefaultFeatureResolver",
     "RandomSplitter",
     "ModelDefinition",
+    "parse_model_definition",
     "Metrics",
     "Scorer",
     "Predictions",

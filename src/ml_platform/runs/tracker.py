@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from typing import Mapping, Any
 from collections.abc import Sequence
 
 from .context import RunContext
-from .schema import RunSpec, RunArtifacts, RunManifest, RunSummary, TrackerResult
+from .schema import RunArtifacts, RunManifest, RunSummary, TrackerResult
 
 from ml_platform.modeling._core import Metrics
 from ml_platform.signatures import DataSignature, FeatureSignature
@@ -21,7 +22,7 @@ class RunTracker:
         ctx: RunContext,
         input_key: str,
         
-        spec: RunSpec,
+        spec: Mapping[str, Any],
         
         metrics: Metrics,
         primary_metric_name: str | None,
