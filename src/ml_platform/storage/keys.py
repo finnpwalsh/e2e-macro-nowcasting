@@ -4,13 +4,13 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class RunKeys:
-    model_name: str
+    run_family: str
     run_id: str
     root: str = "artifacts/runs"
 
     @property
     def dir(self) -> str:
-        return f"{self.root}/{self.model_name}/{self.run_id}"
+        return f"{self.root}/{self.run_family}/{self.run_id}"
     
     @property
     def manifest(self) -> str:
@@ -29,7 +29,7 @@ class ModelKeys:
 
     @property
     def dir(self) -> str:
-        return f"{self.root}/{self.model_name}/{self.run_id}"
+        return f"{self.root}/{self.run_family}/{self.run_id}"
     
     @property
     def model(self) -> str:
@@ -38,13 +38,13 @@ class ModelKeys:
 
 @dataclass(frozen=True)
 class DatasetKeys:
-    model_name: str
+    run_family: str
     run_id: str
     root: str = "artifacts/datasets"
 
     @property
     def dir(self) -> str:
-        return f"{self.root}/{self.model_name}/{self.run_id}"
+        return f"{self.root}/{self.run_family}/{self.run_id}"
     
     @property
     def predictions(self) -> str:
@@ -53,16 +53,16 @@ class DatasetKeys:
 
 @dataclass(frozen=True)
 class PointerKeys:
-    model_name: str
+    run_family: str
     root: str = "artifacts/pointers"
 
     @property
     def latest(self) -> str:
-        return f"{self.root}/{self.model_name}/latest.json"
+        return f"{self.root}/{self.run_family}/latest.json"
     
     @property
     def champion(self) -> str:
-        return f"{self.root}/{self.model_name}/champion.json"
+        return f"{self.root}/{self.run_family}/champion.json"
 
 
 # ---------------------
@@ -71,21 +71,21 @@ class PointerKeys:
 
 @dataclass(frozen=True)
 class Keys:
-    model_name: str
+    run_family: str
     run_id: str
 
     @property
     def run(self) -> RunKeys:
-        return RunKeys(self.model_name, self.run_id)
+        return RunKeys(self.run_family, self.run_id)
     
     @property
     def models(self) -> ModelKeys:
-        return ModelKeys(self.model_name, self.run_id)
+        return ModelKeys(self.run_family, self.run_id)
     
     @property
     def datasets(self) -> DatasetKeys:
-        return DatasetKeys(self.model_name, self.run_id)
+        return DatasetKeys(self.run_family, self.run_id)
     
     @property
     def pointers(self) -> PointerKeys:
-        return PointerKeys(self.model_name)
+        return PointerKeys(self.run_family)

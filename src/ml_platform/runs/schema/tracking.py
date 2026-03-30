@@ -7,8 +7,7 @@ from collections.abc import Sequence
 import pandas as pd
 
 from ml_platform.modeling._core import Metrics
-from ml_platform.storage.persistence import WriteOp, PersistencePlan
-
+from ml_platform.storage import WriteOp, PersistencePlan
 from ml_platform.runs import RunContext
 
 from .spec import RunSpec

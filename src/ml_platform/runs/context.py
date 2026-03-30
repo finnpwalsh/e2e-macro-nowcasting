@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from ml_platform.storage.keys import Keys
+from ml_platform.storage import Keys
 from .schema import RunIdentity
 
 

@@ -7,8 +7,8 @@ from collections.abc import Sequence
 
 import pandas as pd
 
-from ml_platform.storage import Storage
-from ml_platform.storage.serde import write_joblib, write_json
+from .base import Storage
+from .serde import write_joblib, write_json
 
 
 class WriteOp(ABC):

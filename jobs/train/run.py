@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from dotenv import load_dotenv
 
-from ml_platform.storage import Storage, get_storage
-from ml_platform.storage.persistence import JsonWrite
-
+from ml_platform.storage import Storage, get_storage, JsonWrite
 from ml_platform.runs import RunContext, RunPointer
 
 from ml_platform.modeling.engines import ENGINES

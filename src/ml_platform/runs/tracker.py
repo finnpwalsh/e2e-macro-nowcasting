@@ -7,7 +7,7 @@ from .schema import RunSpec, RunArtifacts, RunManifest, RunSummary, TrackerResul
 
 from ml_platform.modeling._core import Metrics
 from ml_platform.signatures import DataSignature, FeatureSignature
-from ml_platform.storage.persistence import (
+from ml_platform.storage import (
     PersistencePlan,
     JsonWrite,
     WriteOp,

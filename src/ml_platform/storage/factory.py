@@ -8,8 +8,7 @@ from __future__ import annotations
 import os
 
 from .base import Storage
-from .backends.local import LocalStorage
-from .backends.s3 import S3Storage
+from .backends import LocalStorage, S3Storage
 
 
 def get_storage() -> Storage:
@@ -19,7 +18,7 @@ def get_storage() -> Storage:
     Defaults to local filesystem storage.
     """
 
-    backend = os.getenv("STORAGE_BACKEND", "local").lower()
+    backend = os.getenv("STORAGE_BACKEND", "s3").lower()
 
     if backend == "local":
         return LocalStorage()
