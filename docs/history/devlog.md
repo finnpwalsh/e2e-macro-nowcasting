@@ -10,7 +10,7 @@ Doc for keeping track of development activity. Split by major version + day.
 
 For easy copy/paste logging:
 
-### March XX, 2026
+### April XX, 2026
 
 **CONTEXT**
 
@@ -29,6 +29,29 @@ For easy copy/paste logging:
 ## V1
 
 Production-flavored infra hardening.
+
+---
+
+### April 4, 2026
+
+**CONTEXT**
+
+- v1.5.1 – shock corrector: `promotion`
+
+**DONE**
+
+- mv `macro_nowcast/select` -> `ml_platform/promotion`
+- made promotion domain-agnostic
+
+**NEXT**
+
+- `jobs/select`: add CLI for
+    - `model_name`
+    - `promotion_metric_name`
+- update State Machines with new CLI
+- decouple prepare from train/track/select (new state machine)
+- training run with new CLI
+- then finally add shock corrector logic
 
 ---
 
