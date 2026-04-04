@@ -3,7 +3,7 @@ from __future__ import annotations
 from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage
-from macro_nowcast.select.selector import ChampionSelector
+from ml_platform.promotion import PromotionService
 
 
 def run(storage: Storage) -> None:
@@ -12,8 +12,11 @@ def run(storage: Storage) -> None:
     # Select champion
     # -----------------------------------------------------
 
-    selector = ChampionSelector(model_name="baseline")
-    result = selector.select(storage=storage)
+    service = PromotionService(model_name="baseline")
+    result = service.run(
+        storage=storage,
+        promotion_metric_name="rmse",
+    )
 
     # -----------------------------------------------------
     # Persist
