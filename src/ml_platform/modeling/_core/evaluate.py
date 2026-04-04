@@ -1,23 +1,32 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TypeVar, Protocol, Generic
 from abc import ABC, abstractmethod
 
 from .predictions import Predictions
 
 
+@dataclass(frozen=True)
+class Metric:
+    name: str
+    value: float
+    higher_is_better: bool
+
+    def compare_to(self, *, other: Metric) -> int:
+        if self.name != other.name:
+            raise ValueError("Cannot compare metrics with different names.")
+        if self.value == other.value: return 0
+
+        if self.higher_is_better:
+            return 1 if self.value > other.value else -1
+        else:
+            return -1 if self.value > other.value else 1
+
+
 class Metrics(Protocol):
     def to_dict(self) -> dict[str, float]: ...
-
-    def get_value(self, name: str) -> float:
-        values = self.to_dict()
-        try: 
-            return values[name]
-        except KeyError as e:
-            available = ", ".join(sorted(values))
-            raise ValueError(
-                f"Unknown metric '{name}'. Available metrics: {available}"
-            ) from e
+    def get_metric(self, *, name: str) -> Metric: ...
         
 
 MetricsT = TypeVar("MetricsT", bound=Metrics)

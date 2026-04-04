@@ -1,7 +1,7 @@
 from .config import TrainingRunConfig, parse_training_run_config
 from .defaults import DefaultFeatureResolver, RandomSplitter
 from .definitions import ModelDefinition, parse_model_definition
-from .evaluate import Metrics, Scorer
+from .evaluate import Metric, Metrics, Scorer
 from .predictions import Predictions, PredictionsBuilder, PredictionsResolver
 from .protocols import Splitter, FeatureResolver, FitPredictModel, ModelSpec
 from .schema import TrainedModel, TrainingResult
@@ -15,6 +15,7 @@ __all__ = [
     "RandomSplitter",
     "ModelDefinition",
     "parse_model_definition",
+    "Metric",
     "Metrics",
     "Scorer",
     "Predictions",
