@@ -16,17 +16,18 @@ from .schema import ResolvedTargets, PromotionResult, PromotionTarget, Promotion
 
 @dataclass(frozen=True)
 class PromotionService:
-    model_name: str
+    model_family: str
 
     def run(
         self,
         *,
         storage: Storage,
-        promotion_metric_name: str,
+        primary_metric: str,
+        minimum_proportional_improvement: float,
     ) -> PromotionResult:
         targets: ResolvedTargets = PromotionResolver().resolve_targets(
             storage=storage,
-            model_name=self.model_name,
+            model_family=self.model_family,
         )
 
         challenger = targets.challenger
@@ -34,10 +35,13 @@ class PromotionService:
 
         promotion_metrics: PromotionMetrics = PromotionResolver().resolve_metrics(
             targets=targets,
-            promotion_metric_name=promotion_metric_name,
+            primary_metric=primary_metric,
         )
 
-        decision = PromotionPolicy().decide(promotion_metrics=promotion_metrics)
+        decision = PromotionPolicy().decide(
+            promotion_metrics=promotion_metrics,
+            minimum_proportional_improvement=minimum_proportional_improvement,
+        )
 
         if decision.chosen == PromotionTarget.CHALLENGER:
             champion_after = challenger.pointer

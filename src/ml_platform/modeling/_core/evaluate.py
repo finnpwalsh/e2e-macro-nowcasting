@@ -13,15 +13,23 @@ class Metric:
     value: float
     higher_is_better: bool
 
-    def compare_to(self, *, other: Metric) -> int:
+    def improvement_over(self, *, other: Metric) -> float:
         if self.name != other.name:
             raise ValueError("Cannot compare metrics with different names.")
-        if self.value == other.value: return 0
+        
+        if self.higher_is_better != other.higher_is_better:
+            raise ValueError("Cannot compare metrics with different optimization directions.")
+        
+        if self.value == other.value:
+            return 0.0
+        
+        if abs(other.value) < 1e-12:
+            raise ValueError("Cannot compute relative improvement over zero.")
 
         if self.higher_is_better:
-            return 1 if self.value > other.value else -1
+            return (self.value - other.value) / abs(other.value)
         else:
-            return -1 if self.value > other.value else 1
+            return (other.value - self.value) / abs(other.value)
 
 
 class Metrics(Protocol):

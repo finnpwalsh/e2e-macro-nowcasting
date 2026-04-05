@@ -4,6 +4,6 @@
     },
     "policy": {
         "primary_metric": "rmse",
-        "minimum_relative_improvement": 0.01 
+        "minimum_proportional_improvement": 0.01 
     }
 }

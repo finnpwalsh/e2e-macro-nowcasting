@@ -8,6 +8,7 @@ class PromotionPolicy:
         self,
         *,
         promotion_metrics: PromotionMetrics,
+        minimum_proportional_improvement: float
     ) -> PromotionDecision:
         if promotion_metrics.champion_metric is None:
             return PromotionDecision(
@@ -15,8 +16,13 @@ class PromotionPolicy:
                 challenger_metric=promotion_metrics.challenger_metric,
                 champion_metric=None,
             )
-
-        if promotion_metrics.challenger_metric.compare_to(promotion_metrics.champion_metric) > 0: 
+        
+        improvement = (
+            promotion_metrics.challenger_metric
+            .improvement_over(promotion_metrics.champion_metric)
+        )
+        
+        if (improvement > minimum_proportional_improvement):
             chosen = PromotionTarget.CHALLENGER
         else:
             chosen = PromotionTarget.CHAMPION

@@ -11,10 +11,10 @@ from .schema import ResolvedTargets, PromotionMetrics
 class PromotionResolver:
     def resolve_targets(
         storage: Storage,
-        model_name: str,
+        model_family: str,
     ) -> ResolvedTargets:
 
-        pointers = PointerKeys(model_name=model_name)
+        pointers = PointerKeys(run_family=model_family)
         
         # -----------------------------------------------
         # Challenger
@@ -71,7 +71,7 @@ class PromotionResolver:
     
     def resolve_metrics(
             targets: ResolvedTargets,
-            promotion_metric_name: str,
+            primary_metric: str,
     ) -> PromotionMetrics:
         champion = targets.champion
         challenger = targets.challenger
@@ -79,9 +79,9 @@ class PromotionResolver:
         if champion is None:
             champion_metric = None
         else:
-            champion_metric = champion.summary.metrics.get_metric(promotion_metric_name)
+            champion_metric = champion.summary.metrics.get_metric(primary_metric)
         
-        challenger_metric = challenger.summary.metrics.get_metric(promotion_metric_name)
+        challenger_metric = challenger.summary.metrics.get_metric(primary_metric)
         
         return PromotionMetrics(
             challenger_metric=challenger_metric,
