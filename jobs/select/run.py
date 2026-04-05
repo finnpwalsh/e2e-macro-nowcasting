@@ -15,7 +15,7 @@ def run(storage: Storage, config: SelectionConfig) -> None:
     # Select champion
     # -----------------------------------------------------
 
-    service = PromotionService(model_name=config.target.model_family)
+    service = PromotionService(model_family=config.target.model_family)
     result = service.run(
         storage=storage,
         promotion_metric_name=config.policy.primary_metric,
