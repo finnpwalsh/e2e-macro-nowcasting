@@ -29,7 +29,7 @@ class ModelDefinition:
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "engine": self.name,
+            "engine": self.engine,
             "name": self.name,
             "params": dict(self.params),
         }
