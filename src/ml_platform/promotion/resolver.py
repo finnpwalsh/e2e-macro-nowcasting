@@ -11,10 +11,10 @@ from .schema import ResolvedTargets, PromotionMetrics
 class PromotionResolver:
     def resolve_targets(
         storage: Storage,
-        model_family: str,
+        run_family: str,
     ) -> ResolvedTargets:
 
-        pointers = PointerKeys(run_family=model_family)
+        pointers = PointerKeys(run_family=run_family)
         
         # -----------------------------------------------
         # Challenger

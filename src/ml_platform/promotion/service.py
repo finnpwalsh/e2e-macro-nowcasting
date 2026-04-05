@@ -16,7 +16,7 @@ from .schema import ResolvedTargets, PromotionResult, PromotionTarget, Promotion
 
 @dataclass(frozen=True)
 class PromotionService:
-    model_family: str
+    run_family: str
 
     def run(
         self,
@@ -27,7 +27,7 @@ class PromotionService:
     ) -> PromotionResult:
         targets: ResolvedTargets = PromotionResolver().resolve_targets(
             storage=storage,
-            model_family=self.model_family,
+            run_family=self.run_family,
         )
 
         challenger = targets.challenger
@@ -47,7 +47,7 @@ class PromotionService:
             champion_after = challenger.pointer
             writes = [
                 JsonWrite(
-                    key=PointerKeys(model_name=self.model_name).champion,
+                    key=PointerKeys(run_family=self.run_family).champion,
                     payload=champion_after,
                 )
             ]

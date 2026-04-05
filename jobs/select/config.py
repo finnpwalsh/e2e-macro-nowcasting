@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class SelectionTargetConfig:
-    model_family: str
+    run_family: str
 
 
 @dataclass(frozen=True)

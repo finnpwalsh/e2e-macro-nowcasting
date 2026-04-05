@@ -37,12 +37,12 @@ def parse_selection_config(value: Any) -> SelectionConfig:
 
 
 def _parse_target_config(target: dict) -> SelectionTargetConfig:
-    model_family = target.get("model_family")
+    run_family = target.get("run_family")
     
-    if not isinstance(model_family, str) or not model_family.strip():
+    if not isinstance(run_family, str) or not run_family.strip():
         raise SystemExit("--select-config['target']['model_family'] must be a non-empty string.")
     
-    return SelectionTargetConfig(model_family)
+    return SelectionTargetConfig(run_family)
 
 
 def _parse_policy_config(policy: dict) -> SelectionPolicyConfig:
