@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage, JsonWrite
 from ml_platform.runs import RunContext, RunPointer
+from ml_platform.signatures import DataSignatureBuilder, FeatureSignatureBuilder
 
 from ml_platform.modeling.engines import ENGINES
 from ml_platform.modeling._core import (
@@ -11,8 +12,8 @@ from ml_platform.modeling._core import (
     PredictionsBuilder,
     Trainer,
     TrainingWorkflow,
-    TrainingTrackingAdapter
 )
+from ml_platform.modeling._core.track import TrainingTrackingAdapter
 
 from ml_platform.modeling.regression import RegressionScorer
 from ml_platform.modeling.time_series import TimeSplitter
@@ -49,7 +50,7 @@ def run(
 
     trainer = Trainer(
         target_col=config.run.target_col,
-        feature_resolver=DefaultFeatureResolver(),
+        feature_resolver=DefaultFeatureResolver(exclude_cols=[config.split.time_col]),
         model_spec=model_spec,
         model_params=config.model.params,
     )

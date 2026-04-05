@@ -47,7 +47,7 @@ module "config" {
 
   ssm_parameters = {
     STORAGE_BACKEND = "S3"
-    IMAGE_TAG       = "v1.5.0"
+    IMAGE_TAG       = "v1.5.1"
   }
 
   secrets = [

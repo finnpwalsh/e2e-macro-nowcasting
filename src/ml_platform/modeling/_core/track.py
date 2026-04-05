@@ -15,10 +15,6 @@ from .schema import TrainingResult, ModelDefinition
 
 @dataclass(frozen=True)
 class TrainingTrackingAdapter:
-    tracker: RunTracker
-    data_signature_builder: DataSignatureBuilder
-    feature_signature_builder: FeatureSignatureBuilder
-
     def track(
         self,
         *,
@@ -41,7 +37,7 @@ class TrainingTrackingAdapter:
         artifact_writes = [
             JoblibWrite(
                 key=ctx.keys.models.model,
-                payload=training_result.trained_model.model,
+                obj=training_result.trained_model.model,
             ),
             ParquetWrite(
                 key=ctx.keys.datasets.predictions,
@@ -49,18 +45,18 @@ class TrainingTrackingAdapter:
             ),
         ]
 
-        data_signature = self.data_signature_builder.build(
+        data_signature = DataSignatureBuilder().build(
             df=df,
             train_df=training_result.train_df,
             valid_df=training_result.valid_df,
         )
 
-        feature_signature = self.feature_signature_builder.build(
+        feature_signature = FeatureSignatureBuilder().build(
             df=df,
             feature_cols=training_result.trained_model.feature_cols,
         )
 
-        return self.tracker.track(
+        return RunTracker().track(
             ctx=ctx,
             input_key=input_key,
             spec=model_definition,

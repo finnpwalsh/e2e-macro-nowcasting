@@ -26,7 +26,7 @@ ACCOUNT_ID := $(shell aws sts get-caller-identity \
 ECR := $(ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 
 IMAGE ?= prepare
-IMAGE_TAG ?= v1.5.0
+IMAGE_TAG ?= v1.5.1
 
 # ===== Login =====
 .PHONY: docker-login
@@ -63,11 +63,15 @@ push-runtimes:
 	$(MAKE) push-image IMAGE=select
 
 # ===== Build & Push =====
-.PHONY: build-push-image
+.PHONY: build-push-image, build-push-runtimes
 
 build-push-image:
 	$(MAKE) build-image
 	$(MAKE) push-image
+
+build-push-runtimes:
+	$(MAKE) build-runtimes
+	$(MAKE) push-runtimes
 
 
 # --------------------------------------------------------

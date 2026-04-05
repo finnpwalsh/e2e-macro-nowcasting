@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ml_platform.modeling.engines import SpecRegistry
+from ..registry import SpecRegistry
 from .specs import RidgeSpec
 
 

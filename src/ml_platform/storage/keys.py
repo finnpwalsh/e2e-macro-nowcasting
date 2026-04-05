@@ -23,7 +23,7 @@ class RunKeys:
 
 @dataclass(frozen=True)
 class ModelKeys:
-    model_name: str
+    run_family: str
     run_id: str
     root: str = "artifacts/models"
 

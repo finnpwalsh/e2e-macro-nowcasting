@@ -1,7 +1,7 @@
 {
     "run": {
         "run_family": "baseline",
-        "input_key": "data/model_ready/anchors.parquet",
+        "input_key": "data/model_ready/anchors/table.parquet",
         "target_col": "cpi_all_items"
     },
     "split": {

@@ -5,8 +5,6 @@ from typing import Mapping
 
 from ml_platform.modeling._core import ModelSpec
 
-from .sklearn import SKLEARN
-
 
 @dataclass(frozen=True)
 class SpecRegistry:
@@ -37,6 +35,8 @@ class EngineRegistry:
         
         return spec_registry.get_spec(model=model)
 
+
+from .sklearn import SKLEARN
 
 ENGINES = EngineRegistry(
     engines = {

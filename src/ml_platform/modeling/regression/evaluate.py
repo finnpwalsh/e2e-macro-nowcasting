@@ -30,33 +30,17 @@ class RegressionMetrics:
         
         return out
     
-    def get_metric(self, *, name: str) -> Metric:
+    def get_metric(self, *, name: str) -> Metric | None:
         name = name.strip().lower()
         match name:
             case "rmse":
-                return Metric(
-                    name=name,
-                    value=self.rmse,
-                    higher_is_better=False,
-                )
+                return self.rmse
             case "mae":
-                return Metric(
-                    name=name,
-                    value=self.mae,
-                    higher_is_better=False,
-                )
+                return self.mae
             case "r2":
-                return Metric(
-                    name=name,
-                    value=self.r2,
-                    higher_is_better=True,
-                )
+                return self.r2
             case "mape":
-                return Metric(
-                    name=name,
-                    value=self.mape,
-                    higher_is_better=False,
-                ) if self.mape is not None else None
+                return self.mape
             case _:
                 raise KeyError(f"Unknown metric: {name}")
 
@@ -71,10 +55,17 @@ class RegressionScorer:
         y = np.asarray(predictions.y)
         y_hat = np.asarray(predictions.y_hat)
 
+        valid = ~np.isnan(y) & ~np.isnan(y_hat)
+        if not np.any(valid):
+            raise ValueError("Cannot score predictions: all rows contain NaN in y or y_hat.")
+        
+        y = y[valid]
+        y_hat = y_hat[valid]
+
         rmse = Metric(
             name = "rmse",
             value = float(np.sqrt(mean_squared_error(y, y_hat))),
-            higher_is_better=True
+            higher_is_better=False
         )
 
         mae = Metric(

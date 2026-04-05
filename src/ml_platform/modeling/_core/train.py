@@ -17,7 +17,10 @@ class Trainer(ABC):
     model_params: dict[str, object] | None = None
 
     def fit(self, *, df: pd.DataFrame) -> TrainedModel:
-        feature_cols = self.feature_resolver.resolve(df=df)
+        feature_cols = self.feature_resolver.resolve(
+            df=df,
+            target_col=self.target_col,
+        )
         X, y = self._split_xy(df=df, feature_cols=feature_cols)
 
         params = self.model_params or {}

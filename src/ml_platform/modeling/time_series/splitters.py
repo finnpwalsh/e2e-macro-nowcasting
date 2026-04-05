@@ -13,12 +13,10 @@ class TimeSplitter:
     def split(
         self,
         df: pd.DataFrame,
-        *,
-        split_date: str,
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
         
-        train_df = df[df[self.time_col] < split_date].copy()
-        valid_df = df[df[self.time_col] >= split_date].copy()
+        train_df = df[df[self.time_col] < self.split_date].copy()
+        valid_df = df[df[self.time_col] >= self.split_date].copy()
         
         if train_df.empty or valid_df.empty:
             raise ValueError(
