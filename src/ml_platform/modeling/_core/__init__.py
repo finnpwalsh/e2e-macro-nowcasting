@@ -1,11 +1,11 @@
 from .defaults import DefaultFeatureResolver, RandomSplitter
-from .definitions import ModelDefinition
 from .evaluate import Metric, Metrics, Scorer
 from .predictions import Predictions, PredictionsBuilder, PredictionsResolver
 from .protocols import Splitter, FeatureResolver, FitPredictModel, ModelSpec
-from .schema import TrainedModel, TrainingResult
+from .schema import TrainedModel, TrainingResult, ModelDefinition
 from .track import TrainingTrackingAdapter
 from .train import Trainer, TrainingWorkflow
+
 
 __all__ = [
     "DefaultFeatureResolver",
