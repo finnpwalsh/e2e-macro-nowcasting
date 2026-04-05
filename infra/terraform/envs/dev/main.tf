@@ -208,39 +208,39 @@ module "orchestration" {
   project = var.project
   env     = var.env
 
-  execution_role_arn   = module.compute.execution_role_arn
-  task_role_arns       = module.runtimes.runtime_role_arns
+  execution_role_arn = module.compute.execution_role_arn
+  task_role_arns     = module.runtimes.runtime_role_arns
 
   machines = {
 
     # -----------------------------------------
-    # Anchors
+    # [ANCHORS][PREPARE]
     # -----------------------------------------
 
-    anchors = {
+    anchors_prepare = {
       definition = jsonencode({
         StartAt = "PrepareAnchorsFred"
-        States  = {
+        States = {
 
           # ---------------------------------
           # [ANCHORS][PREPARE][FRED]
           # ---------------------------------
 
           PrepareAnchorsFred = {
-            Type = "Task"
+            Type     = "Task"
             Resource = "arn:aws:states:::ecs:runTask.sync"
             Parameters = {
-                Cluster = module.compute.ecs_cluster_arn
-                LaunchType = "FARGATE"
-                NetworkConfiguration = local.sfn_network_configuration
-                
-                TaskDefinition = module.tasks.task_definition_arns["prepare"]
-                Overrides = {
-                    ContainerOverrides = [{
-                        Name    = "${var.project}-${var.env}-prepare"
-                        Command = ["python", "-m", "jobs.prepare.anchors.sources.fred"]
-                    }]
-                }
+              Cluster              = module.compute.ecs_cluster_arn
+              LaunchType           = "FARGATE"
+              NetworkConfiguration = local.sfn_network_configuration
+
+              TaskDefinition = module.tasks.task_definition_arns["prepare"]
+              Overrides = {
+                ContainerOverrides = [{
+                  Name    = "${var.project}-${var.env}-prepare"
+                  Command = ["python", "-m", "jobs.prepare.anchors.sources.fred"]
+                }]
+              }
             }
             Next = "AnchorsAssemble"
           }
@@ -250,20 +250,20 @@ module "orchestration" {
           # ---------------------------------
 
           AnchorsAssemble = {
-            Type = "Task"
+            Type     = "Task"
             Resource = "arn:aws:states:::ecs:runTask.sync"
             Parameters = {
-                Cluster = module.compute.ecs_cluster_arn
-                LaunchType = "FARGATE"
-                TaskDefinition = module.tasks.task_definition_arns["prepare"]
-                NetworkConfiguration = local.sfn_network_configuration
-                
-                Overrides = {
-                    ContainerOverrides = [{
-                        Name    = "${var.project}-${var.env}-prepare"
-                        Command = ["python", "-m", "jobs.prepare.anchors.assemble"]
-                    }]
-                }
+              Cluster              = module.compute.ecs_cluster_arn
+              LaunchType           = "FARGATE"
+              TaskDefinition       = module.tasks.task_definition_arns["prepare"]
+              NetworkConfiguration = local.sfn_network_configuration
+
+              Overrides = {
+                ContainerOverrides = [{
+                  Name    = "${var.project}-${var.env}-prepare"
+                  Command = ["python", "-m", "jobs.prepare.anchors.assemble"]
+                }]
+              }
             }
             Next = "AnchorsBuildFeatures"
           }
@@ -273,66 +273,81 @@ module "orchestration" {
           # ---------------------------------
 
           AnchorsBuildFeatures = {
-            Type = "Task"
+            Type     = "Task"
             Resource = "arn:aws:states:::ecs:runTask.sync"
             Parameters = {
-                Cluster = module.compute.ecs_cluster_arn
-                LaunchType = "FARGATE"
-                TaskDefinition = module.tasks.task_definition_arns["prepare"]
-                NetworkConfiguration = local.sfn_network_configuration
+              Cluster              = module.compute.ecs_cluster_arn
+              LaunchType           = "FARGATE"
+              TaskDefinition       = module.tasks.task_definition_arns["prepare"]
+              NetworkConfiguration = local.sfn_network_configuration
 
-                Overrides = {
-                    ContainerOverrides = [{
-                        Name    = "${var.project}-${var.env}-prepare"
-                        Command = ["python", "-m", "jobs.prepare.anchors.build_features"]
-                    }]
-                }
+              Overrides = {
+                ContainerOverrides = [{
+                  Name    = "${var.project}-${var.env}-prepare"
+                  Command = ["python", "-m", "jobs.prepare.anchors.build_features"]
+                }]
+              }
             }
-            Next = "TrainBaseline"
+            End = true
           }
+        }
+      })
+    }
 
-          # ---------------------------------
-          # [ANCHORS][TRAIN][BASELINE]
-          # ---------------------------------
+    # ---------------------------------
+    # [BASELINE][TRAIN]
+    # ---------------------------------
+
+    baseline_train = {
+      definition = jsonencode({
+        StartAt = "TrainBaseline"
+        States = {
 
           TrainBaseline = {
-            Type = "Task"
+            Type     = "Task"
             Resource = "arn:aws:states:::ecs:runTask.sync"
             Parameters = {
-                Cluster = module.compute.ecs_cluster_arn
-                LaunchType = "FARGATE"
-                TaskDefinition = module.tasks.task_definition_arns["train"]
-                NetworkConfiguration = local.sfn_network_configuration
+              Cluster              = module.compute.ecs_cluster_arn
+              LaunchType           = "FARGATE"
+              TaskDefinition       = module.tasks.task_definition_arns["train"]
+              NetworkConfiguration = local.sfn_network_configuration
 
-                Overrides = {
-                    ContainerOverrides = [{
-                        Name    = "${var.project}-${var.env}-train"
-                        Command = ["python", "-m", "jobs.train.run"]
-                    }]
-                }
+              Overrides = {
+                ContainerOverrides = [{
+                  Name    = "${var.project}-${var.env}-train"
+                  Command = ["python", "-m", "jobs.train.run", "--config", "configs/train/baseline.json"]
+                }]
+              }
             }
-            Next = "SelectChampion"
+            End = true
           }
+        }
+      })
+    }
 
-          # ---------------------------------
-          # [ANCHORS][SELECT][BASELINE]
-          # ---------------------------------
+    # ---------------------------------
+    # [BASELINE][SELECT]
+    # ---------------------------------
+    baseline_select = {
+      definition = jsonencode({
+        StartAt = "SelectBaselineChampion"
+        States = {
 
-          SelectChampion = {
-            Type = "Task"
+          SelectBaselineChampion = {
+            Type     = "Task"
             Resource = "arn:aws:states:::ecs:runTask.sync"
             Parameters = {
-                Cluster = module.compute.ecs_cluster_arn
-                LaunchType = "FARGATE"
-                TaskDefinition = module.tasks.task_definition_arns["select"]
-                NetworkConfiguration = local.sfn_network_configuration
+              Cluster              = module.compute.ecs_cluster_arn
+              LaunchType           = "FARGATE"
+              TaskDefinition       = module.tasks.task_definition_arns["select"]
+              NetworkConfiguration = local.sfn_network_configuration
 
-                Overrides = {
-                    ContainerOverrides = [{
-                        Name    = "${var.project}-${var.env}-select"
-                        Command = ["python", "-m", "jobs.select.run"]
-                    }]
-                }
+              Overrides = {
+                ContainerOverrides = [{
+                  Name    = "${var.project}-${var.env}-select"
+                  Command = ["python", "-m", "jobs.select.run", "--config", "configs/select/baseline.json"]
+                }]
+              }
             }
             End = true
           }
@@ -356,7 +371,7 @@ module "scheduler" {
 
   schedules = {
     anchors = {
-      machine = "anchors"
+      machine             = "anchors_prepare"
       schedule_expression = "cron(0 12 2 * ? *)"
     }
   }

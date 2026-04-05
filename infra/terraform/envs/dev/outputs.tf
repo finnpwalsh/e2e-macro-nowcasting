@@ -54,8 +54,8 @@ output "task_definition_arns" { value = module.tasks.task_definition_arns }
 # Network
 # -----------------------------------------------------
 
-output "vpc_id"                { value = module.network.vpc_id }
-output "public_subnets"        { value = module.network.public_subnet_ids }
+output "vpc_id" { value = module.network.vpc_id }
+output "public_subnets" { value = module.network.public_subnet_ids }
 output "svc_security_group_id" { value = module.network.svc_security_group_id }
 
 # -----------------------------------------------------
