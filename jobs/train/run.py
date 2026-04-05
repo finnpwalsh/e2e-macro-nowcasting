@@ -19,41 +19,40 @@ from ml_platform.modeling.regression import RegressionScorer
 from ml_platform.modeling.time_series import TimeSplitter
 
 from .cli import parse_args
-from .config import TrainingRunConfig
+from .config import TrainingConfig
 
 
 def run(
     storage: Storage,
-    run_config: TrainingRunConfig,
-    model_definition: ModelDefinition,
+    config: TrainingConfig,
 ) -> None:
-    ctx = RunContext.create(run_family=run_config.run_family)
+    ctx = RunContext.create(run_family=config.run.run_family)
 
     # -----------------------------------------------------
     # Load dataset
     # -----------------------------------------------------
     
-    df = storage.read_parquet(key=run_config.input_key)
+    df = storage.read_parquet(key=config.run.input_key)
 
     # -----------------------------------------------------
     # Train
     # -----------------------------------------------------
 
     splitter = TimeSplitter(
-        time_col=run_config.row_id_col,
-        split_date=run_config.extras["split_date"],
+        time_col=config.split.time_col,
+        split_date=config.split.split_date,
     )
 
     model_spec = ENGINES.get_spec(
-        engine=model_definition.engine,
-        model=model_definition.name,
+        engine=config.model.engine,
+        model=config.model.name,
     )
 
     trainer = Trainer(
-        target_col=run_config.target_col,
+        target_col=config.run.target_col,
         feature_resolver=DefaultFeatureResolver(),
         model_spec=model_spec,
-        model_params=model_definition.params,
+        model_params=config.model.params,
     )
 
     workflow = TrainingWorkflow(
@@ -68,8 +67,8 @@ def run(
     # -----------------------------------------------------
 
     predictions = PredictionsBuilder(
-        target_col=run_config.target_col,
-        row_id_col=run_config.row_id_col,
+        target_col=config.run.target_col,
+        row_id_col=config.run.row_id_col,
     ).build(df=training_result.valid_df, y_hat=training_result.y_hat)
 
     metrics = RegressionScorer().score(predictions=predictions)
@@ -81,8 +80,8 @@ def run(
     tracking_result = TrainingTrackingAdapter().track(
         ctx=ctx,
         df=df,
-        input_key=run_config.input_key,
-        model_definition=model_definition,
+        input_key=config.run.input_key,
+        model_definition=config.model,
         predictions=predictions,
         training_result=training_result,
         metrics=metrics,
