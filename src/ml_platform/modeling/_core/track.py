@@ -10,8 +10,7 @@ from ml_platform.storage.persistence import JoblibWrite, ParquetWrite
 
 from .predictions import Predictions
 from .evaluate import Metrics
-from .schema import TrainingResult
-from .definitions import ModelDefinition
+from .schema import TrainingResult, ModelDefinition
 
 
 @dataclass(frozen=True)

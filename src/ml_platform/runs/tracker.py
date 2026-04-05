@@ -25,7 +25,6 @@ class RunTracker:
         spec: Mapping[str, Any],
         
         metrics: Metrics,
-        primary_metric_name: str | None,
         
         artifacts: RunArtifacts,
         artifact_writes: Sequence[WriteOp],
@@ -33,11 +32,6 @@ class RunTracker:
         data_signature: DataSignature,
         feature_signature: FeatureSignature | None = None,
     ) -> TrackerResult:
-        primary_metric = (
-            metrics.get_value(name=primary_metric_name)
-            if primary_metric_name is not None
-            else None
-        )
         
         manifest = RunManifest(
             run_identity=ctx.identity,
@@ -52,7 +46,7 @@ class RunTracker:
         summary = RunSummary(
             run_identity=ctx.identity,
             input_key=input_key,
-            primary_metric=primary_metric,
+            metrics=metrics,
             primary_artifact_key=artifacts.primary,
         )
 
