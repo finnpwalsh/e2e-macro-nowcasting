@@ -42,12 +42,11 @@ Production-flavored infra hardening.
 
 - mv `macro_nowcast/select` -> `ml_platform/promotion`
 - made promotion domain-agnostic
+- `jobs/select`: add CLI
+- create `configs`
 
 **NEXT**
 
-- `jobs/select`: add CLI for
-    - `model_name`
-    - `promotion_metric_name`
 - update State Machines with new CLI
 - decouple prepare from train/track/select (new state machine)
 - training run with new CLI
