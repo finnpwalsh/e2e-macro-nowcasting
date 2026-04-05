@@ -7,7 +7,6 @@ from ml_platform.runs import RunContext, RunPointer
 
 from ml_platform.modeling.engines import ENGINES
 from ml_platform.modeling._core import (
-    ModelDefinition,
     DefaultFeatureResolver,
     PredictionsBuilder,
     Trainer,
@@ -18,7 +17,7 @@ from ml_platform.modeling._core import (
 from ml_platform.modeling.regression import RegressionScorer
 from ml_platform.modeling.time_series import TimeSplitter
 
-from .cli import parse_args
+from .cli import resolve_training_config
 from .config import TrainingConfig
 
 
@@ -114,8 +113,8 @@ def run(
 
 def main() -> None:
     load_dotenv()
-    run_config, model_definition = parse_args()
-    run(storage=get_storage(), run_config=run_config, model_definition=model_definition)
+    config = resolve_training_config()
+    run(storage=get_storage(), config=config)
 
 
 if __name__ == "__main__":

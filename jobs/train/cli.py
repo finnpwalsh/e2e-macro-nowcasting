@@ -1,52 +1,18 @@
 from __future__ import annotations
 
-import argparse
-import json
-from pathlib import Path
 from typing import Any
 
 from .config import RunConfig, SplitConfig, TrainingConfig
 from ml_platform.modeling._core import ModelDefinition
 
-
-def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "--config",
-        required=True,
-    )
-
-    return parser
+from jobs._shared.cli import resolve_config
 
 
-def parse_args() -> argparse.Namespace:
-    return build_parser().parse_args()
+def resolve_training_config() -> TrainingConfig:
+    return resolve_config(parse_training_config)
 
 
-def load_training_config(path: str) -> TrainingConfig:
-    config_path = Path(path)
-
-    if not config_path.exists():
-        raise SystemExit(f"--config file does not exist: {config_path}")
-    
-    if not config_path.is_file():
-        raise SystemExit(f"--config must point to a file: {config_path}")
-    
-    try:
-        raw = config_path.read_text(encoding="utf-8")
-    except OSError as e:
-        raise SystemExit(f"Failed to read config file '{config_path}': {e}") from e
-    
-    try:
-        value: Any = json.loads(raw)
-    except json.JSONDecodeError as e:
-        raise SystemExit(f"Config file '{config_path}' must contain valid JSON: {e}")
-    
-    return parse_training_config_dict(value)
-
-
-def parse_training_config_dict(value: Any) -> TrainingConfig:
+def parse_training_config(value: Any) -> TrainingConfig:
     if not isinstance(value, dict):
         raise SystemExit("Training config must deserialize to a JSON object.")
     
@@ -62,9 +28,9 @@ def parse_training_config_dict(value: Any) -> TrainingConfig:
     if not isinstance(model_value, dict):
         raise SystemExit("config['model'] must be an object.")
     
-    run = parse_run_config(run_value)
-    split = parse_split_config(split_value)
-    model = parse_model_definition(model_value)
+    run = _parse_run_config(run_value)
+    split = _parse_split_config(split_value)
+    model = _parse_model_definition(model_value)
 
     return TrainingConfig(
         run=run,
@@ -73,7 +39,7 @@ def parse_training_config_dict(value: Any) -> TrainingConfig:
     )
 
 
-def parse_run_config(value: dict[str, Any]) -> RunConfig:
+def _parse_run_config(value: dict[str, Any]) -> RunConfig:
     run_family = value.get("run_family")
     if not isinstance(run_family, str) or not run_family.strip():
         raise SystemExit("config['run']['run_family'] must be a non-empty string.")
@@ -98,7 +64,7 @@ def parse_run_config(value: dict[str, Any]) -> RunConfig:
     )
 
 
-def parse_split_config(value: dict[str, Any]) -> SplitConfig:
+def _parse_split_config(value: dict[str, Any]) -> SplitConfig:
     split_type = value.get("type")
     if not split_type == "time":
         raise SystemExit("config['split']['type'] must be 'time'.")
@@ -122,7 +88,7 @@ def parse_split_config(value: dict[str, Any]) -> SplitConfig:
     )
 
 
-def parse_model_definition(value: dict[str, Any]) -> ModelDefinition:
+def _parse_model_definition(value: dict[str, Any]) -> ModelDefinition:
     engine = value.get("engine")
     if not isinstance(engine, str) or not engine.strip():
         raise SystemExit("config['model']['engine'] must be a non-empty string.")
