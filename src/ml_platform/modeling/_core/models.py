@@ -1,21 +1,9 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Protocol, Mapping, Any
 
 import pandas as pd
-
-
-class Splitter(Protocol):
-    def split(
-        self,
-        *,
-        df: pd.DataFrame,
-    ) -> tuple[pd.DataFrame, pd.DataFrame]:
-        ...
-
-
-class FeatureResolver(Protocol): 
-    def resolve(self, *, df: pd.DataFrame, target_col: str) -> list[str]: ...
 
 
 class FitPredictModel(Protocol):
@@ -43,3 +31,15 @@ class ModelSpec(Protocol):
     ) -> FitPredictModel: ...
 
 
+@dataclass(frozen=True)
+class ModelDefinition:
+    engine: str
+    name: str
+    params: Mapping[str, Any]
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "engine": self.engine,
+            "name": self.name,
+            "params": dict(self.params),
+        }

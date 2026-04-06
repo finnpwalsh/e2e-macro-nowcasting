@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TypeVar, Protocol, Generic
-from abc import ABC, abstractmethod
-
-from .predictions import Predictions
+from typing import Protocol
 
 
 @dataclass(frozen=True)
@@ -35,12 +32,3 @@ class Metric:
 class Metrics(Protocol):
     def to_dict(self) -> dict[str, float]: ...
     def get_metric(self, *, name: str) -> Metric: ...
-        
-
-MetricsT = TypeVar("MetricsT", bound=Metrics)
-
-
-class Scorer(ABC, Generic[MetricsT]):
-    @abstractmethod
-    def score(self, *, predictions: Predictions) -> MetricsT:
-        raise NotImplementedError
