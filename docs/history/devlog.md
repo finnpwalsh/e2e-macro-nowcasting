@@ -32,6 +32,26 @@ Production-flavored infra hardening.
 
 ---
 
+### April 5, 2026
+
+**CONTEXT**
+
+- v1.5.1 – shock corrector: `select` audit
+
+**DONE**
+
+- create `configs`
+- `jobs/select`: add CLI
+- completed full run throughs of baseline `train`, `select`
+
+---
+
+**NEXT**
+
+- `residuals`
+
+---
+
 ### April 4, 2026
 
 **CONTEXT**
@@ -42,8 +62,6 @@ Production-flavored infra hardening.
 
 - mv `macro_nowcast/select` -> `ml_platform/promotion`
 - made promotion domain-agnostic
-- `jobs/select`: add CLI
-- create `configs`
 
 **NEXT**
 
