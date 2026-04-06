@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 import pandas as pd
 
+from .predictions import Predictions
+
 
 @dataclass(frozen=True)
 class TrainedModel:
@@ -18,4 +20,4 @@ class TrainingResult:
     trained_model: TrainedModel
     train_df: pd.DataFrame
     valid_df: pd.DataFrame
-    y_hat: pd.Series
+    predictions: Predictions

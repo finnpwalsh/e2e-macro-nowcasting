@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from abc import ABC
 
 import pandas as pd
 
@@ -11,7 +10,7 @@ from .models import ModelSpec
 
 
 @dataclass(frozen=True)
-class Trainer(ABC):
+class Trainer:
     target_col: str
     feature_resolver: FeatureResolver
     model_spec: ModelSpec
