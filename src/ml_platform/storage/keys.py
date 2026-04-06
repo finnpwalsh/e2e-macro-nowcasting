@@ -49,6 +49,10 @@ class DatasetKeys:
     @property
     def predictions(self) -> str:
         return f"{self.dir}/predictions.parquet"
+    
+    @property
+    def residuals(self) -> str:
+        return f"{self.dir}/residuals.parquet"
 
 
 @dataclass(frozen=True)

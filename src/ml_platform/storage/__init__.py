@@ -1,6 +1,6 @@
 from .base import Storage
 from .factory import get_storage
-from .keys import Keys
+from .keys import PointerKeys, Keys
 from .persistence import (
     JsonWrite,
     JoblibWrite,
@@ -12,6 +12,7 @@ from .persistence import (
 __all__ = [
     "Storage",
     "get_storage",
+    "PointerKeys",
     "Keys",
     "JsonWrite",
     "JoblibWrite",
