@@ -4,19 +4,16 @@ from dotenv import load_dotenv
 
 from ml_platform.storage import Storage, get_storage, JsonWrite
 from ml_platform.runs import RunContext, RunPointer
-from ml_platform.signatures import DataSignatureBuilder, FeatureSignatureBuilder
 
 from ml_platform.modeling.engines import ENGINES
 from ml_platform.modeling._core import (
     DefaultFeatureResolver,
-    PredictionsBuilder,
     Trainer,
-    TrainingWorkflow,
+    TemporalSplitter,
 )
-from ml_platform.modeling._core.track import TrainingTrackingAdapter
-
 from ml_platform.modeling.regression import RegressionScorer
-from ml_platform.modeling.time_series import TimeSplitter
+from ml_platform.modeling.workflows import TrainingWorkflow
+from ml_platform.modeling.tracking import TrainingRunTracker
 
 from .cli import resolve_training_config
 from .config import TrainingConfig
@@ -29,18 +26,18 @@ def run(
     ctx = RunContext.create(run_family=config.run.run_family)
 
     # -----------------------------------------------------
-    # Load dataset
+    # load dataset
     # -----------------------------------------------------
     
     df = storage.read_parquet(key=config.run.input_key)
 
     # -----------------------------------------------------
-    # Train
+    # splitter, model spec, trainer
     # -----------------------------------------------------
 
-    splitter = TimeSplitter(
+    splitter = TemporalSplitter(
         time_col=config.split.time_col,
-        split_date=config.split.split_date,
+        split_at=config.split.split_date,
     )
 
     model_spec = ENGINES.get_spec(
@@ -55,40 +52,32 @@ def run(
         model_params=config.model.params,
     )
 
-    workflow = TrainingWorkflow(
+    # -----------------------------------------------------
+    # train + compute metrics
+    # -----------------------------------------------------
+
+    training_result = TrainingWorkflow(
         splitter=splitter,
         trainer=trainer,
-    )
+    ).run(df=df)
 
-    training_result = workflow.run(df=df)
-
-    # -----------------------------------------------------
-    # Evaluate
-    # -----------------------------------------------------
-
-    predictions = PredictionsBuilder(
-        target_col=config.run.target_col,
-        row_id_col=config.run.row_id_col,
-    ).build(df=training_result.valid_df, y_hat=training_result.y_hat)
-
-    metrics = RegressionScorer().score(predictions=predictions)
+    metrics = RegressionScorer().score(predictions=training_result.predictions)
 
     # -----------------------------------------------------
-    # Track run
+    # track run
     # -----------------------------------------------------
 
-    tracking_result = TrainingTrackingAdapter().track(
+    tracking_result = TrainingRunTracker().track(
         ctx=ctx,
         df=df,
         input_key=config.run.input_key,
         model_definition=config.model,
-        predictions=predictions,
         training_result=training_result,
         metrics=metrics,
     )
 
     # -----------------------------------------------------
-    # Update latest pointer
+    # update latest pointer
     # -----------------------------------------------------
 
     pointer = RunPointer(
@@ -106,7 +95,7 @@ def run(
     plan = tracking_result.persistence_plan.extend([pointer_write])
 
     # -----------------------------------------------------
-    # Persist
+    # persist
     # -----------------------------------------------------
 
     plan.persist(storage=storage)
