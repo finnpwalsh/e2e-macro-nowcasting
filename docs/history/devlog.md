@@ -32,6 +32,22 @@ Production-flavored infra hardening.
 
 ---
 
+### April XX, 2026
+
+**CONTEXT**
+
+- v1.5.1 – shock corrector: `residuals`
+
+**DONE**
+
+- `modeling` audit
+
+**NEXT**
+
+- `residuals`
+
+---
+
 ### April 5, 2026
 
 **CONTEXT**
