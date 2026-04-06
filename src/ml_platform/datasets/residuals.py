@@ -6,8 +6,8 @@ from collections.abc import Sequence
 from ml_platform.storage import Storage, PointerKeys, Keys
 from ml_platform.storage.persistence import ParquetWrite, PersistencePlan, WriteOp
 from ml_platform.storage.serde import read_json
-from ml_platform.runs.schema import RunPointer, RunManifest
-from ml_platform.modeling._core import Predictions
+from ml_platform.runs.schema import RunPointer, RunIdentity
+from ml_platform.modeling._core import PredictionsResolver
 from ml_platform.modeling.regression import ResidualsBuilder
 
 
@@ -32,25 +32,21 @@ class ResidualsService:
             key=ptr_key
         ))
 
-        manifest = RunManifest(**read_json(
-            storage=storage,
-            key=ptr.manifest_key,
-        ))
-
-        predictions = Predictions(**storage.read_parquet(key=manifest.artifacts["predictions"]))
-
-        residuals = ResidualsBuilder().build(predictions=predictions)
+        run_identity = RunIdentity(**ptr.run_identity)
 
         keys = Keys(
             run_family=run_family,
-            run_id = ptr.run_identity.run_id,
+            run_id = run_identity.run_id,
         )
+
+        predictions = PredictionsResolver(storage).resolve(key=keys.datasets.predictions)
+        residuals = ResidualsBuilder().build(predictions=predictions)
         
         writes: Sequence[WriteOp] = (
             ParquetWrite(
                 key=keys.datasets.residuals,
-                df=residuals.to_frame(),
+                df=residuals.to_frame,
             ),
         )
 
-        PersistencePlan(writes).persist(storage)
+        PersistencePlan(writes=writes).persist(storage=storage)

@@ -23,3 +23,6 @@ def main() -> None:
         storage=get_storage(),
         config=resolve_residuals_config(),
     )
+
+if __name__ == "__main__":
+    main()
