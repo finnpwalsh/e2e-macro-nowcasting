@@ -32,7 +32,7 @@ Production-flavored infra hardening.
 
 ---
 
-### April XX, 2026
+### April 6, 2026
 
 **CONTEXT**
 
@@ -41,10 +41,14 @@ Production-flavored infra hardening.
 **DONE**
 
 - `modeling` audit
+- created + validated:
+    - `jobs/prepare/residuals`
+    - `ml_platform/datasets/residuals`
+- we now have the target ready to go for shock correction 
 
 **NEXT**
 
-- `residuals`
+- shock corrector feature engineering
 
 ---
 
