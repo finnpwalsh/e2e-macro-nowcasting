@@ -19,7 +19,7 @@ class PromotionPolicy:
         
         improvement = (
             promotion_metrics.challenger_metric
-            .improvement_over(promotion_metrics.champion_metric)
+            .improvement_over(other=promotion_metrics.champion_metric)
         )
         
         if (improvement > minimum_proportional_improvement):

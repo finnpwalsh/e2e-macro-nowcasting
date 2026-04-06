@@ -4,12 +4,15 @@ from ml_platform.storage import Storage
 from ml_platform.storage.serde import read_json
 from ml_platform.storage.keys import PointerKeys
 from ml_platform.runs.schema import RunPointer, RunSummary, ResolvedRun
+from ml_platform.modeling._core import Metric
 
 from .schema import ResolvedTargets, PromotionMetrics
 
 
 class PromotionResolver:
     def resolve_targets(
+        self,
+        *,
         storage: Storage,
         run_family: str,
     ) -> ResolvedTargets:
@@ -70,6 +73,8 @@ class PromotionResolver:
         )
     
     def resolve_metrics(
+            self,
+            *,
             targets: ResolvedTargets,
             primary_metric: str,
     ) -> PromotionMetrics:
@@ -79,9 +84,9 @@ class PromotionResolver:
         if champion is None:
             champion_metric = None
         else:
-            champion_metric = champion.summary.metrics.get_metric(primary_metric)
+            champion_metric = Metric(**champion.summary.metrics[primary_metric])
         
-        challenger_metric = challenger.summary.metrics.get_metric(primary_metric)
+        challenger_metric = Metric(**challenger.summary.metrics[primary_metric])
         
         return PromotionMetrics(
             challenger_metric=challenger_metric,

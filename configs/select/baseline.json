@@ -1,6 +1,6 @@
 {
     "target": {
-        "model_family": "baseline"
+        "run_family": "baseline"
     },
     "policy": {
         "primary_metric": "rmse",

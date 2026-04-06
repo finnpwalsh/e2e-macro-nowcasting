@@ -22,8 +22,8 @@ class PromotionTarget(str, Enum):
 @dataclass(frozen=True)
 class PromotionDecision:
     chosen: PromotionTarget
-    challenger_metrics: dict[str, float]
-    champion_metrics: dict[str, float] | None
+    challenger_metric: Metric
+    champion_metric: Metric | None = None
 
 
 @dataclass(frozen=True)

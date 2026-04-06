@@ -18,7 +18,8 @@ def run(storage: Storage, config: SelectionConfig) -> None:
     service = PromotionService(run_family=config.target.run_family)
     result = service.run(
         storage=storage,
-        promotion_metric_name=config.policy.primary_metric,
+        primary_metric=config.policy.primary_metric,
+        minimum_proportional_improvement=config.policy.minimum_proportional_improvement,
     )
 
     # -----------------------------------------------------

@@ -11,7 +11,7 @@ class SelectionTargetConfig:
 @dataclass(frozen=True)
 class SelectionPolicyConfig:
     primary_metric: str
-    minimum_relative_improvement: float
+    minimum_proportional_improvement: float
 
 
 @dataclass(frozen=True)
