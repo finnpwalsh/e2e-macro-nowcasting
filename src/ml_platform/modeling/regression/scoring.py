@@ -9,40 +9,8 @@ from sklearn.metrics import (
     r2_score,
 )
 
-from ml_platform.modeling._core import Predictions, Metric
-
-
-@dataclass(frozen=True)
-class RegressionMetrics:
-    rmse: Metric
-    mae: Metric
-    r2: Metric
-    mape: Metric | None
-
-    def to_dict(self) -> dict[str, float]:
-        out =  {
-            "rmse": self.rmse.value,
-            "mae": self.mae.value,
-            "r2": self.r2.value,
-        }
-        if self.mape is not None:
-            out["mape"] = self.mape.value
-        
-        return out
-    
-    def get_metric(self, *, name: str) -> Metric | None:
-        name = name.strip().lower()
-        match name:
-            case "rmse":
-                return self.rmse
-            case "mae":
-                return self.mae
-            case "r2":
-                return self.r2
-            case "mape":
-                return self.mape
-            case _:
-                raise KeyError(f"Unknown metric: {name}")
+from ..core import Metric, Predictions
+from .metrics import RegressionMetrics
 
 
 @dataclass(frozen=True)

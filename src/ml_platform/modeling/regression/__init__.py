@@ -1,10 +1,7 @@
-from .evaluate import RegressionMetrics, RegressionScorer
-from .residuals import Residuals, ResidualsBuilder, ResidualsResolver
+from .metrics import RegressionMetrics
+from .scoring import RegressionScorer
 
 __all__ = [
     "RegressionMetrics",
     "RegressionScorer",
-    "Residuals",
-    "ResidualsBuilder",
-    "ResidualsResolver",
 ]
