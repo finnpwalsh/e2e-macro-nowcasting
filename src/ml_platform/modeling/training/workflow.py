@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
+from ..core.features import FeaturesResolver, DefaultFeaturesResolver
 from ..core.predictions import PredictionsBuilder
 from ..core.splitting import Splitter
 
@@ -13,6 +14,7 @@ from .contract import TrainingResult
 
 @dataclass(frozen=True)
 class TrainingWorkflow:
+    features_resolver: FeaturesResolver
     splitter: Splitter
     trainer: Trainer
 
@@ -22,27 +24,17 @@ class TrainingWorkflow:
         df: pd.DataFrame,
         row_id_col: str | None = None,
     ) -> TrainingResult:
-
-        # -------------------------------
-        # split 
-        # -------------------------------
+        
+        feature_cols = self.features_resolver.resolve(columns=df.columns)
 
         train_df, valid_df = self.splitter.split(df=df)
 
-        # -------------------------------
-        # train + predict 
-        # -------------------------------
-
-        trained_model = self.trainer.fit(df=train_df)
+        trained_model = self.trainer.fit(df=train_df, feature_cols=feature_cols)
 
         y_hat = self.trainer.predict(
             trained_model=trained_model,
             df=valid_df,
         )
-
-        # -------------------------------
-        # build predictions 
-        # -------------------------------
 
         predictions = PredictionsBuilder(
             target_col=trained_model.target_col,

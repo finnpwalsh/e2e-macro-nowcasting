@@ -1,9 +1,8 @@
-from .resolvers import FeatureResolver, DefaultFeatureResolver
-from .signature import FeaturesSignature, FeaturesSignatureBuilder
+from .resolvers import FeatureResolver
+from .signature import FeatureSignature, FeatureSignatureBuilder
 
 __all__ = [
     "FeatureResolver",
-    "DefaultFeatureResolver",
-    "FeaturesSignature",
-    "FeaturesSignatureBuilder",
+    "FeatureSignature",
+    "FeatureSignatureBuilder",
 ]

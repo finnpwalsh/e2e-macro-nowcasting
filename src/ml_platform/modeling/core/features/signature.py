@@ -7,7 +7,7 @@ import pandas as pd
 
 
 @dataclass(frozen=True)
-class FeaturesSignature:
+class FeatureSignature:
     n_features: int
     features: list[str]
     feature_dtypes: dict[str, str]
@@ -22,16 +22,16 @@ class FeaturesSignature:
         }
 
 
-class FeaturesSignatureBuilder:
+class FeatureSignatureBuilder:
     def build(
             self,
             *,
             df: pd.DataFrame,
             feature_cols: list[str],
-    ) -> FeaturesSignature:
+    ) -> FeatureSignature:
         feature_df = df[feature_cols].copy()
 
-        return FeaturesSignature(
+        return FeatureSignature(
             n_features=len(feature_cols),
             features=list(feature_cols),
             feature_dtypes={c: str(df[c].dtype) for c in feature_cols},
