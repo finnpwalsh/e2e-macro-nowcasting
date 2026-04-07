@@ -3,7 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
 
-from ..core import Predictions, Metrics
+from ..core.predictions import Predictions
+from ..core.metrics import Metrics
 
 
 MetricsT = TypeVar("MetricsT", bound=Metrics)

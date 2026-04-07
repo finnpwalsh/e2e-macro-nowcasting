@@ -1,18 +1,11 @@
 from __future__ import annotations
 
-from typing import Any
 from dataclasses import dataclass
 
 import pandas as pd
 
-from ..core import Predictions
-
-
-@dataclass(frozen=True)
-class TrainedModel:
-    model: Any
-    feature_cols: list[str]
-    target_col: str
+from ..core.predictions import Predictions
+from ..core.models import TrainedModel
 
 
 @dataclass(frozen=True)

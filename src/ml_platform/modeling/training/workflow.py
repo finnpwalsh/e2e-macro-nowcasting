@@ -4,11 +4,11 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from ..core import PredictionsBuilder
+from ..core.predictions import PredictionsBuilder
+from ..core.splitting import Splitter
 
-from .splitters import Splitter
 from .trainer import Trainer
-from .contracts import TrainingResult
+from .contract import TrainingResult
 
 
 @dataclass(frozen=True)

@@ -4,9 +4,8 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from .contracts import TrainedModel
-from .features import FeatureResolver
-from .models import ModelSpec
+from ..core.features import FeatureResolver
+from ..core.models import ModelSpec, TrainedModel
 
 
 @dataclass(frozen=True)

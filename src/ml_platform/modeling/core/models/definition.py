@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 
-class Task(str, Enum):
+class ModelFamily(str, Enum):
     REGRESSION = "regression"
     CLASSIFICATION = "classification"
 
@@ -12,14 +12,14 @@ class Task(str, Enum):
 @dataclass(frozen=True)
 class ModelDefinition:
     engine: str
-    task: Task
-    name: str
+    family: ModelFamily
+    model: str
     params: dict
 
     def to_dict(self) -> dict:
         return {
             "engine": self.engine,
-            "task": self.task,
-            "name": self.name,
+            "family": self.family,
+            "model": self.model,
             "params": self.params,
         }
