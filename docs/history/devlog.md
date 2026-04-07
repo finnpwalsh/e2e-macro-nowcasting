@@ -32,6 +32,28 @@ Production-flavored infra hardening.
 
 ---
 
+### April 7, 2026
+
+**CONTEXT**
+
+- v1.5.1 – shock corrector: `ml_platform` refactor
+
+**DONE**
+
+- `ml_platform` split
+    - `modeling`
+    - `platform` – reusable concepts
+    - `services` – anything that coordinates multiple domains
+- move `residuals` from `ml_platform` -> `macro_nowcast`
+- make `runs` generic (not dependent upon `modeling`)
+
+**NEXT**
+
+- make storage, persistence generic
+- update services
+
+---
+
 ### April 6, 2026
 
 **CONTEXT**
