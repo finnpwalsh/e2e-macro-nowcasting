@@ -4,9 +4,9 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from ..core.features import FeaturesResolver, DefaultFeaturesResolver
+from .features import FeatureResolver
 from ..core.predictions import PredictionsBuilder
-from ..core.splitting import Splitter
+from .splitting import Splitter
 
 from .trainer import Trainer
 from .contract import TrainingResult
@@ -14,7 +14,7 @@ from .contract import TrainingResult
 
 @dataclass(frozen=True)
 class TrainingWorkflow:
-    features_resolver: FeaturesResolver
+    feature_resolver: FeatureResolver
     splitter: Splitter
     trainer: Trainer
 
@@ -25,7 +25,7 @@ class TrainingWorkflow:
         row_id_col: str | None = None,
     ) -> TrainingResult:
         
-        feature_cols = self.features_resolver.resolve(columns=df.columns)
+        feature_cols = self.feature_resolver.resolve(columns=df.columns)
 
         train_df, valid_df = self.splitter.split(df=df)
 
