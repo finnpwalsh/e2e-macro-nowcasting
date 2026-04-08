@@ -1,9 +1,16 @@
-from .contract import TrainingResult
+from .schemas import TrainedModel, TrainingResult
 from .trainer import Trainer
-from .workflow import TrainingWorkflow
+from .service import TrainingService
+from .splitting import Splitter, RandomSplitter, TemporalSplitter
+from .features import FeatureSelector
 
 __all__ = [
+    "TrainedModel",
     "TrainingResult",
     "Trainer",
-    "TrainingWorkflow",
+    "TrainingService",
+    "Splitter",
+    "RandomSplitter",
+    "TemporalSplitter",
+    "FeatureSelector",
 ]

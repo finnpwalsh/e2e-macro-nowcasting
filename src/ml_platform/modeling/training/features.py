@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class FeatureResolver:
+class FeatureSelector:
     target_col: str
     exclude_cols: tuple[str, ...] = ()
 

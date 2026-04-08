@@ -4,17 +4,18 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from .features import FeatureResolver
-from ..core.predictions import PredictionsBuilder
-from .splitting import Splitter
+from ..outputs import PredictionsBuilder
+from ..metadata import FeatureSignatureBuilder
 
+from .features import FeatureSelector
+from .splitting import Splitter
 from .trainer import Trainer
-from .contract import TrainingResult
+from .schemas import TrainingResult
 
 
 @dataclass(frozen=True)
-class TrainingWorkflow:
-    feature_resolver: FeatureResolver
+class TrainingService:
+    feature_selector: FeatureSelector
     splitter: Splitter
     trainer: Trainer
 
@@ -24,12 +25,14 @@ class TrainingWorkflow:
         df: pd.DataFrame,
         row_id_col: str | None = None,
     ) -> TrainingResult:
-        
-        feature_cols = self.feature_resolver.resolve(columns=df.columns)
-
         train_df, valid_df = self.splitter.split(df=df)
+        
+        feature_cols = self.feature_selector.resolve(columns=train_df.columns)
 
-        trained_model = self.trainer.fit(df=train_df, feature_cols=feature_cols)
+        trained_model = self.trainer.fit(
+            df=train_df,
+            feature_cols=feature_cols,
+        )
 
         y_hat = self.trainer.predict(
             trained_model=trained_model,
@@ -44,13 +47,13 @@ class TrainingWorkflow:
             y_hat=y_hat,
         )
 
-        # -------------------------------
-        # result 
-        # -------------------------------
+        feature_signature = FeatureSignatureBuilder().build(
+            df=train_df,
+            feature_cols=feature_cols,
+        )
 
         return TrainingResult(
             trained_model=trained_model,
-            train_df=train_df,
-            valid_df=valid_df,
             predictions=predictions,
+            feature_signature=feature_signature,
         )

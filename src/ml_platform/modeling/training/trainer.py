@@ -4,7 +4,9 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from ..core.models import ModelSpec, TrainedModel
+from ..models import ModelSpec
+
+from .schemas import TrainedModel
 
 
 @dataclass(frozen=True)
