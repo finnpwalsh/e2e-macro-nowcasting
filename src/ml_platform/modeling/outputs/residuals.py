@@ -3,9 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import pandas as pd
 
-from ml_platform.modeling._core import Predictions
-
-from ml_platform.storage import Storage
+from .predictions import Predictions
 
 
 @dataclass(frozen=True)
@@ -18,7 +16,18 @@ class Residuals:
 
         if missing:
             raise ValueError(f"Residuals missing required columns: {sorted(missing)}")
+        
+        df = self.df.copy()
+
+        for col in ["y", "y_hat", "residual"]:
+            df[col] = pd.to_numeric(df[col], errors="raise")
+
+        if len(df) == 0:
+            raise ValueError("Residuals cannot be empty.")
+        
+        object.__setattr__(self, "df", df)
     
+
     @property
     def y(self) -> pd.Series:
         return self.df["y"]
@@ -32,7 +41,7 @@ class Residuals:
         return self.df["residual"]
     
     @property
-    def row_id(self) -> pd.Series:
+    def row_id(self) -> pd.Series | None:
         return self.df["row_id"] if "row_id" in self.df.columns else None
     
     @property
@@ -57,15 +66,3 @@ class ResidualsBuilder:
             out["row_id"] = predictions.row_id
 
         return Residuals(df=out)
-
-
-@dataclass(frozen=True)
-class ResidualsResolver:
-    storage: Storage
-
-    def resolve(
-            self,
-            *,
-            key: str,
-    ) -> Residuals:
-        return Residuals(self.storage.read_parquet(key=key))
