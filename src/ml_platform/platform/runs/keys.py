@@ -10,7 +10,7 @@ class RunKeys:
 
     @property
     def run_dir(self) -> str:
-        return f"{self.root}/{self.run_family}/{self.run_id}"
+        return f"{self.runs_root}/{self.run_family}/{self.run_id}"
     
     @property
     def manifest(self) -> str:
@@ -19,6 +19,13 @@ class RunKeys:
     @property
     def summary(self) -> str:
         return f"{self.run_dir}/summary.json"
+    
+    @property
+    def artifacts_dir(self) -> str:
+        return f"{self.run_dir}/artifacts"
+    
+    def artifact(self, name: str) -> str:
+        return f"{self.artifacts_dir}/{name}"
 
 
 @dataclass(frozen=True)
@@ -26,5 +33,9 @@ class PointerKeys:
     run_family: str
     pointer_root: str = "artifacts/pointers"
 
-    def __call__(self, slot: str) -> str:
-        return f"{self.pointer_root}/{self.run_family}/{slot}.json"
+    @property
+    def family_dir(self) -> str:
+        return f"{self.pointer_root}/{self.run_family}"
+    
+    def pointer(self, slot: str) -> str:
+        return f"{self.family_dir}/{slot}.json"
