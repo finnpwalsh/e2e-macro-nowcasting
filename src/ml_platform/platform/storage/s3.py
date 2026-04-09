@@ -1,12 +1,10 @@
 """S3 Implementation of Storage."""
 from __future__ import annotations
 
-import io
 import os
 from typing import Any
 
 import boto3
-import pandas as pd
 from botocore.exceptions import ClientError
 
 # helpers
@@ -34,20 +32,7 @@ def _is_not_found_error(exc: ClientError) -> bool:
 class S3Storage:
     """
     S3 storage backend.
-    """
-
-    def read_parquet(self, key: str) -> pd.DataFrame:
-        data = self.read_bytes(key)
-        buf = io.BytesIO(data)
-        return pd.read_parquet(buf)
-    
-    def write_parquet(self, key: str, df: pd.DataFrame, **kwargs) -> None:
-        bucket = _bucket(key)
-        buf = io.BytesIO()
-        df.to_parquet(buf, **kwargs)
-        buf.seek(0)
-        _s3().put_object(Bucket=bucket, Key=key, Body=buf.read())
-    
+    """ 
     def read_bytes(self, key: str) -> bytes:
         bucket = _bucket(key)
         try:
@@ -71,3 +56,31 @@ class S3Storage:
             if _is_not_found_error(e):
                 return False
             raise
+    
+    def list(self, prefix: str) -> list[str]:
+        bucket = _bucket(prefix)
+        client = _s3()
+
+        keys = list[str] = []
+        continuation_token = str | None = None
+
+        while True:
+            kwargs = {
+                "Bucket": bucket,
+                "Prefix": prefix,
+            }
+        
+            if continuation_token:
+                kwargs["ContinuationToken"] = continuation_token
+
+            resp = client.list_objects_v2(**kwargs)
+
+            contents = resp.get("Contents", [])
+            keys.extend(obj["Key"] for obj in contents)
+
+            if resp.get("IsTruncated"):
+                continuation_token = resp.get("NextContinuationToken")
+            else:
+                break
+                
+            return keys

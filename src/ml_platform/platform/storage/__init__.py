@@ -1,9 +1,9 @@
 from .base import Storage
-from .factory import get_storage
-from .io import StorageIO
+from .local import LocalStorage
+from .s3 import S3Storage
 
 __all__ = [
     "Storage",
-    "get_storage",
-    "StorageIO",
+    "LocalStorage",
+    "S3Storage",
 ]
