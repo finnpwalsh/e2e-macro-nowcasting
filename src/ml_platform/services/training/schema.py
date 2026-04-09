@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from ml_platform.modeling.training import TrainedModel
 from ml_platform.modeling.outputs import Predictions
-from ml_platform.modeling.contracts import FeatureSignature
+from ml_platform.modeling.features import FeatureSignature
 
 
 @dataclass(frozen=True)

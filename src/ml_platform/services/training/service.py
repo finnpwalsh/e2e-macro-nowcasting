@@ -5,9 +5,9 @@ from dataclasses import dataclass
 import pandas as pd
 
 from ml_platform.modeling.outputs import PredictionsBuilder
-from ml_platform.modeling.contracts import FeatureSignatureBuilder
+from ml_platform.modeling.features import FeatureSelector, FeatureSignatureBuilder
 
-from ml_platform.modeling.training import FeatureSelector, Trainer
+from ml_platform.modeling.training import Trainer
 from ml_platform.modeling.splitting import Splitter
 from .schema import TrainingResult
 
