@@ -9,8 +9,9 @@ from sklearn.metrics import (
     r2_score,
 )
 
-from ...core.metrics import Metric
-from ...core.predictions import Predictions
+from ..metrics import Metric
+from ...outputs import Predictions
+
 from .metrics import RegressionMetrics
 
 

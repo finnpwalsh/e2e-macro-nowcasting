@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ...core.metrics import Metric
+from ..metrics import Metric
 
 
 @dataclass(frozen=True)

@@ -6,7 +6,7 @@ import pandas as pd
 
 from ..models import ModelSpec
 
-from .schemas import TrainedModel
+from .schema import TrainedModel
 
 
 @dataclass(frozen=True)
