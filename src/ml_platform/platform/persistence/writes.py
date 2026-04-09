@@ -3,12 +3,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict, is_dataclass
 from typing import Any, Mapping
-from collections.abc import Sequence
 
 import pandas as pd
 
-from .base import Storage
-from .serde import write_joblib, write_json
+from ml_platform.platform.storage import Storage, write_json
 
 
 class WriteOp(ABC):
@@ -40,30 +38,9 @@ class JsonWrite(WriteOp):
 
 
 @dataclass(frozen=True)
-class JoblibWrite(WriteOp):
-    key: str
-    obj: Any
-
-    def persist(self, *, storage: Storage) -> None:
-        write_joblib(storage=storage, key=self.key, obj=self.obj)
-
-
-@dataclass(frozen=True)
 class ParquetWrite(WriteOp):
     key: str
     df: pd.DataFrame
 
     def persist(self, *, storage: Storage) -> None:
         storage.write_parquet(key=self.key, df=self.df)
-
-
-@dataclass(frozen=True)
-class PersistencePlan:
-    writes: Sequence[WriteOp]
-
-    def persist(self, *, storage: Storage) -> None:
-        for write in self.writes:
-            write.persist(storage=storage)
-    
-    def extend(self, more_writes: Sequence[WriteOp]) -> "PersistencePlan":
-        return PersistencePlan(writes=[*self.writes, *more_writes])
