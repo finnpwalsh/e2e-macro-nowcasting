@@ -1,6 +1,5 @@
-from .schemas import TrainedModel, TrainingResult
+from .schemas import TrainedModel
 from .trainer import Trainer
-from .service import TrainingService
 from .splitting import Splitter, RandomSplitter, TemporalSplitter
 from .features import FeatureSelector
 
