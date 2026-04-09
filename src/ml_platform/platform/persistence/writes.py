@@ -6,7 +6,8 @@ from typing import Any, Mapping
 
 import pandas as pd
 
-from ml_platform.platform.storage import Storage, write_json
+from ml_platform.platform.storage import Storage
+from .data_io import DataIO
 
 
 class WriteOp(ABC):
@@ -19,28 +20,37 @@ class WriteOp(ABC):
 @dataclass(frozen=True)
 class JsonWrite(WriteOp):
     key: str
-    payload: Any
+    payload: Mapping[str, Any] | object
 
     def persist(self, *, storage: Storage) -> None:
-        write_json(
-            storage=storage,
+        DataIO(storage).write_json(
             key=self.key,
-            payload=self._resolve_json_payload(self.payload),
+            payload=self.payload,
         )
     
     @staticmethod
-    def _resolve_json_payload(payload: Any) -> Any:
-        if is_dataclass(payload): return asdict(payload)
-        elif isinstance(payload, Mapping): return dict(payload)
-        else: raise TypeError(
-                f"JsonWrite payload must be a dataclass or mapping, got {type(payload).__name__}"
-            )
+    def _resolve_payload(payload: Mapping[str, Any] | object) -> dict[str, Any]:
+        if is_dataclass(payload):
+            return asdict(payload)
+        
+        if isinstance(payload, Mapping):
+            return dict(payload)
+        
+        raise TypeError(
+            "JsonWrite payload must be a dataclass or Mapping[str, Any], "
+            f"got {type(payload).__name__}"
+        )
 
 
 @dataclass(frozen=True)
 class ParquetWrite(WriteOp):
     key: str
     df: pd.DataFrame
+    parquet_kwargs: Mapping[str, Any] | None = None
 
     def persist(self, *, storage: Storage) -> None:
-        storage.write_parquet(key=self.key, df=self.df)
+        DataIO(storage).write_parquet(
+            key=self.key,
+            df=self.df,
+            **(self.parquet_kwargs or {}),
+        )
