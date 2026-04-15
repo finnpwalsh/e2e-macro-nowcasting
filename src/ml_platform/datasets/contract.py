@@ -6,11 +6,11 @@ from typing import Tuple
 import pandas as pd
 
 
-class Contract(ABC):
+class DatasetContract(ABC):
     """
-    Domain contract interface.
+    Dataset contract interface.
 
-    A contract defines:
+    A dataset contract defines:
         - required columns
         - primary key uniqueness
         - coercion semantics
