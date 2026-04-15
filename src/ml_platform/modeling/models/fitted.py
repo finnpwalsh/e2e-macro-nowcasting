@@ -6,7 +6,7 @@ from ..models import FitPredictModel
 
 
 @dataclass(frozen=True)
-class TrainedModel:
+class FittedModel:
     model: FitPredictModel
-    feature_cols: list[str]
+    feature_cols: tuple[str, ...]
     target_col: str
