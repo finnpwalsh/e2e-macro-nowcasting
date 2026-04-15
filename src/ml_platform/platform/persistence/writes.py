@@ -7,7 +7,7 @@ from typing import Any, Mapping
 import pandas as pd
 
 from ml_platform.platform.storage import Storage
-from .data_io import DataIO
+from .serde import Serde
 
 
 class WriteOp(ABC):
@@ -23,7 +23,7 @@ class JsonWrite(WriteOp):
     payload: Mapping[str, Any] | object
 
     def persist(self, *, storage: Storage) -> None:
-        DataIO(storage).write_json(
+        Serde(storage).write_json(
             key=self.key,
             payload=self.payload,
         )
@@ -49,7 +49,7 @@ class ParquetWrite(WriteOp):
     parquet_kwargs: Mapping[str, Any] | None = None
 
     def persist(self, *, storage: Storage) -> None:
-        DataIO(storage).write_parquet(
+        Serde(storage).write_parquet(
             key=self.key,
             df=self.df,
             **(self.parquet_kwargs or {}),

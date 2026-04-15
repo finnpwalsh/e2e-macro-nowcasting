@@ -1,9 +1,9 @@
-from .data_io import DataIO
+from .serde import Serde
 from .plan import PersistencePlan
 from .writes import JsonWrite, ParquetWrite, WriteOp
 
 __all__ = [
-    "DataIO",
+    "Serde",
     "PersistencePlan",
     "JsonWrite",
     "ParquetWrite",

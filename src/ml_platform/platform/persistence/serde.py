@@ -11,7 +11,7 @@ from ..storage import Storage
 
 
 @dataclass(frozen=True)
-class DataIO:
+class Serde:
     storage: Storage
 
     def read_json(self, *, key: str) -> dict:
