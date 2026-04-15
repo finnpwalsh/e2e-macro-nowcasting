@@ -32,6 +32,25 @@ Production-flavored infra hardening.
 
 ---
 
+### April 15, 2026
+
+**CONTEXT**
+
+- v1.5.1 – shock corrector: `ml_platform` refactor
+
+**DONE**
+
+- split `ml_platform` and `ml_services`
+- made `ml_platform` truly primitive
+    - removed `training`
+    - renames
+
+**NEXT**
+
+- `training` service and (maybe) move `ml_platform` into its own repo
+
+---
+
 ### April 7, 2026
 
 **CONTEXT**
