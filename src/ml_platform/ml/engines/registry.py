@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Mapping
 
-from ..core.models import ModelSpec
+from ..models import ModelSpec
 
 
 @dataclass(frozen=True)
