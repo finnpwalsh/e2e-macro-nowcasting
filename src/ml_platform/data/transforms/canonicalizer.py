@@ -1,18 +1,14 @@
 from __future__ import annotations
 
-from typing import Generic, Protocol, TypeVar
+from typing import Protocol
 
 import pandas as pd
 
 
-D = TypeVar("D")
-
-
-class Canonicalizer(Protocol, Generic[D]):
+class Canonicalizer(Protocol):
     """
-    Domain canonicalization step: raw -> canonical.
+    Canonicalization step: raw -> canonical.
     """
-    domain: D
 
     def canonicalize(self, raw: pd.DataFrame) -> pd.DataFrame:
         ...
