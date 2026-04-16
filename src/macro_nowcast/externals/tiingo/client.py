@@ -3,30 +3,28 @@ from __future__ import annotations
 import requests
 import pandas as pd
 
+from ml_platform.data.sources import AuthConfig
+from ml_platform.platform.secrets import SecretResolver
+
 
 class TiingoClient:
     """
     Client for Tiingo REST API.
-
-    Responsibilities:
-        - Fetch raw price series
-        - Return normalized DataFrame
-    
-    Out of scope:
-        - Canonicalization
-        - Validation
     """
-
     BASE_URL = "https://api.tiingo.com/tiingo/daily"
-
-    def __init__(self, api_key: str):
-        self._api_key = api_key
-
-    # hide API key
-    def __repr__(self) -> str:
-        return "TiingoClient(api_key=****)"
     
-    def fetch_series(
+    def __init__(
+        self,
+        *,
+        auth: AuthConfig,
+        secrets: SecretResolver,
+    ) -> None:
+        self._api_key = self._resolve_api_key(
+            auth=auth,
+            secrets=secrets,
+        )
+
+    def fetch(
             self,
             *,
             ticker: str,
@@ -54,3 +52,24 @@ class TiingoClient:
             df["date"] = pd.to_datetime(df["date"]).dt.tz_localize(None)
         
         return df
+    
+    @staticmethod
+    def _resolve_api_key(
+        *,
+        auth: AuthConfig,
+        secrets: SecretResolver,
+    ) -> str:
+        auth.validate()
+
+        if auth.type != "api_key":
+            raise ValueError("TiingoClient requires api_key authentication.")
+        
+        if auth.key_name is None:
+            raise ValueError("AuthConig.key_name is required for api_key auth.")
+        
+        api_key = secrets.get(auth.key_name)
+        
+        if not api_key:
+            raise ValueError(f"Missing API key for secret: '{auth.key_name}'.")
+        
+        return api_key

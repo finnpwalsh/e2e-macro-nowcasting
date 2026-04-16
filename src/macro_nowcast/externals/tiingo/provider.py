@@ -15,15 +15,17 @@ class TiingoProvider:
             *,
             tickers: dict[str, str],
             start_date: str,
+            end_date: str | None = None,
             frequency: str,
     ) -> pd.DataFrame:
         """Fetch all tickers from Tiingo and return one raw dataframe."""
         dfs: list[pd.DataFrame] = []
 
         for ticker_name, ticker_id in tickers.items():
-            raw = self._client.fetch_series(
+            raw = self._client.fetch(
                 ticker=ticker_id,
                 start_date=start_date,
+                end_date=end_date,
                 frequency=frequency,
             )
 

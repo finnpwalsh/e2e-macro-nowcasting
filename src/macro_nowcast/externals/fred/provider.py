@@ -1,13 +1,18 @@
 from __future__ import annotations
 
 import pandas as pd
+
 from .client import FREDClient
 
 
 class FREDProvider:
     name = "fred"
 
-    def __init__(self, client: FREDClient):
+    def __init__(
+        self,
+        *,
+        client: FREDClient,
+    ) -> None:
         self._client = client
 
     def fetch(
@@ -15,6 +20,7 @@ class FREDProvider:
             *,
             series: dict[str, str],
             start_date: str,
+            end_date: str | None = None,
     ) -> pd.DataFrame:
         """
         Fetch all requested series from FRED and return one raw dataframe.
@@ -22,9 +28,10 @@ class FREDProvider:
         dfs: list[pd.DataFrame] = []
 
         for series_name, series_id in series.items():
-            df = self._client.fetch_series(
+            df = self._client.fetch(
                 series_id=series_id,
                 start_date=start_date,
+                end_date=end_date,
             )
 
             if df is None or df.empty:
