@@ -6,7 +6,6 @@ from macro_nowcast.externals.clients.fred import FREDClient
 
 class FREDProvider:
     name = "fred"
-    domain = "anchors"
 
     def __init__(self, client: FREDClient):
         self._client = client

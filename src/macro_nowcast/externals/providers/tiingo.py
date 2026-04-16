@@ -6,7 +6,6 @@ from macro_nowcast.externals.clients.tiingo import TiingoClient
 
 class TiingoProvider:
     name = "tiingo"
-    domain = "shocks"
 
     def __init__(self, client: TiingoClient):
         self._client = client
