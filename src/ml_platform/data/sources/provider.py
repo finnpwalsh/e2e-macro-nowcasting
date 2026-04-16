@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-from typing import Generic, Protocol, TypeVar
+from typing import Protocol
 
 import pandas as pd
 
 
-D = TypeVar("D")
-
-
-class Provider(Protocol, Generic[D]):
+class Provider(Protocol):
     """
     Upstream data provider adapter.
     """
