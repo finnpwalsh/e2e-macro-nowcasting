@@ -2,18 +2,6 @@
 .env
 .envrc
 
-# Pipeline outputs
-data/
-mlruns/
-/airflow/
-
-# Airflow generated files
-orchestration/airflow/logs/**
-airflow/*.db
-airflow/*.pid
-airflow/airflow.cfg
-airflow/webserver_config.py
-
 # Terraform
 .terraform/
 *.tfstate

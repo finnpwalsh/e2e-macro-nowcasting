@@ -1,0 +1,16 @@
+{
+    "source": "fred",
+
+    "series": {
+        "cpi_all_items": "CPIAUCSL",
+        "cpi_energy": "CPIENGSL",
+        "cpi_housing": "CPIHOSSL",
+        "federal_funds": "FEDFUNDS",
+        "unemployment_rate": "UNRATE"
+    },
+
+    "ingestion": {
+        "start_date": "2010-01-01",
+        "end_date": null
+    }
+}

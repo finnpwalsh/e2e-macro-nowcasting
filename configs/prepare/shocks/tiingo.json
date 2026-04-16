@@ -1,0 +1,17 @@
+{
+    "source": "tiingo",
+
+    "series": {
+        "sp500_equity": "SPY",
+        "long_term_treasury": "TLT",
+        "us_dollar_index": "UUP",
+        "energy_sector": "XLE",
+        "high_yield_credit":"HYG"
+    },
+
+    "ingestion": {
+        "start_date": "2010-01-01",
+        "end_date": null,
+        "frequency": "daily"
+    }
+}
