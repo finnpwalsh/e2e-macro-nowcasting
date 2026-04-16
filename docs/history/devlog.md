@@ -32,6 +32,25 @@ Production-flavored infra hardening.
 
 ---
 
+### April 16, 2026
+
+**CONTEXT**
+
+- v1.5.1 – shock corrector: `macro_nowcast` audit
+
+**DONE**
+
+- update `anchors` + `shocks` with new imports from `ml_platform`
+- rename `storage` -> `keys`
+- flatten `prepare`
+- move tickers + series definitions to `configs`
+
+**NEXT**
+
+- `prepare` audit (move to CLI)
+
+---
+
 ### April 15, 2026
 
 **CONTEXT**
