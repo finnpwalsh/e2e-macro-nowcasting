@@ -44,6 +44,7 @@ Production-flavored infra hardening.
 - rename `storage` -> `keys`
 - flatten `prepare`
 - move tickers + series definitions to `configs`
+- `externals` audit
 
 **NEXT**
 
