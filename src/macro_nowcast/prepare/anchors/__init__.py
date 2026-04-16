@@ -1,9 +1,11 @@
-from .assemble import AnchorAssembler
+from .assembler import AnchorAssembler
+from .canonicalizers import FREDAnchorCanonicalizer
 from .contract import CONTRACT
-from .features import AnchorFeatureBuilder
+from .tabularizer import AnchorTabularizer
 
 __all__ = [
     "AnchorAssembler",
+    "FREDAnchorCanonicalizer",
     "CONTRACT",
-    "AnchorFeatureBuilder",
+    "AnchorTabularizer",
 ]

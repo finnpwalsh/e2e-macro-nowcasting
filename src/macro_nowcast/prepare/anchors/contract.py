@@ -9,10 +9,10 @@ from typing import Tuple
 
 import pandas as pd
 
-from macro_nowcast.prepare._interfaces import Contract
+from ml_platform.data.contracts import DatasetContract
 
 
-class AnchorContract(Contract):
+class AnchorContract(DatasetContract):
     """
     Canonical anchors contract.
     """

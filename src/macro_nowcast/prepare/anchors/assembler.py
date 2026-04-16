@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import pandas as pd
 
-from macro_nowcast.prepare._interfaces import Assembler
 from .contract import CONTRACT
+
+from ml_platform.data.transforms import Assembler
 
 
 class AnchorAssembler(Assembler):

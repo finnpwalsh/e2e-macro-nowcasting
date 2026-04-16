@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import pandas as pd
-from .base import AnchorCanonicalizer
+
+from ml_platform.data.transforms import Canonicalizer
 
 
-class FREDAnchorCanonicalizer(AnchorCanonicalizer):
+class FREDAnchorCanonicalizer(Canonicalizer):
     """
     Raw FRED -> AnchorLong canonical.
     Expects raw columns: date, value, series, series_id
@@ -12,7 +13,7 @@ class FREDAnchorCanonicalizer(AnchorCanonicalizer):
     """
     name = "fred"
 
-    def canonicalize(self, raw: pd.DataFrame):
+    def canonicalize(self, raw: pd.DataFrame) -> pd.DataFrame:
         out = raw.copy()
         out = out.rename(columns={"date":"ds"})
         out["source"] = self.name
