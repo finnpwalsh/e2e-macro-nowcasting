@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
-from macro_nowcast.externals.clients.fred import FREDClient
+from .client import FREDClient
 
 
 class FREDProvider:

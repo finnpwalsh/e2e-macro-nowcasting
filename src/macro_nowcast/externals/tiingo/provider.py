@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
-from macro_nowcast.externals.clients.tiingo import TiingoClient
+from .client import TiingoClient
 
 
 class TiingoProvider:
