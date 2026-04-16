@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import pandas as pd
-from macro_nowcast.prepare._interfaces import FeatureBuilder
+
+from ml_platform.data.transforms import Tabularizer
 
 
-class ShockFeatureBuilder(FeatureBuilder):
-    domain="shocks"
+class ShockTabularizer(Tabularizer):
 
     def build(self, canonical: pd.DataFrame) -> pd.DataFrame:
         df = canonical.copy()
