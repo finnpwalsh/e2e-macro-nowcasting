@@ -1,6 +1,11 @@
 {
     "source": "fred",
 
+    "auth": {
+        "type": "api_key",
+        "key_name": "FRED_API_KEY"
+    },
+
     "series": {
         "cpi_all_items": "CPIAUCSL",
         "cpi_energy": "CPIENGSL",
